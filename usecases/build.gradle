@@ -1,0 +1,12 @@
+apply plugin: 'java-library'
+apply plugin: "net.ltgt.apt"
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+dependencies {
+    implementation project(path: ':common')
+
+    implementation "com.google.dagger:dagger:${dagger_version}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+}

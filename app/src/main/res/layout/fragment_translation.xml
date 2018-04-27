@@ -1,0 +1,90 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/toolbar_height" />
+
+    <EditText
+        android:id="@+id/edit_input"
+        style="@style/txtSearch.singleLine"
+        android:hint="@string/type_word"
+        android:inputType="text"
+        android:lines="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guideline" />
+
+    <ImageView
+        android:id="@+id/btn_search_cancel"
+        style="@style/toolbar.btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/txt_hint"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/search_progress"
+        style="@style/toolbar.btn"
+        android:theme="@style/AppTheme.Progress"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_divider"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_input" />
+
+    <TextView
+        android:id="@+id/txt_translated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <LinearLayout
+        android:id="@+id/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        tools:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_m"
+            android:text="@string/error_no_internet" />
+
+        <Button
+            android:id="@+id/retry_btn"
+            style="@style/btn.filled.accent"
+            android:layout_width="200dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/retry_again" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

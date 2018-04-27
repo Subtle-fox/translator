@@ -1,0 +1,26 @@
+apply plugin: 'com.android.library'
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+android {
+    defaultConfig {
+        versionCode pVersionCode
+        versionName pVersionName
+
+        compileSdkVersion = compileSdk
+        targetSdkVersion targetSdk
+        minSdkVersion minSdk
+        buildToolsVersion build_tools_version
+    }
+}
+
+dependencies {
+    implementation project(path: ':common')
+
+    implementation "com.google.dagger:dagger:${dagger_version}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+
+    implementation "android.arch.persistence.room:runtime:${roomVersion}"
+    annotationProcessor "android.arch.persistence.room:compiler:${roomVersion}"
+}
