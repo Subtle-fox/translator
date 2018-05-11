@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui;
+package com.andyanika.translator.features.translate;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,8 +16,7 @@ import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.component.TranslationFragmentComponent;
 import com.andyanika.translator.di.module.TranslationFragmentModule;
-import com.andyanika.translator.ui.presenter.TranslationPresenter;
-import com.andyanika.translator.ui.view.TranslationView;
+import com.andyanika.translator.ui.MainActivity;
 
 import javax.inject.Inject;
 

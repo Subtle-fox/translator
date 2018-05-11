@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui.view;
+package com.andyanika.translator.features.translate;
 
 
 import com.andyanika.translator.common.models.TranslateResult;

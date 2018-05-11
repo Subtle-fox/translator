@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui.adapter;
+package com.andyanika.translator.features.history;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

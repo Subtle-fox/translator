@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui.adapter;
+package com.andyanika.translator.features.history;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

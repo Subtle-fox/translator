@@ -1,9 +1,7 @@
-package com.andyanika.translator.ui;
+package com.andyanika.translator.features.translate;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import com.andyanika.translator.di.FragmentScope;
-import com.andyanika.translator.ui.presenter.TranslationPresenter;
 
 import javax.inject.Inject;
 

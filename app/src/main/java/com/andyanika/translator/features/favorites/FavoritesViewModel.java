@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui.vm;
+package com.andyanika.translator.features.favorites;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;

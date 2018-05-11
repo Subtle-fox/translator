@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui.presenter;
+package com.andyanika.translator.features.translate;
 
 
 import android.os.Handler;
@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.di.FragmentScope;
-import com.andyanika.translator.ui.view.TranslationView;
 import com.andyanika.usecases.TranslateUseCase;
 
 import javax.inject.Inject;
@@ -30,22 +29,38 @@ public class TranslationPresenter {
     public void translate(@NonNull final String text) {
         view.showProgress();
         view.hideErrorLayout();
-
         handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    TranslateResult result = translateUseCase.run(new TranslationRequest(text, "en"));
-                    view.showTranslation(result);
+                    Thread.sleep(1500);
+
+                    final TranslateResult result = translateUseCase.run(new TranslationRequest(text, "en"));
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            view.showTranslation(result);
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
-                    view.showErrorLayout();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            view.showErrorLayout();
+                        }
+                    });
                 } finally {
-                    view.hideProgress();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            view.hideProgress();
+                        }
+                    });
                 }
             }
-        }, DELAY);
+        }).start();
     }
 
     public void onTextChanged(@NonNull final String text) {

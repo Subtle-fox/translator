@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui;
+package com.andyanika.translator.features.favorites;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
@@ -17,9 +17,8 @@ import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.component.FavoriteFragmentComponent;
 import com.andyanika.translator.di.module.FavoriteFragmentModule;
-import com.andyanika.translator.ui.adapter.HistoryListAdapter;
-import com.andyanika.translator.ui.view.FavoriteView;
-import com.andyanika.translator.ui.vm.FavoritesViewModel;
+import com.andyanika.translator.features.history.HistoryListAdapter;
+import com.andyanika.translator.ui.MainActivity;
 
 import javax.inject.Inject;
 import java.util.List;

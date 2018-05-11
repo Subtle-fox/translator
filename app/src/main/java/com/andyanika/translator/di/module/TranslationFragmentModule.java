@@ -1,8 +1,8 @@
 package com.andyanika.translator.di.module;
 
 import com.andyanika.translator.di.FragmentScope;
-import com.andyanika.translator.ui.adapter.HistoryListAdapter;
-import com.andyanika.translator.ui.view.TranslationView;
+import com.andyanika.translator.features.history.HistoryListAdapter;
+import com.andyanika.translator.features.translate.TranslationView;
 
 import dagger.Module;
 import dagger.Provides;

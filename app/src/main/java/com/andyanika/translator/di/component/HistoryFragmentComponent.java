@@ -2,7 +2,7 @@ package com.andyanika.translator.di.component;
 
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.translator.di.module.HistoryFragmentModule;
-import com.andyanika.translator.ui.HistoryFragment;
+import com.andyanika.translator.features.history.HistoryFragment;
 import dagger.Subcomponent;
 
 @FragmentScope

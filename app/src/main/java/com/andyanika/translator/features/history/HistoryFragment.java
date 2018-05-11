@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui;
+package com.andyanika.translator.features.history;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
@@ -20,9 +20,7 @@ import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.component.HistoryFragmentComponent;
 import com.andyanika.translator.di.module.HistoryFragmentModule;
-import com.andyanika.translator.ui.adapter.HistoryListAdapter;
-import com.andyanika.translator.ui.view.HistoryView;
-import com.andyanika.translator.ui.vm.HistoryViewModel;
+import com.andyanika.translator.ui.MainActivity;
 
 import javax.inject.Inject;
 import java.util.List;
