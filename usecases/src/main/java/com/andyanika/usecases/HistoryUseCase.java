@@ -24,7 +24,7 @@ public class HistoryUseCase implements Usecase<String, List<TranslateResult>> {
 
         ArrayList<TranslateResult> filtered = new ArrayList<>();
         for (TranslateResult tr : historyList) {
-            if (tr.source.contains(filter) || tr.translated.contains(filter)) {
+            if (tr.textSrc.contains(filter) || tr.textTranslated.contains(filter)) {
                 filtered.add(tr);
             }
         }

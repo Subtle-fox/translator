@@ -81,7 +81,7 @@ public class TranslationFragment extends Fragment implements TranslationView {
 
     @Override
     public void showTranslation(TranslateResult response) {
-        txtTranslated.setText(response.translated);
+        txtTranslated.setText(response.textTranslated);
     }
 
     @Override

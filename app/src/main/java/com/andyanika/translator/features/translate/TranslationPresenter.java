@@ -3,6 +3,7 @@ package com.andyanika.translator.features.translate;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.di.FragmentScope;
@@ -30,13 +31,21 @@ public class TranslationPresenter {
         view.showProgress();
         view.hideErrorLayout();
         handler.removeCallbacksAndMessages(null);
+        handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    translateInternal(text);
+                                }
+                            }
+                , 1500L);
+    }
+
+    private void translateInternal(final String text) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(1500);
-
-                    final TranslateResult result = translateUseCase.run(new TranslationRequest(text, "en"));
+                    final TranslateResult result = translateUseCase.run(TranslationRequest.create(text, LanguageCode.RU, LanguageCode.EN));
                     handler.post(new Runnable() {
                         @Override
                         public void run() {

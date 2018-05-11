@@ -67,8 +67,8 @@
     <!-- Заполненняемая по ширине экрана кнопка  -->
     <style name="btn.filled">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginLeft">@dimen/margin_xs</item>
-        <item name="android:layout_marginRight">@dimen/margin_xs</item>
+        <item name="android:layout_marginLeft">@dimen/space_xs</item>
+        <item name="android:layout_marginRight">@dimen/space_xs</item>
         <item name="android:height">@dimen/btn_height</item>
         <item name="android:textSize">@dimen/txt_size_button</item>
     </style>
@@ -100,5 +100,15 @@
         <item name="android:layout_height">@dimen/toolbar_height</item>
         <item name="android:singleLine">true</item>
         <item name="android:lines">1</item>
+    </style>
+
+    <style name="txtTranslated">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:paddingLeft">@dimen/padding_default</item>
+        <item name="android:layout_margin">@dimen/margin_default</item>
+        <item name="android:textSize">@dimen/txt_size_large</item>
+        <item name="android:textColor">@color/txt_primary</item>
     </style>
 </resources>

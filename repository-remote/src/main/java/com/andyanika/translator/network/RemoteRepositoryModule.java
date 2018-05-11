@@ -11,7 +11,19 @@ import javax.inject.Singleton;
 public class RemoteRepositoryModule {
     @Singleton
     @Provides
-    public RemoteRepository provideYandexRepository(@Named("yandex") NetworkYandexApi api) {
-        return new RemoteYandexRepository(api);
+    public RemoteRepository provideYandexRepository(@Named("yandex") NetworkYandexApi api, TranslationParamsBuilder paramsBuilder, ModelsAdapter adapter) {
+        return new RemoteYandexRepository(api, paramsBuilder, adapter);
+    }
+
+    @Singleton
+    @Provides
+    public TranslationParamsBuilder provideTranslationParamsBuilder() {
+        return new TranslationParamsBuilder();
+    }
+
+    @Singleton
+    @Provides
+    public ModelsAdapter provideModelAdapter() {
+        return new ModelsAdapter();
     }
 }

@@ -1,7 +1,6 @@
 <resources>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="margin_xs">8dp</dimen>
 
     <dimen name="btn_height">36dp</dimen>
     <dimen name="btn_min_width">88dp</dimen>
@@ -10,16 +9,18 @@
 
     <dimen name="txt_size_primary">16sp</dimen>
     <dimen name="txt_size_secondary">14sp</dimen>
+    <dimen name="txt_size_large">18sp</dimen>
     <dimen name="txt_size_small">12sp</dimen>
 
-    <dimen name="padding_default">@dimen/padding_s</dimen>
+    <dimen name="padding_default">@dimen/space_s</dimen>
+    <dimen name="margin_default">@dimen/space_s</dimen>
 
-    <dimen name="padding_xxs">4dp</dimen>
-    <dimen name="padding_xs">8dp</dimen>
-    <dimen name="padding_s">16dp</dimen>
-    <dimen name="padding_m">24dp</dimen>
-    <dimen name="padding_l">32dp</dimen>
-    <dimen name="padding_xl">48dp</dimen>
+    <dimen name="spacce_xxs">4dp</dimen>
+    <dimen name="space_xs">8dp</dimen>
+    <dimen name="space_s">16dp</dimen>
+    <dimen name="space_m">24dp</dimen>
+    <dimen name="space_l">32dp</dimen>
+    <dimen name="space_xl">48dp</dimen>
 
     <dimen name="list_item_height">48dp</dimen>
     <dimen name="list_item_height_2lines">56dp</dimen>

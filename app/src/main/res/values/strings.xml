@@ -8,4 +8,6 @@
     <string name="error_no_internet">No internet connection :(</string>
     <string name="retry_again">Try again</string>
     <string name="type_word">Start typing</string>
+
+    <string name="copyright_yandex">Powered by Yandex.Translate</string>
 </resources>

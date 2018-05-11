@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -21,7 +22,7 @@ public class NetworkModule {
     @Provides
     @Named("yandex")
     String provideUrl() {
-        return "http://api.yandex.ru/translate/";
+        return "https://translate.yandex.net/api/v1.5/tr.json/";
     }
 
     @Provides
@@ -31,6 +32,7 @@ public class NetworkModule {
                 .readTimeout(NETWORK_READ_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(NETWORK_WRITE_TIMEOUT, TimeUnit.SECONDS)
                 .connectTimeout(NETWORK_CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
 
         Gson gson = new GsonBuilder()

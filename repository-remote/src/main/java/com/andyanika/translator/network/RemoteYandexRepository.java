@@ -2,33 +2,54 @@ package com.andyanika.translator.network;
 
 import com.andyanika.translator.common.RemoteRepository;
 import com.andyanika.translator.common.models.AvailableLanguagesResult;
+import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
+
+import java.io.IOException;
 
 class RemoteYandexRepository implements RemoteRepository {
-    private NetworkYandexApi api;
+    private final NetworkYandexApi api;
+    private final TranslationParamsBuilder directionBuilder;
+    private ModelsAdapter modelsAdapter;
+    private final String key;
 
-    RemoteYandexRepository(NetworkYandexApi api) {
+    RemoteYandexRepository(NetworkYandexApi api, TranslationParamsBuilder directionBuilder, ModelsAdapter modelsAdapter) {
         this.api = api;
+        this.directionBuilder = directionBuilder;
+        this.modelsAdapter = modelsAdapter;
+        this.key = "trnsl.1.1.20180425T102131Z.2f89797675600432.d96e99dc90d3a48a0db9128c85bddfaeea265ef4";
     }
 
     @Override
-    public TranslateResult translate(TranslationRequest request) {
+    public TranslateResult translate(TranslationRequest request) throws IOException {
+        Call<TranslationResponse> translate = api.translate(key, request.text, directionBuilder.buildDiractionParam(request.languageSrc, request.languageDst));
+
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return new TranslateResult(request.text, String.format("%s: %s", request.language, request.text));
+
+        TranslationResponse response = parseResult(translate.execute());
+        return modelsAdapter.convert(request, response);
     }
 
     @Override
-    public AvailableLanguagesResult getAvailableLanguages() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public AvailableLanguagesResult getAvailableLanguages(LanguageCode languageCode) throws IOException {
+        Response<ResponseBody> response = api.getAvailableLanguages(key, languageCode.getValue()).execute();
+        parseResult(response);
         return new AvailableLanguagesResult();
+    }
+
+    private <T> T parseResult(Response<T> response) throws IOException {
+        if (response.isSuccessful()) {
+            return response.body();
+        } else {
+            throw new IOException(response.message());
+        }
     }
 }
