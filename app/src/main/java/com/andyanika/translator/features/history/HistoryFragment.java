@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.models.TranslationRowModel;
 import com.andyanika.translator.di.component.HistoryFragmentComponent;
 import com.andyanika.translator.di.module.HistoryFragmentModule;
 import com.andyanika.translator.ui.MainActivity;
@@ -58,9 +59,9 @@ public class HistoryFragment extends Fragment implements HistoryView {
         super.onViewCreated(view, savedInstanceState);
 
         HistoryViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(HistoryViewModel.class);
-        viewModel.data.observe(this, new Observer<List<TranslateResult>>() {
+        viewModel.data.observe(this, new Observer<List<TranslationRowModel>>() {
             @Override
-            public void onChanged(@Nullable List<TranslateResult> translateResults) {
+            public void onChanged(@Nullable List<TranslationRowModel> translateResults) {
                 adapter.setData(translateResults);
             }
         });

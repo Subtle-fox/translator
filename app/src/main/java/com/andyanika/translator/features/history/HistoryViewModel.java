@@ -3,6 +3,7 @@ package com.andyanika.translator.features.history;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.models.TranslationRowModel;
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.usecases.HistoryUseCase;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class HistoryViewModel extends ViewModel {
     private HistoryUseCase historyUseCase;
 
-    public MutableLiveData<List<TranslateResult>> data = new MutableLiveData<>();
+    public MutableLiveData<List<TranslationRowModel>> data = new MutableLiveData<>();
 
     @Inject
     HistoryViewModel(HistoryUseCase historyUseCase) {
@@ -24,8 +25,13 @@ public class HistoryViewModel extends ViewModel {
         filter(null);
     }
 
-    public void filter(String filter) {
-        List<TranslateResult> filtered = historyUseCase.run(filter);
-        this.data.setValue(filtered);
+    public void filter(final String filter) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<TranslationRowModel> filtered = historyUseCase.run(filter);
+                data.postValue(filtered);
+            }
+        }).start();
     }
 }

@@ -37,7 +37,7 @@ public class TranslationPresenter {
                                     translateInternal(text);
                                 }
                             }
-                , 1500L);
+                , 1000L);
     }
 
     private void translateInternal(final String text) {
@@ -45,11 +45,15 @@ public class TranslationPresenter {
             @Override
             public void run() {
                 try {
-                    final TranslateResult result = translateUseCase.run(TranslationRequest.create(text, LanguageCode.RU, LanguageCode.EN));
+                    final TranslateResult result = translateUseCase.run(new TranslationRequest(text, LanguageCode.RU, LanguageCode.EN));
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            view.showTranslation(result);
+                            if (result != null) {
+                                view.showTranslation(result);
+                            } else {
+                                view.showErrorLayout();
+                            }
                         }
                     });
                 } catch (Exception e) {

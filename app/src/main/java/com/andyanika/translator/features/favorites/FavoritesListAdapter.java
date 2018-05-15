@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.history;
+package com.andyanika.translator.features.favorites;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,19 +10,16 @@ import android.view.ViewGroup;
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslationRowModel;
 import com.andyanika.translator.ui.OnClickListener;
-import com.andyanika.usecases.AddFavoriteUseCase;
 import com.andyanika.usecases.RemoveFavoriteUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
+public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHolder> {
     private ArrayList<TranslationRowModel> data = new ArrayList<>();
-    private AddFavoriteUseCase addFavoriteUseCase;
     private RemoveFavoriteUseCase removeFavoriteUseCase;
 
-    public HistoryListAdapter(AddFavoriteUseCase addFavoriteUseCase, RemoveFavoriteUseCase removeFavoriteUseCase) {
-        this.addFavoriteUseCase = addFavoriteUseCase;
+    public FavoritesListAdapter(RemoveFavoriteUseCase removeFavoriteUseCase) {
         this.removeFavoriteUseCase = removeFavoriteUseCase;
     }
 
@@ -32,12 +29,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    TranslationRowModel model = data.get(position);
-                    if (model.isFavorite) {
-                        removeFavoriteUseCase.run(model.id);
-                    } else {
-                        addFavoriteUseCase.run(model.id);
-                    }
+                    removeFavoriteUseCase.run(data.get(position).id);
                 }
             }).start();
         }
@@ -50,14 +42,14 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
 
     @NonNull
     @Override
-    public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FavoritesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.listview_row, parent, false);
-        return new HistoryViewHolder(itemView, clickListener);
+        return new FavoritesViewHolder(itemView, clickListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FavoritesViewHolder holder, int position) {
         TranslationRowModel translateResult = data.get(position);
         holder.bind(translateResult);
     }
@@ -66,4 +58,5 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
     public int getItemCount() {
         return data.size();
     }
+
 }

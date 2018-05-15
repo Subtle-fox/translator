@@ -3,6 +3,9 @@ package com.andyanika.translator.di.module;
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.translator.features.history.HistoryListAdapter;
 import com.andyanika.translator.features.history.HistoryView;
+import com.andyanika.usecases.AddFavoriteUseCase;
+import com.andyanika.usecases.RemoveFavoriteUseCase;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -22,7 +25,7 @@ public class HistoryFragmentModule {
 
 	@Provides
 	@FragmentScope
-	public HistoryListAdapter getAdapter() {
-		return new HistoryListAdapter();
+	public HistoryListAdapter getAdapter(AddFavoriteUseCase addFavoriteUseCase, RemoveFavoriteUseCase removeFavoriteUseCase) {
+		return new HistoryListAdapter(addFavoriteUseCase, removeFavoriteUseCase);
 	}
 }

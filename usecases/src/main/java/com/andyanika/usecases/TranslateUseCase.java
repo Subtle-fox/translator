@@ -5,9 +5,9 @@ import com.andyanika.translator.common.RemoteRepository;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 
-import javax.inject.Inject;
 import java.io.IOException;
-import java.net.URLEncoder;
+
+import javax.inject.Inject;
 
 public class TranslateUseCase implements Usecase<TranslationRequest, TranslateResult> {
     private LocalRepository localRepository;
@@ -25,10 +25,25 @@ public class TranslateUseCase implements Usecase<TranslationRequest, TranslateRe
             return new TranslateResult("", "", request.languageSrc, request.languageDst);
         }
 
+        TranslateResult translateResult = null;
         try {
-            return remoteRepository.translate(request);
+            translateResult = remoteRepository.translate(request);
         } catch (IOException e) {
-            return localRepository.translate(request);
+            // go to offline
+            e.printStackTrace();
         }
+
+        if (translateResult != null) {
+            try {
+                long wordId = localRepository.addTranslation(translateResult);
+            } catch (Exception e) {
+                // somethign goes wrong while saving into db
+                e.printStackTrace();
+            }
+        } else {
+            translateResult = localRepository.translate(request);
+        }
+
+        return translateResult;
     }
 }

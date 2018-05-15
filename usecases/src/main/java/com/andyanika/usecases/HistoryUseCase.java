@@ -2,12 +2,13 @@ package com.andyanika.usecases;
 
 import com.andyanika.translator.common.LocalRepository;
 import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.models.TranslationRowModel;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryUseCase implements Usecase<String, List<TranslateResult>> {
+public class HistoryUseCase implements Usecase<String, List<TranslationRowModel>> {
     private LocalRepository repository;
 
     @Inject
@@ -16,15 +17,15 @@ public class HistoryUseCase implements Usecase<String, List<TranslateResult>> {
     }
 
     @Override
-    public List<TranslateResult> run(String filter) {
-        List<TranslateResult> historyList = repository.getHistory();
+    public List<TranslationRowModel> run(String filter) {
+        List<TranslationRowModel> historyList = repository.getHistory();
         if (filter == null || filter.isEmpty()) {
             return historyList;
         }
 
-        ArrayList<TranslateResult> filtered = new ArrayList<>();
-        for (TranslateResult tr : historyList) {
-            if (tr.textSrc.contains(filter) || tr.textTranslated.contains(filter)) {
+        ArrayList<TranslationRowModel> filtered = new ArrayList<>();
+        for (TranslationRowModel tr : historyList) {
+            if (tr.translateResult.textSrc.contains(filter) || tr.translateResult.textTranslated.contains(filter)) {
                 filtered.add(tr);
             }
         }

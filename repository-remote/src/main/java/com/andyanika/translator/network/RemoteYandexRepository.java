@@ -26,21 +26,15 @@ class RemoteYandexRepository implements RemoteRepository {
 
     @Override
     public TranslateResult translate(TranslationRequest request) throws IOException {
-        Call<TranslationResponse> translate = api.translate(key, request.text, directionBuilder.buildDiractionParam(request.languageSrc, request.languageDst));
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        String direction = directionBuilder.buildDiractionParam(request.languageSrc, request.languageDst);
+        Call<TranslationResponse> translate = api.translate(key, request.text, direction);
         TranslationResponse response = parseResult(translate.execute());
         return modelsAdapter.convert(request, response);
     }
 
     @Override
     public AvailableLanguagesResult getAvailableLanguages(LanguageCode languageCode) throws IOException {
-        Response<ResponseBody> response = api.getAvailableLanguages(key, languageCode.getValue()).execute();
+        Response<ResponseBody> response = api.getAvailableLanguages(key, languageCode.toString().toLowerCase()).execute();
         parseResult(response);
         return new AvailableLanguagesResult();
     }

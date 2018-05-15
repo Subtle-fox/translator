@@ -1,8 +1,10 @@
 package com.andyanika.translator.di.module;
 
+import com.andyanika.translator.common.LocalRepository;
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.translator.features.history.HistoryListAdapter;
 import com.andyanika.translator.features.translate.TranslationView;
+import com.andyanika.usecases.AddFavoriteUseCase;
 
 import dagger.Module;
 import dagger.Provides;
@@ -19,11 +21,5 @@ public class TranslationFragmentModule {
 	@FragmentScope
 	public TranslationView getView() {
 		return view;
-	}
-
-	@Provides
-	@FragmentScope
-	public HistoryListAdapter getAdapter() {
-		return new HistoryListAdapter();
 	}
 }

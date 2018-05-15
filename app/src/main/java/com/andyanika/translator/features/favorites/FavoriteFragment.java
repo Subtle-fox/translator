@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.models.TranslationRowModel;
 import com.andyanika.translator.di.component.FavoriteFragmentComponent;
 import com.andyanika.translator.di.module.FavoriteFragmentModule;
 import com.andyanika.translator.features.history.HistoryListAdapter;
@@ -25,7 +26,7 @@ import java.util.List;
 
 public class FavoriteFragment extends Fragment implements FavoriteView {
     @Inject
-    HistoryListAdapter adapter;
+    FavoritesListAdapter adapter;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -54,9 +55,9 @@ public class FavoriteFragment extends Fragment implements FavoriteView {
         super.onViewCreated(view, savedInstanceState);
 
         FavoritesViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
-        viewModel.data.observe(this, new Observer<List<TranslateResult>>() {
+        viewModel.data.observe(this, new Observer<List<TranslationRowModel>>() {
             @Override
-            public void onChanged(@Nullable List<TranslateResult> translateResults) {
+            public void onChanged(@Nullable List<TranslationRowModel> translateResults) {
                 adapter.setData(translateResults);
             }
         });
