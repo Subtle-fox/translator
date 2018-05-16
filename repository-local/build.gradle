@@ -18,6 +18,11 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        compileOptions {
+            sourceCompatibility = java_version
+            targetCompatibility = java_version
+        }
     }
 }
 
@@ -29,4 +34,6 @@ dependencies {
 
     implementation "android.arch.persistence.room:runtime:${roomVersion}"
     annotationProcessor "android.arch.persistence.room:compiler:${roomVersion}"
+
+    implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
 }
