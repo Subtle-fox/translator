@@ -1,15 +1,15 @@
 package com.andyanika.datasource.local;
 
 import com.andyanika.datasource.local.model.FavoriteModel;
-import com.andyanika.datasource.local.model.WordFavoriteModel;
 import com.andyanika.datasource.local.model.WordModel;
 import com.andyanika.translator.common.LocalRepository;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.common.models.TranslationRowModel;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Flowable;
 
 class LocalRepositoryImpl implements LocalRepository {
     private TranslatorDao dao;
@@ -21,27 +21,19 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public List<TranslationRowModel> getHistory() {
-        List<WordFavoriteModel> history = dao.getHistory();
-        List<TranslationRowModel> result = new ArrayList<>();
-        if (history != null) {
-            for (WordFavoriteModel wordModel : history) {
-                result.add(adapter.convertToRowModel(wordModel));
-            }
-        }
-        return result;
+    public Flowable<List<TranslationRowModel>> getHistory() {
+        return dao.getHistory()
+                .flatMap(list -> Flowable.fromIterable(list)
+                        .map(item -> adapter.convertToRowModel(item)).toList()
+                        .toFlowable());
     }
 
     @Override
-    public List<TranslationRowModel> getFavorites() {
-        List<WordModel> history = dao.getFavorites();
-        List<TranslationRowModel> result = new ArrayList<>();
-        if (history != null) {
-            for (WordModel wordModel : history) {
-                result.add(adapter.convertToRowModel(wordModel));
-            }
-        }
-        return result;
+    public Flowable<List<TranslationRowModel>> getFavorites() {
+        return dao.getFavorites()
+                .flatMap(list -> Flowable.fromIterable(list)
+                        .map(item -> adapter.convertToRowModel(item)).toList()
+                        .toFlowable());
     }
 
     @Override

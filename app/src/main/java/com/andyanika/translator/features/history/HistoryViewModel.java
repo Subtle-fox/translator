@@ -10,15 +10,17 @@ import com.andyanika.usecases.HistoryUseCase;
 import javax.inject.Inject;
 import java.util.List;
 
+import io.reactivex.disposables.Disposable;
+
 @FragmentScope
 public class HistoryViewModel extends ViewModel {
-    private HistoryUseCase historyUseCase;
+    private Disposable disposable;
 
     public MutableLiveData<List<TranslationRowModel>> data = new MutableLiveData<>();
 
     @Inject
     HistoryViewModel(HistoryUseCase historyUseCase) {
-        this.historyUseCase = historyUseCase;
+        disposable = historyUseCase.run(null).subscribe(data::postValue);
     }
 
     public void load() {
@@ -26,12 +28,14 @@ public class HistoryViewModel extends ViewModel {
     }
 
     public void filter(final String filter) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<TranslationRowModel> filtered = historyUseCase.run(filter);
-                data.postValue(filtered);
-            }
-        }).start();
+        // TODO: 16.05.2018
+    }
+
+    @Override
+    protected void onCleared() {
+        if (!disposable.isDisposed()) {
+            disposable.dispose();
+        }
+        super.onCleared();
     }
 }

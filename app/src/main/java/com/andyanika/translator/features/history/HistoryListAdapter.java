@@ -29,22 +29,17 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
     private final OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(final int position) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    TranslationRowModel model = data.get(position);
-                    if (model.isFavorite) {
-                        removeFavoriteUseCase.run(model.id);
-                    } else {
-                        addFavoriteUseCase.run(model.id);
-                    }
-                }
-            }).start();
+            TranslationRowModel model = data.get(position);
+            if (model.isFavorite) {
+                removeFavoriteUseCase.run(model.id);
+            } else {
+                addFavoriteUseCase.run(model.id);
+            }
         }
     };
 
     public void setData(@Nullable List<TranslationRowModel> data) {
-        this.data = data == null ? new ArrayList<TranslationRowModel>() : new ArrayList<>(data);
+        this.data = data == null ? new ArrayList<>() : new ArrayList<>(data);
         notifyDataSetChanged();
     }
 

@@ -55,13 +55,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView {
         super.onViewCreated(view, savedInstanceState);
 
         FavoritesViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
-        viewModel.data.observe(this, new Observer<List<TranslationRowModel>>() {
-            @Override
-            public void onChanged(@Nullable List<TranslationRowModel> translateResults) {
-                adapter.setData(translateResults);
-            }
-        });
-        viewModel.load();
+        viewModel.data.observe(this, adapter::setData);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView = view.findViewById(R.id.recycler_view);

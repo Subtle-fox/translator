@@ -2,6 +2,7 @@ package com.andyanika.translator.features.favorites;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.andyanika.translator.ui.OnClickListener;
 import com.andyanika.usecases.RemoveFavoriteUseCase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHolder> {
@@ -26,18 +28,16 @@ public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHold
     private final OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(final int position) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    removeFavoriteUseCase.run(data.get(position).id);
-                }
-            }).start();
+            removeFavoriteUseCase.run(data.get(position).id);
         }
     };
 
-    public void setData(@Nullable List<TranslationRowModel> data) {
-        this.data = data == null ? new ArrayList<TranslationRowModel>() : new ArrayList<>(data);
-        notifyDataSetChanged();
+    public void setData(@Nullable List<TranslationRowModel> newData) {
+        List<TranslationRowModel> oldData = data;
+        data = newData == null ? new ArrayList<>() : new ArrayList<>(newData);
+
+        DiffUtilsCallback diffUtilsCallback= new DiffUtilsCallback(data, oldData);
+        DiffUtil.calculateDiff(diffUtilsCallback).dispatchUpdatesTo(this);
     }
 
     @NonNull

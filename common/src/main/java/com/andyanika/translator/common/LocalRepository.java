@@ -6,12 +6,14 @@ import com.andyanika.translator.common.models.TranslationRowModel;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 public interface LocalRepository {
     TranslateResult translate(TranslationRequest request);
     long addTranslation(TranslateResult translateResult);
-    List<TranslationRowModel> getHistory();
+    Flowable<List<TranslationRowModel>> getHistory();
 
-    List<TranslationRowModel> getFavorites();
+    Flowable<List<TranslationRowModel>> getFavorites();
     void addFavorites(int wordId);
     void removeFavorite(int wordId);
 }

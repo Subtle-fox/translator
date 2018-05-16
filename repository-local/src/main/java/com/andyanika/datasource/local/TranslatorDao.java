@@ -8,6 +8,8 @@ import com.andyanika.datasource.local.model.WordModel;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 @Dao
 public interface TranslatorDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -17,7 +19,7 @@ public interface TranslatorDao {
             " from words_table " +
             "LEFT JOIN favorites_table ON words_table._id = favorites_table._id " +
             "ORDER BY words_table.last_modified DESC")
-    List<WordFavoriteModel> getHistory();
+    Flowable<List<WordFavoriteModel>> getHistory();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addFavorite(FavoriteModel favorite);
@@ -28,7 +30,7 @@ public interface TranslatorDao {
     @Query("SELECT * from words_table " +
             "JOIN favorites_table ON words_table._id = favorites_table._id " +
             "ORDER BY favorites_table.last_modified DESC")
-    List<WordModel> getFavorites();
+    Flowable<List<WordModel>> getFavorites();
 
     @Nullable
     @Query("SELECT * from words_table " +

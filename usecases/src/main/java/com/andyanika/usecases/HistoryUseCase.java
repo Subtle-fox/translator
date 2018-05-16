@@ -1,14 +1,15 @@
 package com.andyanika.usecases;
 
 import com.andyanika.translator.common.LocalRepository;
-import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRowModel;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryUseCase implements Usecase<String, List<TranslationRowModel>> {
+import javax.inject.Inject;
+
+import io.reactivex.Flowable;
+
+public class HistoryUseCase implements Usecase<String, Flowable<List<TranslationRowModel>>> {
     private LocalRepository repository;
 
     @Inject
@@ -17,18 +18,14 @@ public class HistoryUseCase implements Usecase<String, List<TranslationRowModel>
     }
 
     @Override
-    public List<TranslationRowModel> run(String filter) {
-        List<TranslationRowModel> historyList = repository.getHistory();
-        if (filter == null || filter.isEmpty()) {
-            return historyList;
-        }
+    public Flowable<List<TranslationRowModel>> run(String filter) {
+        return repository.getHistory()
+                .flatMap(list -> Flowable.fromIterable(list)
+                        .filter(item -> filter(item, filter)).toList()
+                        .toFlowable());
+    }
 
-        ArrayList<TranslationRowModel> filtered = new ArrayList<>();
-        for (TranslationRowModel tr : historyList) {
-            if (tr.translateResult.textSrc.contains(filter) || tr.translateResult.textTranslated.contains(filter)) {
-                filtered.add(tr);
-            }
-        }
-        return filtered;
+    private boolean filter(TranslationRowModel tr, String filter) {
+        return filter == null || filter.isEmpty() || tr.translateResult.textSrc.contains(filter) || tr.translateResult.textTranslated.contains(filter);
     }
 }

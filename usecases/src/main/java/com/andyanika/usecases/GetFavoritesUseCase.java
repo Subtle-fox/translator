@@ -7,7 +7,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class GetFavoritesUseCase implements Usecase<String, List<TranslationRowModel>> {
+import io.reactivex.Flowable;
+
+public class GetFavoritesUseCase implements Usecase<String, Flowable<List<TranslationRowModel>>> {
     private LocalRepository repository;
 
     @Inject
@@ -16,7 +18,7 @@ public class GetFavoritesUseCase implements Usecase<String, List<TranslationRowM
     }
 
     @Override
-    public List<TranslationRowModel> run(String filter) {
+    public Flowable<List<TranslationRowModel>> run(String filter) {
         return repository.getFavorites();
     }
 }

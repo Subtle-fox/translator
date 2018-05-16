@@ -59,12 +59,7 @@ public class HistoryFragment extends Fragment implements HistoryView {
         super.onViewCreated(view, savedInstanceState);
 
         HistoryViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(HistoryViewModel.class);
-        viewModel.data.observe(this, new Observer<List<TranslationRowModel>>() {
-            @Override
-            public void onChanged(@Nullable List<TranslationRowModel> translateResults) {
-                adapter.setData(translateResults);
-            }
-        });
+        viewModel.data.observe(this, adapter::setData);
         viewModel.load();
 
         textWatcher = new HistoryTextWatcher(viewModel);

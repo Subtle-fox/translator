@@ -4,6 +4,8 @@ import com.andyanika.translator.common.LocalRepository;
 
 import javax.inject.Inject;
 
+import io.reactivex.schedulers.Schedulers;
+
 public class AddFavoriteUseCase implements Usecase<Integer, Void> {
     private final LocalRepository repository;
 
@@ -14,7 +16,7 @@ public class AddFavoriteUseCase implements Usecase<Integer, Void> {
 
     @Override
     public Void run(Integer wordId) {
-        repository.addFavorites(wordId);
+        Schedulers.computation().scheduleDirect(() -> repository.addFavorites(wordId));
         return null;
     }
 }
