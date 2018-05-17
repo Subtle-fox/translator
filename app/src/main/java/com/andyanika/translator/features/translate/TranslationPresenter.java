@@ -3,14 +3,20 @@ package com.andyanika.translator.features.translate;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
+
 import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.usecases.TranslateUseCase;
 
-import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 @FragmentScope
 public class TranslationPresenter {
@@ -31,52 +37,44 @@ public class TranslationPresenter {
         view.showProgress();
         view.hideErrorLayout();
         handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    translateInternal(text);
-                                }
-                            }
-                , 1000L);
-    }
 
-    private void translateInternal(final String text) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final TranslateResult result = translateUseCase.run(new TranslationRequest(text, LanguageCode.RU, LanguageCode.EN));
-                    handler.post(new Runnable() {
+        handler.postDelayed(() -> {
+            translateUseCase.run(new TranslationRequest(text, LanguageCode.RU, LanguageCode.EN))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableObserver<TranslateResult>() {
                         @Override
-                        public void run() {
-                            if (result != null) {
-                                view.showTranslation(result);
-                            } else {
-                                view.showErrorLayout();
-                            }
+                        public void onNext(TranslateResult result) {
+                            view.showTranslation(result);
                         }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    handler.post(new Runnable() {
+
                         @Override
-                        public void run() {
+                        public void onError(Throwable e) {
                             view.showErrorLayout();
+                            onComplete();
                         }
-                    });
-                } finally {
-                    handler.post(new Runnable() {
+
                         @Override
-                        public void run() {
+                        public void onComplete() {
                             view.hideProgress();
+                            view.showClearBtn();
                         }
                     });
-                }
-            }
-        }).start();
+        }, 1000);
     }
 
     public void onTextChanged(@NonNull final String text) {
-        translate(text);
+        if (text.isEmpty()) {
+            clear();
+        } else {
+            translate(text);
+        }
+    }
+
+    public void clear() {
+        view.hideClearBtn();
+        view.hideErrorLayout();
+        view.clearTranslation();
+        handler.removeCallbacksAndMessages(null);
     }
 }

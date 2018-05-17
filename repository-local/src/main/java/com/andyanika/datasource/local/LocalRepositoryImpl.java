@@ -37,9 +37,9 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public TranslateResult translate(TranslationRequest request) {
-        WordModel result = dao.getTranslation(request.text, request.languageSrc.toString(), request.languageDst.toString());
-        return result == null ? null : adapter.convert(result);
+    public Flowable<TranslateResult> translate(TranslationRequest request) {
+        return dao.getTranslation(request.text, request.languageSrc.toString(), request.languageDst.toString())
+                .map(adapter::convert);
     }
 
     @Override

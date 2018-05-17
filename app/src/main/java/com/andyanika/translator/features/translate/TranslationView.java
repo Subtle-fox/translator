@@ -9,4 +9,7 @@ public interface TranslationView {
     void hideProgress();
     void showErrorLayout();
     void hideErrorLayout();
+    void showClearBtn();
+    void hideClearBtn();
+    void clearTranslation();
 }

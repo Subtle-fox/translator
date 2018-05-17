@@ -9,7 +9,7 @@ import java.util.List;
 import io.reactivex.Flowable;
 
 public interface LocalRepository {
-    TranslateResult translate(TranslationRequest request);
+    Flowable<TranslateResult> translate(TranslationRequest request);
     long addTranslation(TranslateResult translateResult);
     Flowable<List<TranslationRowModel>> getHistory();
 

@@ -1,8 +1,8 @@
 package com.andyanika.translator.common.models;
 
 public class TranslateResult {
-    public String textSrc;
-    public String textTranslated;
+    public final String textSrc;
+    public final String textTranslated;
     public final LanguageCode languageSrc;
     public final LanguageCode languageDst;
 

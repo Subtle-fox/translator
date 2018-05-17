@@ -8,10 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.component.TranslationFragmentComponent;
@@ -29,9 +28,10 @@ public class TranslationFragment extends Fragment implements TranslationView {
 
     private EditText editInput;
     private TextView txtTranslated;
-    private ProgressBar progress;
+    private View progress;
     private View errorLayout;
-    private Button retryBtn;
+    private View clearBtn;
+    private View retryBtn;
 
     private void prepareComponent(MainActivity mainActivity) {
         TranslationFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new TranslationFragmentModule(this));
@@ -57,25 +57,23 @@ public class TranslationFragment extends Fragment implements TranslationView {
         txtTranslated = view.findViewById(R.id.txt_translated);
         progress = view.findViewById(R.id.search_progress);
         errorLayout = view.findViewById(R.id.error_layout);
-        retryBtn = view.findViewById(R.id.retry_btn);
+        retryBtn = view.findViewById(R.id.btn_retry);
+        clearBtn = view.findViewById(R.id.btn_clear);
     }
 
     @Override
     public void onStart() {
         super.onStart();
         editInput.addTextChangedListener(textWatcher);
-        retryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.translate(editInput.getText().toString());
-            }
-        });
+        retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
+        clearBtn.setOnClickListener(v -> presenter.clear());
     }
 
     @Override
     public void onStop() {
         editInput.removeTextChangedListener(textWatcher);
         retryBtn.setOnClickListener(null);
+        clearBtn.setOnClickListener(null);
         super.onStop();
     }
 
@@ -102,6 +100,21 @@ public class TranslationFragment extends Fragment implements TranslationView {
     @Override
     public void hideErrorLayout() {
         errorLayout.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showClearBtn() {
+        clearBtn.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideClearBtn() {
+        clearBtn.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void clearTranslation() {
+        txtTranslated.setText("");
     }
 
     @Override
