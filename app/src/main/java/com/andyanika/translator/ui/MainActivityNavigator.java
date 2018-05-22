@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.andyanika.translator.di.ActivityScope;
 import com.andyanika.translator.features.favorites.FavoriteFragment;
 import com.andyanika.translator.features.history.HistoryFragment;
+import com.andyanika.translator.features.select_lang.SelectLanguageFragment;
 import com.andyanika.translator.features.translate.TranslationFragment;
 
 import javax.inject.Inject;
@@ -45,6 +46,9 @@ public class MainActivityNavigator extends SupportFragmentNavigator {
                     favoriteFragment = new FavoriteFragment();
                 }
                 return favoriteFragment;
+            case Screens.SELECT_LANGUAGE_SCREEN: {
+                return new SelectLanguageFragment();
+            }
         }
         return null;
     }

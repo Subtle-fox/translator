@@ -16,4 +16,5 @@ public interface MainActivityComponent {
     TranslationFragmentComponent plus(TranslationFragmentModule module);
     HistoryFragmentComponent plus(HistoryFragmentModule module);
     FavoriteFragmentComponent plus(FavoriteFragmentModule module);
+    SelectLanguageComponent plus(SelectLanguageModule module);
 }

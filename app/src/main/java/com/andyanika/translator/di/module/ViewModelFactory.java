@@ -3,12 +3,13 @@ package com.andyanika.translator.di.module;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
+import com.andyanika.translator.di.ActivityScope;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Map;
 
-//@Singleton
 public class ViewModelFactory implements ViewModelProvider.Factory {
 
 	private final Map<Class<? extends ViewModel>, Provider<ViewModel>> mProviders;

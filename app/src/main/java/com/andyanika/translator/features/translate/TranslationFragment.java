@@ -10,15 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.andyanika.translator.R;
+import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.component.TranslationFragmentComponent;
 import com.andyanika.translator.di.module.TranslationFragmentModule;
 import com.andyanika.translator.ui.MainActivity;
+import com.andyanika.translator.ui.Screens;
 
 import javax.inject.Inject;
+
+import ru.terrakok.cicerone.Router;
 
 public class TranslationFragment extends Fragment implements TranslationView {
     @Inject
@@ -27,11 +33,17 @@ public class TranslationFragment extends Fragment implements TranslationView {
     @Inject
     TranslationTextWatcher textWatcher;
 
+    @Inject
+    Router router;
+
     private EditText editInput;
     private TextView txtTranslated;
     private ProgressBar progress;
     private View errorLayout;
     private Button retryBtn;
+    private Button srcLangBtn;
+    private Button dstLangBtn;
+    private ImageButton swapLangBtn;
 
     private void prepareComponent(MainActivity mainActivity) {
         TranslationFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new TranslationFragmentModule(this));
@@ -58,24 +70,33 @@ public class TranslationFragment extends Fragment implements TranslationView {
         progress = view.findViewById(R.id.search_progress);
         errorLayout = view.findViewById(R.id.error_layout);
         retryBtn = view.findViewById(R.id.retry_btn);
+
+        srcLangBtn = view.findViewById(R.id.btn_lang_src);
+        dstLangBtn = view.findViewById(R.id.btn_lang_dst);
+        swapLangBtn = view.findViewById(R.id.btn_lang_swap);
+
+        srcLangBtn.setText(LanguageCode.RU.toString());
+        dstLangBtn.setText(LanguageCode.EN.toString());
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
         editInput.addTextChangedListener(textWatcher);
-        retryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.translate(editInput.getText().toString());
-            }
-        });
+        retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
+        View.OnClickListener selectLanguageClickListener = v -> router.navigateTo(Screens.SELECT_LANGUAGE_SCREEN);
+        srcLangBtn.setOnClickListener(selectLanguageClickListener);
+        dstLangBtn.setOnClickListener(selectLanguageClickListener);
     }
 
     @Override
     public void onStop() {
         editInput.removeTextChangedListener(textWatcher);
         retryBtn.setOnClickListener(null);
+        srcLangBtn.setOnClickListener(null);
+        dstLangBtn.setOnClickListener(null);
+
         super.onStop();
     }
 

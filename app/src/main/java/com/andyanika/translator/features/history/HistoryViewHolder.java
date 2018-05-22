@@ -20,7 +20,7 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
         title = itemView.findViewById(R.id.title);
         description = itemView.findViewById(R.id.description);
         favoriteButton = itemView.findViewById(R.id.btn_favorite);
-        favoriteButton.setImageResource(R.drawable.ic_star_black_24dp);
+        favoriteButton.setImageResource(R.drawable.ic_star);
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
