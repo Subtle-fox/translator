@@ -7,9 +7,10 @@ import com.andyanika.translator.common.models.TranslationRowModel;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
 public interface LocalRepository {
-    Flowable<TranslateResult> translate(TranslationRequest request);
+    Maybe<TranslateResult> translate(TranslationRequest request);
     long addTranslation(TranslateResult translateResult);
     Flowable<List<TranslationRowModel>> getHistory();
 

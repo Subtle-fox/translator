@@ -3,6 +3,8 @@ package com.andyanika.translator.features.translate;
 
 import com.andyanika.translator.common.models.TranslateResult;
 
+import io.reactivex.Observable;
+
 public interface TranslationView {
     void showTranslation(TranslateResult result);
     void showProgress();
@@ -11,5 +13,6 @@ public interface TranslationView {
     void hideErrorLayout();
     void showClearBtn();
     void hideClearBtn();
-    void clearTranslation();
+    void clearResult();
+    Observable<CharSequence> getSearchTextObservable();
 }

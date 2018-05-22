@@ -10,6 +10,7 @@ import com.andyanika.translator.common.models.TranslationRowModel;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
 class LocalRepositoryImpl implements LocalRepository {
     private TranslatorDao dao;
@@ -37,7 +38,7 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Flowable<TranslateResult> translate(TranslationRequest request) {
+    public Maybe<TranslateResult> translate(TranslationRequest request) {
         return dao.getTranslation(request.text, request.languageSrc.toString(), request.languageDst.toString())
                 .map(adapter::convert);
     }

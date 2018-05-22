@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,15 @@ import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.component.TranslationFragmentComponent;
 import com.andyanika.translator.di.module.TranslationFragmentModule;
 import com.andyanika.translator.ui.MainActivity;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 public class TranslationFragment extends Fragment implements TranslationView {
     @Inject
@@ -64,14 +72,15 @@ public class TranslationFragment extends Fragment implements TranslationView {
     @Override
     public void onStart() {
         super.onStart();
-        editInput.addTextChangedListener(textWatcher);
+
+        presenter.subscribe();
         retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
         clearBtn.setOnClickListener(v -> presenter.clear());
     }
 
     @Override
     public void onStop() {
-        editInput.removeTextChangedListener(textWatcher);
+        presenter.unsubscribe();
         retryBtn.setOnClickListener(null);
         clearBtn.setOnClickListener(null);
         super.onStop();
@@ -113,8 +122,16 @@ public class TranslationFragment extends Fragment implements TranslationView {
     }
 
     @Override
-    public void clearTranslation() {
+    public void clearResult() {
+        if (editInput.getText().length() > 0) {
+            editInput.getText().clear();
+        }
         txtTranslated.setText("");
+    }
+
+    @Override
+    public Observable<CharSequence> getSearchTextObservable() {
+        return RxTextView.textChanges(editInput);
     }
 
     @Override

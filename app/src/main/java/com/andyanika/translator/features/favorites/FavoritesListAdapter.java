@@ -58,5 +58,4 @@ public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHold
     public int getItemCount() {
         return data.size();
     }
-
 }
