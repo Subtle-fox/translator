@@ -1,41 +1,30 @@
 package com.andyanika.translator.ui;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+
 import com.andyanika.translator.App;
 import com.andyanika.translator.R;
 import com.andyanika.translator.di.component.MainActivityComponent;
 import com.andyanika.translator.di.module.MainActivityModule;
-import com.andyanika.translator.features.favorites.FavoriteFragment;
-import com.andyanika.translator.features.history.HistoryFragment;
-import com.andyanika.translator.features.translate.TranslationFragment;
+
+import javax.inject.Inject;
+
+import ru.terrakok.cicerone.NavigatorHolder;
 
 
 public class MainActivity extends AppCompatActivity {
     private MainActivityComponent activityComponent;
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    @Inject
+    MainActivityPresenter presenter;
 
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_translate:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new TranslationFragment()).commit();
-                    return true;
-                case R.id.navigation_history:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new HistoryFragment()).commit();
-                    return true;
-                case R.id.navigation_favorite:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FavoriteFragment()).commit();
-                    return true;
-            }
-            return false;
-        }
-    };
+    @Inject
+    NavigatorHolder navigatorHolder;
+
+    @Inject
+    MainActivityNavigator navigator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigation.setOnNavigationItemSelectedListener(presenter);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new TranslationFragment()).commit();
+            presenter.navigateToTranslation();
         }
     }
 
@@ -58,5 +47,21 @@ public class MainActivity extends AppCompatActivity {
 
     public MainActivityComponent getActivityComponent() {
         return activityComponent;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        navigatorHolder.setNavigator(navigator);
+    }
+
+    @Override
+    protected void onPause() {
+        navigatorHolder.removeNavigator();
+        super.onPause();
+    }
+
+    public int getFragmentContainerId() {
+        return R.id.content_frame;
     }
 }
