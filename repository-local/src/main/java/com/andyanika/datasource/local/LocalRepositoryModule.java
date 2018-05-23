@@ -2,6 +2,7 @@ package com.andyanika.datasource.local;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.andyanika.translator.common.LocalRepository;
 
@@ -14,8 +15,8 @@ import dagger.Provides;
 public class LocalRepositoryModule {
     @Provides
     @Singleton
-    public LocalRepository getDataSource(TranslatorDao dao, ModelsAdapter adapter) {
-        return new LocalRepositoryImpl(dao, adapter);
+    public LocalRepository getDataSource(TranslatorDao dao, SharedPreferences preferences, ModelsAdapter adapter) {
+        return new LocalRepositoryImpl(dao, preferences, adapter);
     }
 
     @Provides
@@ -28,5 +29,11 @@ public class LocalRepositoryModule {
     @Singleton
     public ModelsAdapter provideAdapter() {
         return new ModelsAdapter();
+    }
+
+    @Provides
+    @Singleton
+    public SharedPreferences providePreferences(Context ctx) {
+        return ctx.getSharedPreferences("config", Context.MODE_PRIVATE);
     }
 }

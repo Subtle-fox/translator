@@ -75,6 +75,6 @@ public class MainActivityNavigator extends SupportFragmentNavigator {
             animationEnter = android.R.anim.slide_in_left;
             animationExit = android.R.anim.slide_out_right;
         }
-        fragmentTransaction.setCustomAnimations(animationEnter, animationExit);
+        fragmentTransaction.setCustomAnimations(animationEnter, animationExit, animationEnter, animationExit);
     }
 }

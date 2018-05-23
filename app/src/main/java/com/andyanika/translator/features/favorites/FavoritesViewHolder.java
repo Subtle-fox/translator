@@ -19,12 +19,7 @@ public class FavoritesViewHolder extends RecyclerView.ViewHolder {
         description = itemView.findViewById(R.id.description);
         ImageButton favoriteButton = itemView.findViewById(R.id.btn_favorite);
         favoriteButton.setImageResource(R.drawable.ic_close);
-        favoriteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onClick(getAdapterPosition());
-            }
-        });
+        favoriteButton.setOnClickListener(v -> clickListener.onClick(getAdapterPosition()));
     }
 
     public void bind(TranslationRowModel model) {

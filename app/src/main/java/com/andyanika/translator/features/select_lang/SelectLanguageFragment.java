@@ -20,12 +20,17 @@ import com.andyanika.translator.ui.MainActivity;
 
 import javax.inject.Inject;
 
+import ru.terrakok.cicerone.Router;
+
 public class SelectLanguageFragment extends Fragment implements SelectLanguageView {
     @Inject
     SelectLanguageListAdapter adapter;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
+
+    @Inject
+    Router router;
 
     private void prepareComponent(MainActivity mainActivity) {
         SelectLanguageComponent fragmentComponent = mainActivity.getActivityComponent().plus(new SelectLanguageModule(this));
