@@ -9,7 +9,8 @@ import dagger.Subcomponent;
 @Subcomponent(modules = {
         MainActivityModule.class,
         ViewModelModule.class,
-        ViewModelFactoryModule.class
+        ViewModelFactoryModule.class,
+        ResourceModule.class
 })
 public interface MainActivityComponent {
     void inject(MainActivity activity);

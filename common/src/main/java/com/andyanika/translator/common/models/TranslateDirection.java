@@ -1,10 +1,10 @@
 package com.andyanika.translator.common.models;
 
-public class LanguageDirection {
+public class TranslateDirection {
     public LanguageCode src;
     public LanguageCode dst;
 
-    public LanguageDirection(LanguageCode src, LanguageCode dst) {
+    public TranslateDirection(LanguageCode src, LanguageCode dst) {
         this.src = src;
         this.dst = dst;
     }

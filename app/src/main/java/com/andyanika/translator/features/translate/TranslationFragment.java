@@ -1,5 +1,6 @@
 package com.andyanika.translator.features.translate;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,10 +16,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.andyanika.translator.R;
-import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.component.TranslationFragmentComponent;
 import com.andyanika.translator.di.module.TranslationFragmentModule;
+import com.andyanika.translator.features.select_lang.Extras;
 import com.andyanika.translator.ui.MainActivity;
 import com.andyanika.translator.ui.Screens;
 
@@ -35,6 +36,9 @@ public class TranslationFragment extends Fragment implements TranslationView {
 
     @Inject
     Router router;
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
 
     private EditText editInput;
     private TextView txtTranslated;
@@ -75,19 +79,23 @@ public class TranslationFragment extends Fragment implements TranslationView {
         dstLangBtn = view.findViewById(R.id.btn_lang_dst);
         swapLangBtn = view.findViewById(R.id.btn_lang_swap);
 
-        srcLangBtn.setText(LanguageCode.RU.toString());
-        dstLangBtn.setText(LanguageCode.EN.toString());
+        presenter.load();
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
+        // TODO: 24.05.2018 : make reactive
+        presenter.load();
+
         editInput.addTextChangedListener(textWatcher);
         retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
-        View.OnClickListener selectLanguageClickListener = v -> router.navigateTo(Screens.SELECT_LANGUAGE_SCREEN);
-        srcLangBtn.setOnClickListener(selectLanguageClickListener);
-        dstLangBtn.setOnClickListener(selectLanguageClickListener);
+
+        srcLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC));
+        dstLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST));
+
+        swapLangBtn.setOnClickListener(v -> presenter.swapDirection());
     }
 
     @Override
@@ -126,7 +134,18 @@ public class TranslationFragment extends Fragment implements TranslationView {
     }
 
     @Override
+    public void setSrcLabel(String text) {
+        srcLangBtn.setText(text);
+    }
+
+    @Override
+    public void setDstLabel(String text) {
+        dstLangBtn.setText(text);
+    }
+
+    @Override
     public void onDestroy() {
+        presenter.dispose();
         presenter = null;
         textWatcher = null;
         super.onDestroy();

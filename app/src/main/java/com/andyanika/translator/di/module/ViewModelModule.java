@@ -1,6 +1,7 @@
 package com.andyanika.translator.di.module;
 
 import android.arch.lifecycle.ViewModel;
+
 import com.andyanika.translator.di.ViewModelKey;
 import com.andyanika.translator.features.favorites.FavoritesViewModel;
 import com.andyanika.translator.features.history.HistoryViewModel;
@@ -21,7 +22,6 @@ public abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(FavoritesViewModel.class)
     abstract ViewModel bindFavoritesViewModel(FavoritesViewModel viewModel);
-
 
     @Binds
     @IntoMap

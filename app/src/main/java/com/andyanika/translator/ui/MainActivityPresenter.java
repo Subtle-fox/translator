@@ -19,15 +19,15 @@ public class MainActivityPresenter implements BottomNavigationView.OnNavigationI
     }
 
     public void navigateToTranslation() {
-        router.replaceScreen(Screens.TRANSLATION_SCREEN);
+        router.replaceScreen(Screens.TRANSLATION);
     }
 
     public void navigateToHistory() {
-        router.replaceScreen(Screens.HISTORY_SCREEN);
+        router.replaceScreen(Screens.HISTORY);
     }
 
     public void navigateToFavorites() {
-        router.replaceScreen(Screens.FAVORITES_SCREEN);
+        router.replaceScreen(Screens.FAVORITES);
     }
 
     public void onBackPressed() {

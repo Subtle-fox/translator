@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.ui.OnClickListener;
+import com.andyanika.translator.ui.ListItemClickListener;
 import com.andyanika.usecases.AddFavoriteUseCase;
 import com.andyanika.usecases.RemoveFavoriteUseCase;
 
@@ -26,7 +26,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
         this.removeFavoriteUseCase = removeFavoriteUseCase;
     }
 
-    private final OnClickListener clickListener = new OnClickListener() {
+    private final ListItemClickListener clickListener = new ListItemClickListener() {
         @Override
         public void onClick(final int position) {
             TranslationRowModel model = data.get(position);

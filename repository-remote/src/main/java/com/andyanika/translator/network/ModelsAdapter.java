@@ -10,6 +10,6 @@ public class ModelsAdapter {
             res.append(s).append('\n');
         }
 
-        return new TranslateResult(request.text, res.toString(), request.languageSrc, request.languageDst);
+        return new TranslateResult(request.text, res.toString(), request.direction);
     }
 }

@@ -1,8 +1,8 @@
 package com.andyanika.translator.ui;
 
 public interface Screens {
-    String TRANSLATION_SCREEN = "translation screen";
-    String HISTORY_SCREEN = "history screen";
-    String FAVORITES_SCREEN = "favorites screen";
-    String SELECT_LANGUAGE_SCREEN = "select language screen";
+    String TRANSLATION = "screens.translation";
+    String HISTORY = "screens.history";
+    String FAVORITES = "screens.favorites screen";
+    String SELECT_LANGUAGE = "screens.select_language";
 }

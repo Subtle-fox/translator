@@ -3,6 +3,7 @@ package com.andyanika.translator.ui;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.di.ActivityScope;
 import com.andyanika.translator.features.favorites.FavoriteFragment;
 import com.andyanika.translator.features.history.HistoryFragment;
@@ -31,23 +32,23 @@ public class MainActivityNavigator extends SupportFragmentNavigator {
     @Override
     protected Fragment createFragment(String screenKey, Object data) {
         switch (screenKey) {
-            case Screens.TRANSLATION_SCREEN:
+            case Screens.TRANSLATION:
                 if (translationFragment == null) {
                     translationFragment = new TranslationFragment();
                 }
                 return translationFragment;
-            case Screens.HISTORY_SCREEN:
+            case Screens.HISTORY:
                 if (historyFragment == null) {
                     historyFragment = new HistoryFragment();
                 }
                 return historyFragment;
-            case Screens.FAVORITES_SCREEN:
+            case Screens.FAVORITES:
                 if (favoriteFragment == null) {
                     favoriteFragment = new FavoriteFragment();
                 }
                 return favoriteFragment;
-            case Screens.SELECT_LANGUAGE_SCREEN: {
-                return new SelectLanguageFragment();
+            case Screens.SELECT_LANGUAGE: {
+                return SelectLanguageFragment.create((String) data);
             }
         }
         return null;

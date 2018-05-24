@@ -20,8 +20,6 @@ import com.andyanika.translator.ui.MainActivity;
 
 import javax.inject.Inject;
 
-import ru.terrakok.cicerone.Router;
-
 public class SelectLanguageFragment extends Fragment implements SelectLanguageView {
     @Inject
     SelectLanguageListAdapter adapter;
@@ -30,7 +28,15 @@ public class SelectLanguageFragment extends Fragment implements SelectLanguageVi
     ViewModelProvider.Factory viewModelFactory;
 
     @Inject
-    Router router;
+    SelectLanguagePresenter presenter;
+
+    public static SelectLanguageFragment create(String mode) {
+        Bundle extra = new Bundle();
+        extra.putString(Extras.SELECT_MODE, mode);
+        SelectLanguageFragment fragment = new SelectLanguageFragment();
+        fragment.setArguments(extra);
+        return fragment;
+    }
 
     private void prepareComponent(MainActivity mainActivity) {
         SelectLanguageComponent fragmentComponent = mainActivity.getActivityComponent().plus(new SelectLanguageModule(this));
@@ -52,13 +58,34 @@ public class SelectLanguageFragment extends Fragment implements SelectLanguageVi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        String mode = getArguments().getString(Extras.SELECT_MODE);
+        presenter.setMode(mode);
 
         SelectLanguageViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(SelectLanguageViewModel.class);
         viewModel.data.observe(this, adapter::setData);
+        viewModel.load(presenter.isSrcMode());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.setCallback(presenter);
+    }
+
+    @Override
+    public void onStop() {
+        adapter.setCallback(null);
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        presenter.dispose();
+        super.onDestroy();
     }
 }

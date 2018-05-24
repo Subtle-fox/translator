@@ -2,12 +2,15 @@ package com.andyanika.usecases;
 
 import com.andyanika.translator.common.LocalRepository;
 import com.andyanika.translator.common.RemoteRepository;
+import com.andyanika.translator.common.models.TranslateDirection;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
+
+import io.reactivex.annotations.NonNull;
 
 public class TranslateUseCase implements Usecase<TranslationRequest, TranslateResult> {
     private LocalRepository localRepository;
@@ -22,8 +25,34 @@ public class TranslateUseCase implements Usecase<TranslationRequest, TranslateRe
     @Override
     public TranslateResult run(TranslationRequest request) {
         if (request.text.isEmpty()) {
-            return new TranslateResult("", "", request.languageSrc, request.languageDst);
+            return new TranslateResult("", "", request.direction);
         }
+
+        TranslateResult translateResult = null;
+        try {
+            translateResult = remoteRepository.translate(request);
+        } catch (IOException e) {
+            // go to offline
+            e.printStackTrace();
+        }
+
+        if (translateResult != null) {
+            try {
+                long wordId = localRepository.addTranslation(translateResult);
+            } catch (Exception e) {
+                // somethign goes wrong while saving into db
+                e.printStackTrace();
+            }
+        } else {
+            translateResult = localRepository.translate(request);
+        }
+
+        return translateResult;
+    }
+
+    public TranslateResult translate(@NonNull String text) {
+        TranslateDirection direction = localRepository.getLanguageDirection();
+        TranslationRequest request = new TranslationRequest(text, direction);
 
         TranslateResult translateResult = null;
         try {

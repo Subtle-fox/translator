@@ -5,11 +5,12 @@ import com.andyanika.translator.common.models.AvailableLanguagesResult;
 import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
+
+import java.io.IOException;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
-
-import java.io.IOException;
 
 class RemoteYandexRepository implements RemoteRepository {
     private final NetworkYandexApi api;
@@ -26,7 +27,7 @@ class RemoteYandexRepository implements RemoteRepository {
 
     @Override
     public TranslateResult translate(TranslationRequest request) throws IOException {
-        String direction = directionBuilder.buildDiractionParam(request.languageSrc, request.languageDst);
+        String direction = directionBuilder.buildParam(request.direction);
         Call<TranslationResponse> translate = api.translate(key, request.text, direction);
         TranslationResponse response = parseResult(translate.execute());
         return modelsAdapter.convert(request, response);

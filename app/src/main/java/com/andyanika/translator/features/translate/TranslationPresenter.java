@@ -3,14 +3,20 @@ package com.andyanika.translator.features.translate;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import com.andyanika.translator.common.models.LanguageCode;
+
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.usecases.GetSelectedLanguagesUseCase;
+import com.andyanika.usecases.SelectLanguageUseCase;
 import com.andyanika.usecases.TranslateUseCase;
 
-import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 @FragmentScope
 public class TranslationPresenter {
@@ -18,13 +24,24 @@ public class TranslationPresenter {
 
     private final TranslationView view;
     private TranslateUseCase translateUseCase;
+    private SelectLanguageUseCase selectLanguageUseCase;
     private final Handler handler;
 
+    private GetSelectedLanguagesUseCase getSelectedLanguagesUseCase;
+
+    private CompositeDisposable compositeDisposable;
+
     @Inject
-    TranslationPresenter(TranslationView view, TranslateUseCase translateUseCase) {
+    TranslationPresenter(TranslationView view,
+                         TranslateUseCase translateUseCase,
+                         GetSelectedLanguagesUseCase getSelectedLanguagesUseCase,
+                         SelectLanguageUseCase selectLanguageUseCase) {
         this.view = view;
         this.translateUseCase = translateUseCase;
+        this.getSelectedLanguagesUseCase = getSelectedLanguagesUseCase;
+        this.selectLanguageUseCase = selectLanguageUseCase;
         this.handler = new Handler();
+        this.compositeDisposable = new CompositeDisposable();
     }
 
     public void translate(@NonNull final String text) {
@@ -41,11 +58,15 @@ public class TranslationPresenter {
     }
 
     private void translateInternal(final String text) {
+        if (text.isEmpty()) {
+            return;
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final TranslateResult result = translateUseCase.run(new TranslationRequest(text, LanguageCode.RU, LanguageCode.EN));
+                    final TranslateResult result = translateUseCase.translate(text);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -78,5 +99,33 @@ public class TranslationPresenter {
 
     public void onTextChanged(@NonNull final String text) {
         translate(text);
+    }
+
+    public void swapDirection() {
+        compositeDisposable.add(
+                selectLanguageUseCase.swap()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::load));
+    }
+
+    public void load() {
+        compositeDisposable.add(
+                getSelectedLanguagesUseCase.getSrc()
+                        .map(ls -> ls.description)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(view::setSrcLabel));
+
+        compositeDisposable.add(
+                getSelectedLanguagesUseCase.getDst()
+                        .map(ls -> ls.description)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(view::setDstLabel));
+    }
+
+    void dispose() {
+        compositeDisposable.dispose();
     }
 }

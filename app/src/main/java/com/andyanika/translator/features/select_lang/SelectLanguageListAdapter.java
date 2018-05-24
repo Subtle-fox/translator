@@ -8,41 +8,39 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.andyanika.translator.R;
-import com.andyanika.translator.common.models.LanguageCode;
-import com.andyanika.translator.common.models.LanguageDirection;
+import com.andyanika.translator.common.models.LanguageRowModel;
 import com.andyanika.translator.di.FragmentScope;
-import com.andyanika.translator.ui.OnClickListener;
-import com.andyanika.translator.ui.Screens;
-import com.andyanika.usecases.SelectLanguageUseCase;
+import com.andyanika.translator.ui.Callback;
+import com.andyanika.translator.ui.ListItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import ru.terrakok.cicerone.Router;
-
 @FragmentScope
 public class SelectLanguageListAdapter extends RecyclerView.Adapter<SelectLanguageViewHolder> {
-    private ArrayList<LanguageCode> data = new ArrayList<>();
-    private SelectLanguageUseCase selectLanguageUseCase;
-    private Router router;
+    private ArrayList<LanguageRowModel> data = new ArrayList<>();
+    private Callback<LanguageRowModel> callback;
 
     @Inject
-    public SelectLanguageListAdapter(SelectLanguageUseCase selectLanguageUseCase, Router router) {
-        this.selectLanguageUseCase = selectLanguageUseCase;
-        this.router = router;
+    SelectLanguageListAdapter() {
     }
 
-    private final OnClickListener clickListener = new OnClickListener() {
+    void setCallback(Callback<LanguageRowModel> callback) {
+        this.callback = callback;
+    }
+
+    private final ListItemClickListener clickListener = new ListItemClickListener() {
         @Override
         public void onClick(final int position) {
-            selectLanguageUseCase.run(new LanguageDirection(LanguageCode.RU, LanguageCode.EN));
-            router.backTo(Screens.TRANSLATION_SCREEN);
+            if (callback != null) {
+                callback.onClick(data.get(position));
+            }
         }
     };
 
-    public void setData(@Nullable List<LanguageCode> newData) {
+    public void setData(@Nullable List<LanguageRowModel> newData) {
         data = newData == null ? new ArrayList<>() : new ArrayList<>(newData);
         notifyDataSetChanged();
     }
@@ -64,5 +62,4 @@ public class SelectLanguageListAdapter extends RecyclerView.Adapter<SelectLangua
     public int getItemCount() {
         return data.size();
     }
-
 }

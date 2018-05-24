@@ -15,8 +15,13 @@ public interface TranslatorDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long addTranslation(WordModel word);
 
-    @Query("SELECT words_table._id AS id, words_table.src AS textSrc, words_table.dst AS textDst, favorites_table._id AS favoriteId" +
-            " from words_table " +
+    @Query("SELECT words_table._id AS id," +
+            "words_table.src AS textSrc, " +
+            "words_table.dst AS textDst, " +
+            "words_table.lang_src AS languageSrc, " +
+            "words_table.lang_dst AS languageDst, " +
+            "favorites_table._id AS favoriteId " +
+            "from words_table " +
             "LEFT JOIN favorites_table ON words_table._id = favorites_table._id " +
             "ORDER BY words_table.last_modified DESC")
     Flowable<List<WordFavoriteModel>> getHistory();
