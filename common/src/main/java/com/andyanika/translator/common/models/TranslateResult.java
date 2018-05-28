@@ -3,13 +3,11 @@ package com.andyanika.translator.common.models;
 public class TranslateResult {
     public final String textSrc;
     public final String textTranslated;
-    public final LanguageCode languageSrc;
-    public final LanguageCode languageDst;
+    public final TranslateDirection direction;
 
-    public TranslateResult(String textSrc, String textTranslated, LanguageCode languageSrc, LanguageCode languageDst) {
+    public TranslateResult(String textSrc, String textTranslated, TranslateDirection direction) {
         this.textSrc = textSrc;
         this.textTranslated = textTranslated;
-        this.languageSrc = languageSrc;
-        this.languageDst = languageDst;
+        this.direction = direction;
     }
 }

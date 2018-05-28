@@ -1,9 +1,9 @@
 package com.andyanika.translator.network;
 
-import com.andyanika.translator.common.models.LanguageCode;
+import com.andyanika.translator.common.models.TranslateDirection;
 
 public class TranslationParamsBuilder {
-    public String buildDiractionParam(LanguageCode from, LanguageCode to) {
-        return String.format("%s-%s", from.toString().toLowerCase(), to.toString().toLowerCase());
+    public String buildParam(TranslateDirection direction) {
+        return String.format("%s-%s", direction.src.toString(), direction.dst.toString()).toLowerCase();
     }
 }

@@ -10,11 +10,10 @@ import android.view.ViewGroup;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.ui.OnClickListener;
+import com.andyanika.translator.ui.ListItemClickListener;
 import com.andyanika.usecases.RemoveFavoriteUseCase;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHolder> {
@@ -25,7 +24,7 @@ public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHold
         this.removeFavoriteUseCase = removeFavoriteUseCase;
     }
 
-    private final OnClickListener clickListener = new OnClickListener() {
+    private final ListItemClickListener clickListener = new ListItemClickListener() {
         @Override
         public void onClick(final int position) {
             removeFavoriteUseCase.run(data.get(position).id);

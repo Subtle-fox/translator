@@ -8,6 +8,8 @@ import android.util.Log;
 import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.usecases.GetSelectedLanguagesUseCase;
+import com.andyanika.usecases.SelectLanguageUseCase;
 import com.andyanika.usecases.TranslateUseCase;
 
 import java.util.concurrent.TimeUnit;
@@ -15,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -23,15 +26,26 @@ public class TranslationPresenter {
     private static final long DELAY = TimeUnit.SECONDS.toMillis(3);
 
     private final TranslationView view;
-    private final Handler handler;
     private TranslateUseCase translateUseCase;
+    private SelectLanguageUseCase selectLanguageUseCase;
+    private final Handler handler;
     private Disposable disposable;
 
+    private GetSelectedLanguagesUseCase getSelectedLanguagesUseCase;
+
+    private CompositeDisposable compositeDisposable;
+
     @Inject
-    TranslationPresenter(TranslationView view, TranslateUseCase translateUseCase) {
+    TranslationPresenter(TranslationView view,
+                         TranslateUseCase translateUseCase,
+                         GetSelectedLanguagesUseCase getSelectedLanguagesUseCase,
+                         SelectLanguageUseCase selectLanguageUseCase) {
         this.view = view;
         this.translateUseCase = translateUseCase;
+        this.getSelectedLanguagesUseCase = getSelectedLanguagesUseCase;
+        this.selectLanguageUseCase = selectLanguageUseCase;
         this.handler = new Handler();
+        this.compositeDisposable = new CompositeDisposable();
     }
 
     public void translate(@NonNull final String text) {
@@ -93,5 +107,33 @@ public class TranslationPresenter {
         if (disposable != null) {
             disposable.dispose();
         }
+    }
+
+    public void swapDirection() {
+        compositeDisposable.add(
+                selectLanguageUseCase.swap()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::load));
+    }
+
+    public void load() {
+        compositeDisposable.add(
+                getSelectedLanguagesUseCase.getSrc()
+                        .map(ls -> ls.description)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(view::setSrcLabel));
+
+        compositeDisposable.add(
+                getSelectedLanguagesUseCase.getDst()
+                        .map(ls -> ls.description)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(view::setDstLabel));
+    }
+
+    void dispose() {
+        compositeDisposable.dispose();
     }
 }

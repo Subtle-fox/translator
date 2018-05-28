@@ -1,13 +1,22 @@
 package com.andyanika.translator.di.module;
 
-import android.support.v7.app.AppCompatActivity;
+import com.andyanika.translator.di.ActivityScope;
+import com.andyanika.translator.ui.MainActivity;
+
 import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class MainActivityModule {
-    private AppCompatActivity activity;
+    private MainActivity activity;
 
-    public MainActivityModule(AppCompatActivity activity) {
+    public MainActivityModule(MainActivity activity) {
         this.activity = activity;
+    }
+
+    @ActivityScope
+    @Provides
+    MainActivity provideMainActivity() {
+        return activity;
     }
 }

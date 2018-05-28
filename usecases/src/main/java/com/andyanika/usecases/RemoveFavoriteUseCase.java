@@ -16,7 +16,9 @@ public class RemoveFavoriteUseCase implements Usecase<Integer, Void> {
 
     @Override
     public Void run(Integer wordId) {
-        Schedulers.computation().scheduleDirect(() -> repository.removeFavorite(wordId));
+
+
+        Schedulers.io().scheduleDirect(() -> repository.removeFavorite(wordId));
         return null;
     }
 }

@@ -2,12 +2,10 @@ package com.andyanika.translator.common.models;
 
 public class TranslationRequest {
     public String text;
-    public LanguageCode languageSrc;
-    public LanguageCode languageDst;
+    public TranslateDirection direction;
 
-    public TranslationRequest(String text, LanguageCode languageSrc, LanguageCode languageDst) {
+    public TranslationRequest(String text, TranslateDirection direction) {
         this.text = text;
-        this.languageSrc = languageSrc;
-        this.languageDst = languageDst;
+        this.direction = direction;
     }
 }

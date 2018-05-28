@@ -4,6 +4,7 @@ import com.andyanika.datasource.local.LocalRepositoryModule;
 import com.andyanika.translator.App;
 import com.andyanika.translator.di.module.AppModule;
 import com.andyanika.translator.di.module.MainActivityModule;
+import com.andyanika.translator.di.module.NavigationModule;
 import com.andyanika.translator.network.RemoteRepositoryModule;
 import dagger.Component;
 
@@ -12,6 +13,7 @@ import javax.inject.Singleton;
 @Singleton
 @Component(modules = {
         AppModule.class,
+        NavigationModule.class,
         LocalRepositoryModule.class,
         RemoteRepositoryModule.class
 })

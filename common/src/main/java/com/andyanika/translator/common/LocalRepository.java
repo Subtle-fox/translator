@@ -1,5 +1,7 @@
 package com.andyanika.translator.common;
 
+import com.andyanika.translator.common.models.LanguageCode;
+import com.andyanika.translator.common.models.TranslateDirection;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.common.models.TranslationRowModel;
@@ -17,4 +19,8 @@ public interface LocalRepository {
     Flowable<List<TranslationRowModel>> getFavorites();
     void addFavorites(int wordId);
     void removeFavorite(int wordId);
+
+    TranslateDirection getLanguageDirection();
+    void setLanguageDirection(TranslateDirection direction);
+    List<LanguageCode> getAvailableLanguages();
 }

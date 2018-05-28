@@ -1,6 +1,7 @@
 package com.andyanika.translator.features.translate;
 
 
+import com.andyanika.translator.common.models.LanguageDescription;
 import com.andyanika.translator.common.models.TranslateResult;
 
 import io.reactivex.Observable;
@@ -15,4 +16,6 @@ public interface TranslationView {
     void hideClearBtn();
     void clearResult();
     Observable<CharSequence> getSearchTextObservable();
+    void setSrcLabel(String text);
+    void setDstLabel(String text);
 }

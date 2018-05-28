@@ -1,5 +1,6 @@
 package com.andyanika.translator.features.translate;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,14 +10,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.component.TranslationFragmentComponent;
 import com.andyanika.translator.di.module.TranslationFragmentModule;
+import com.andyanika.translator.features.select_lang.Extras;
 import com.andyanika.translator.ui.MainActivity;
+import com.andyanika.translator.ui.Screens;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.concurrent.TimeUnit;
@@ -27,6 +33,8 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+import ru.terrakok.cicerone.Router;
+
 public class TranslationFragment extends Fragment implements TranslationView {
     @Inject
     TranslationPresenter presenter;
@@ -34,12 +42,21 @@ public class TranslationFragment extends Fragment implements TranslationView {
     @Inject
     TranslationTextWatcher textWatcher;
 
+    @Inject
+    Router router;
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
     private EditText editInput;
     private TextView txtTranslated;
     private View progress;
     private View errorLayout;
     private View clearBtn;
     private View retryBtn;
+    private Button srcLangBtn;
+    private Button dstLangBtn;
+    private ImageButton swapLangBtn;
 
     private void prepareComponent(MainActivity mainActivity) {
         TranslationFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new TranslationFragmentModule(this));
@@ -67,22 +84,38 @@ public class TranslationFragment extends Fragment implements TranslationView {
         errorLayout = view.findViewById(R.id.error_layout);
         retryBtn = view.findViewById(R.id.btn_retry);
         clearBtn = view.findViewById(R.id.btn_clear);
+        srcLangBtn = view.findViewById(R.id.btn_lang_src);
+        dstLangBtn = view.findViewById(R.id.btn_lang_dst);
+        swapLangBtn = view.findViewById(R.id.btn_lang_swap);
+
+        presenter.load();
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
+        // TODO: 24.05.2018 : make reactive
+        presenter.load();
         presenter.subscribe();
         retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
         clearBtn.setOnClickListener(v -> presenter.clear());
+
+
+
+        editInput.addTextChangedListener(textWatcher);
+        retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
+
+        srcLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC));
+        dstLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST));
+
+        swapLangBtn.setOnClickListener(v -> presenter.swapDirection());
     }
 
     @Override
     public void onStop() {
         presenter.unsubscribe();
         retryBtn.setOnClickListener(null);
-        clearBtn.setOnClickListener(null);
         super.onStop();
     }
 
@@ -112,30 +145,8 @@ public class TranslationFragment extends Fragment implements TranslationView {
     }
 
     @Override
-    public void showClearBtn() {
-        clearBtn.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideClearBtn() {
-        clearBtn.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void clearResult() {
-        if (editInput.getText().length() > 0) {
-            editInput.getText().clear();
-        }
-        txtTranslated.setText("");
-    }
-
-    @Override
-    public Observable<CharSequence> getSearchTextObservable() {
-        return RxTextView.textChanges(editInput);
-    }
-
-    @Override
     public void onDestroy() {
+        presenter.dispose();
         presenter = null;
         textWatcher = null;
         super.onDestroy();
