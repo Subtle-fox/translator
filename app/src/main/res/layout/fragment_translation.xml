@@ -44,23 +44,14 @@
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/bg_divider"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_input" />
-
-
     <Button
         android:id="@+id/btn_lang_src"
         style="@style/btn.filled.accent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/btn_lang_swap"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintTop_toBottomOf="@id/edit_input"
         tools:text="Русский" />
 
     <Button
@@ -69,7 +60,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintStart_toEndOf="@id/btn_lang_swap"
+        app:layout_constraintTop_toBottomOf="@id/edit_input"
         tools:text="Английский" />
 
     <ImageButton
@@ -77,13 +69,11 @@
         style="@style/btn.filled.accent"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:tint="@color/colorPrimaryAlt"
-        android:layout_marginStart="8dp"
         android:src="@drawable/ic_swap"
+        android:tint="@color/colorPrimaryAlt"
         app:layout_constraintEnd_toStartOf="@+id/btn_lang_dst"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btn_lang_src"
-        app:layout_constraintTop_toBottomOf="@id/divider" />
+        app:layout_constraintTop_toBottomOf="@id/edit_input" />
 
 
     <TextView
@@ -104,7 +94,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintTop_toBottomOf="@id/edit_input"
         tools:visibility="invisible">
 
         <TextView

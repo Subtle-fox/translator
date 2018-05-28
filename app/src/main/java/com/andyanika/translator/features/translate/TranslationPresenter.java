@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.andyanika.translator.common.models.LanguageCode;
-import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.usecases.GetSelectedLanguagesUseCase;
 import com.andyanika.usecases.SelectLanguageUseCase;
@@ -18,18 +16,16 @@ import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 @FragmentScope
 public class TranslationPresenter {
-    private static final long DELAY = TimeUnit.SECONDS.toMillis(3);
+    private static final long DELAY = 2;
 
     private final TranslationView view;
     private TranslateUseCase translateUseCase;
     private SelectLanguageUseCase selectLanguageUseCase;
     private final Handler handler;
-    private Disposable disposable;
 
     private GetSelectedLanguagesUseCase getSelectedLanguagesUseCase;
 
@@ -73,34 +69,43 @@ public class TranslationPresenter {
     }
 
     public void subscribe() {
-        disposable = view.getSearchTextObservable()
-                .subscribeOn(Schedulers.io())
-                .debounce(2, TimeUnit.SECONDS)
-                .map(CharSequence::toString)
-                .flatMap(str -> translateUseCase.translate(str))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        translateResult -> {
-                            Log.d("###", "next");
-                            view.showTranslation(translateResult);
-                        },
-                        throwable -> {
-                            Log.d("###", "error");
-                            view.showErrorLayout();
-                        },
-                        () -> {
-                            Log.d("###", "completed");
-                            view.hideProgress();
-                            view.showClearBtn();
-                        });
+        compositeDisposable.add(
+                view.getSearchTextObservable()
+                        .doOnNext(x -> System.out.println("received before debounce " + x))
+                        .doOnNext(charSequence -> AndroidSchedulers.mainThread().scheduleDirect(() -> {
+                            System.out.println("received on each");
+                            view.hideClearBtn();
+                            view.hideErrorLayout();
+                            view.showProgress();
+                        }))
+                        .subscribeOn(Schedulers.io())
+                        .debounce(DELAY, TimeUnit.SECONDS)
+//                        .distinctUntilChanged()
+                        .doOnNext(x -> System.out.println("received after debounce " + x))
+                        .map(CharSequence::toString)
+                        .flatMap(str -> translateUseCase.translate(str))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                translateResult -> {
+                                    Log.d("###", "next");
+                                    view.showTranslation(translateResult);
+                                },
+                                throwable -> {
+                                    Log.d("###", "error");
+                                    throwable.printStackTrace();
+                                    view.showErrorLayout();
+                                },
+                                () -> {
+                                    Log.d("###", "completed");
+                                    view.hideProgress();
+                                    view.showClearBtn();
+                                }));
 
 //                .distinctUntilChanged()
     }
 
     public void unsubscribe() {
-        if (disposable != null) {
-            disposable.dispose();
-        }
+        dispose();
     }
 
     public void swapDirection() {

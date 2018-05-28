@@ -6,14 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.andyanika.translator.R;
@@ -25,14 +23,9 @@ import com.andyanika.translator.ui.MainActivity;
 import com.andyanika.translator.ui.Screens;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-
 import ru.terrakok.cicerone.Router;
 
 public class TranslationFragment extends Fragment implements TranslationView {
@@ -103,7 +96,7 @@ public class TranslationFragment extends Fragment implements TranslationView {
 
 
 
-        editInput.addTextChangedListener(textWatcher);
+//        editInput.addTextChangedListener(textWatcher);
         retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
 
         srcLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC));
