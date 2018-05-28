@@ -4,12 +4,6 @@ import com.andyanika.translator.common.RemoteRepository;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 
-import java.io.IOException;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Response;
-
 import io.reactivex.Observable;
 
 class RemoteYandexRepository implements RemoteRepository {
@@ -27,33 +21,30 @@ class RemoteYandexRepository implements RemoteRepository {
 
     @Override
     public Observable<TranslateResult> translate(TranslationRequest request) {
-        String direction = directionBuilder.buildDiractionParam(request.languageSrc, request.languageDst);
-        return api.translate(key, request.text, direction).map(response -> modelsAdapter.convert(request, response));
-    }
-
-    @Override
-    public TranslateResult translate(TranslationRequest request) throws IOException {
         String direction = directionBuilder.buildParam(request.direction);
-        Call<TranslationResponse> translate = api.translate(key, request.text, direction);
-        TranslationResponse response = parseResult(translate.execute());
-        return modelsAdapter.convert(request, response);
-    }
-
-    @Override
-    public AvailableLanguagesResult getAvailableLanguages(LanguageCode languageCode) throws IOException {
-        Response<ResponseBody> response = api.getAvailableLanguages(key, languageCode.toString().toLowerCase()).execute();
-        parseResult(response);
-        return new AvailableLanguagesResult();
-    }
-
-    private <T> T parseResult(Response<T> response) throws IOException {
-        if (response.isSuccessful()) {
-            return response.body();
-        } else {
-            throw new IOException(response.message());
-        }
-    public Observable<TranslateResult> translate(TranslationRequest request) {
-        String direction = directionBuilder.buildDiractionParam(request.languageSrc, request.languageDst);
         return api.translate(key, request.text, direction).map(response -> modelsAdapter.convert(request, response));
     }
+
+//    @Override
+//    public TranslateResult translate(TranslationRequest request) throws IOException {
+//        String direction = directionBuilder.buildParam(request.direction);
+//        Call<TranslationResponse> translate = api.translate(key, request.text, direction);
+//        TranslationResponse response = parseResult(translate.execute());
+//        return modelsAdapter.convert(request, response);
+//    }
+//
+//    @Override
+//    public AvailableLanguagesResult getAvailableLanguages(LanguageCode languageCode) throws IOException {
+//        Response<ResponseBody> response = api.getAvailableLanguages(key, languageCode.toString().toLowerCase()).execute();
+//        parseResult(response);
+//        return new AvailableLanguagesResult();
+//    }
+//
+//    private <T> T parseResult(Response<T> response) throws IOException {
+//        if (response.isSuccessful()) {
+//            return response.body();
+//        } else {
+//            throw new IOException(response.message());
+//        }
+
 }

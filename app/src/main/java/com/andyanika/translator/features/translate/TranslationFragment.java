@@ -116,6 +116,9 @@ public class TranslationFragment extends Fragment implements TranslationView {
     public void onStop() {
         presenter.unsubscribe();
         retryBtn.setOnClickListener(null);
+        srcLangBtn.setOnClickListener(null);
+        dstLangBtn.setOnClickListener(null);
+
         super.onStop();
     }
 
@@ -143,6 +146,40 @@ public class TranslationFragment extends Fragment implements TranslationView {
     public void hideErrorLayout() {
         errorLayout.setVisibility(View.INVISIBLE);
     }
+
+    @Override
+    public void setSrcLabel(String text) {
+        srcLangBtn.setText(text);
+    }
+
+    @Override
+    public void setDstLabel(String text) {
+        dstLangBtn.setText(text);
+    }
+
+    @Override
+    public void showClearBtn() {
+        clearBtn.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideClearBtn() {
+        clearBtn.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void clearResult() {
+        if (editInput.getText().length() > 0) {
+            editInput.getText().clear();
+        }
+        txtTranslated.setText("");
+    }
+
+    @Override
+    public Observable<CharSequence> getSearchTextObservable() {
+        return RxTextView.textChanges(editInput);
+    }
+
 
     @Override
     public void onDestroy() {

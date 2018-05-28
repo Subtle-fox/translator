@@ -74,16 +74,10 @@ public class TranslationPresenter {
 
     public void subscribe() {
         disposable = view.getSearchTextObservable()
+                .subscribeOn(Schedulers.io())
                 .debounce(2, TimeUnit.SECONDS)
                 .map(CharSequence::toString)
-                .subscribeOn(Schedulers.io())
-//                .doAfterNext(s -> {
-//                    Log.d("#", s);
-//                })
-                .flatMap(str -> translateUseCase.run(new TranslationRequest(str, LanguageCode.RU, LanguageCode.EN)))
-//                .doAfterNext(s -> {
-//                    Log.d("#", s.toString());
-//                })
+                .flatMap(str -> translateUseCase.translate(str))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         translateResult -> {

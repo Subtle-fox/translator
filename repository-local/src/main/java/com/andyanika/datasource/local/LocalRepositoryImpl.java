@@ -46,10 +46,8 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public Maybe<TranslateResult> translate(TranslationRequest request) {
-        WordModel result = dao.getTranslation(request.text, request.direction.src.toString(), request.direction.dst.toString());
-        return result == null ? null : adapter.toTranslationResult(result);
-        return dao.getTranslation(request.text, request.languageSrc.toString(), request.languageDst.toString())
-                .map(adapter::convert);
+        return dao.getTranslation(request.text, request.direction.src.toString(), request.direction.dst.toString())
+                .map(adapter::toTranslationResult);
     }
 
     @Override

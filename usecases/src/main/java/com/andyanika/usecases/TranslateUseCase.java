@@ -2,16 +2,16 @@ package com.andyanika.usecases;
 
 import com.andyanika.translator.common.LocalRepository;
 import com.andyanika.translator.common.RemoteRepository;
+import com.andyanika.translator.common.models.TranslateDirection;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.functions.Consumer;
+import io.reactivex.annotations.NonNull;
 
-public class TranslateUseCase implements Usecase<TranslationRequest, Observable<TranslateResult>> {
+public class TranslateUseCase {
     private LocalRepository localRepository;
     private RemoteRepository remoteRepository;
 
@@ -21,25 +21,75 @@ public class TranslateUseCase implements Usecase<TranslationRequest, Observable<
         this.remoteRepository = remoteRepository;
     }
 
-    @Override
-    public Observable<TranslateResult> run(TranslationRequest request) {
-//        Observable<Integer> observable = Observable.create((ObservableEmitter<TranslateResult> e) -> {
-//
-//
-//            e.onComplete();
-//        });
+    public Observable<TranslateResult> translate(@NonNull String text) {
+        TranslateDirection direction = localRepository.getLanguageDirection();
+        TranslationRequest request = new TranslationRequest(text, direction);
 
-        return  localRepository.translate(request).toObservable();
-//
-//        return Observable.concat(
-//                localRepository.translate(request).toObservable(),
-//                remoteRepository.translate(request)
-//                        .onExceptionResumeNext(localRepository.translate(request).toObservable())
-//                        .flatMap((TranslateResult translateResult) -> {
-//                            localRepository.addTranslation(translateResult);
-//                            return localRepository.translate(request).toObservable();
-//                        }
-//                )
-//        );
+        System.out.println("try translate");
+
+        Observable<TranslateResult> localObservable = localRepository.translate(request)
+                .doOnComplete(() -> System.out.println("maybe completed"))
+                .toObservable();
+
+        Observable<TranslateResult> remoteObservable = remoteRepository.translate(request)
+                .doOnNext(x -> System.out.println("remote next"))
+                .doOnComplete(() -> System.out.println("remote completed"))
+                .doOnError(t -> System.out.println("remote error"))
+                .onErrorResumeNext(localObservable);
+
+        return localObservable.concatWith(remoteObservable);
     }
+
+//    public TranslateResult run(TranslationRequest request) {
+//        if (request.text.isEmpty()) {
+//            return new TranslateResult("", "", request.direction);
+//        }
+//
+//        TranslateResult translateResult = null;
+//        try {
+////            translateResult = remoteRepository.translate(request);
+//        } catch (IOException e) {
+//            // go to offline
+//            e.printStackTrace();
+//        }
+//
+//        if (translateResult != null) {
+//            try {
+//                long wordId = localRepository.addTranslation(translateResult);
+//            } catch (Exception e) {
+//                // somethign goes wrong while saving into db
+//                e.printStackTrace();
+//            }
+//        } else {
+////            translateResult = localRepository.translate(request);
+//        }
+//
+//        return translateResult;
+//    }
+//
+//    public TranslateResult translate(@NonNull String text) {
+//        TranslateDirection direction = localRepository.getLanguageDirection();
+//        TranslationRequest request = new TranslationRequest(text, direction);
+//
+//        TranslateResult translateResult = null;
+//        try {
+////            translateResult = remoteRepository.translate(request);
+//        } catch (IOException e) {
+//            // go to offline
+//            e.printStackTrace();
+//        }
+//
+//        if (translateResult != null) {
+//            try {
+//                long wordId = localRepository.addTranslation(translateResult);
+//            } catch (Exception e) {
+//                // somethign goes wrong while saving into db
+//                e.printStackTrace();
+//            }
+//        } else {
+////            translateResult = localRepository.translate(request);
+//        }
+//
+//        return translateResult;
+//    }
 }
