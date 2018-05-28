@@ -1,4 +1,6 @@
 include ':app',
+        ':resources',
+//        ':feature-select-lang',
         ':repository-remote',
         ':repository-local',
         ':usecases',
