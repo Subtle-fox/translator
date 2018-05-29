@@ -16,6 +16,7 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 class LocalRepositoryImpl implements LocalRepository {
     private TranslatorDao dao;
@@ -45,7 +46,7 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Maybe<TranslateResult> translate(TranslationRequest request) {
+    public Single<TranslateResult> translate(TranslationRequest request) {
         return dao.getTranslation(request.text, request.direction.src.toString(), request.direction.dst.toString())
                 .map(adapter::toTranslationResult);
     }

@@ -1,10 +1,10 @@
 package com.andyanika.translator.features.translate;
 
 
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.text.TextUtils;
 
+import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.usecases.GetSelectedLanguagesUseCase;
 import com.andyanika.usecases.SelectLanguageUseCase;
@@ -25,7 +25,6 @@ public class TranslationPresenter {
     private final TranslationView view;
     private TranslateUseCase translateUseCase;
     private SelectLanguageUseCase selectLanguageUseCase;
-    private final Handler handler;
 
     private GetSelectedLanguagesUseCase getSelectedLanguagesUseCase;
 
@@ -40,72 +39,77 @@ public class TranslationPresenter {
         this.translateUseCase = translateUseCase;
         this.getSelectedLanguagesUseCase = getSelectedLanguagesUseCase;
         this.selectLanguageUseCase = selectLanguageUseCase;
-        this.handler = new Handler();
         this.compositeDisposable = new CompositeDisposable();
     }
 
     public void translate(@NonNull final String text) {
-        view.showProgress();
-        view.hideErrorLayout();
-
-//        view.getSearchTextObservable();
-
-    }
-
-
-    public void onTextChanged(@NonNull final String text) {
-        if (text.isEmpty()) {
-            clear();
-        } else {
-            translate(text);
-        }
+        // TODO: 29.05.2018
     }
 
     public void clear() {
         view.hideClearBtn();
         view.hideErrorLayout();
         view.clearResult();
-        handler.removeCallbacksAndMessages(null);
+    }
+
+    private void showProgress() {
+        AndroidSchedulers.mainThread().scheduleDirect(() -> {
+            System.out.println("received on each");
+            view.hideClearBtn();
+            view.hideErrorLayout();
+            view.showProgress();
+            view.hideOffline();
+        });
     }
 
     public void subscribe() {
         compositeDisposable.add(
                 view.getSearchTextObservable()
+                        .doOnNext(x -> System.out.println("begining " + x))
+                        .filter(charSequence -> !TextUtils.isEmpty(charSequence))
                         .doOnNext(x -> System.out.println("received before debounce " + x))
-                        .doOnNext(charSequence -> AndroidSchedulers.mainThread().scheduleDirect(() -> {
-                            System.out.println("received on each");
-                            view.hideClearBtn();
-                            view.hideErrorLayout();
-                            view.showProgress();
-                        }))
-                        .subscribeOn(Schedulers.io())
+                        .doOnNext(charSequence -> showProgress())
                         .debounce(DELAY, TimeUnit.SECONDS)
-//                        .distinctUntilChanged()
                         .doOnNext(x -> System.out.println("received after debounce " + x))
                         .map(CharSequence::toString)
                         .flatMap(str -> translateUseCase.translate(str))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 translateResult -> {
-                                    Log.d("###", "next");
-                                    view.showTranslation(translateResult);
+                                    System.out.println("--- >>> next: " + translateResult.textTranslated);
+                                    processResult(translateResult);
                                 },
                                 throwable -> {
-                                    Log.d("###", "error");
+                                    System.out.println("--- ### error");
                                     throwable.printStackTrace();
+
                                     view.showErrorLayout();
-                                },
-                                () -> {
-                                    Log.d("###", "completed");
+                                    view.clearTranslation();
                                     view.hideProgress();
                                     view.showClearBtn();
-                                }));
-
-//                .distinctUntilChanged()
+                                    view.hideOffline();
+                                },
+                                () -> System.out.println("--- $$$ completed")));
     }
 
-    public void unsubscribe() {
-        dispose();
+    private void processResult(TranslateResult result) {
+        if (!result.isSuccess) {
+            view.showErrorLayout();
+            view.clearTranslation();
+            view.hideProgress();
+            view.showClearBtn();
+            if (!result.isOffline) {
+                view.showOffline();
+            }
+        } else {
+            view.showTranslation(result);
+            view.hideProgress();
+            view.showClearBtn();
+
+            if (!result.isOffline) {
+                view.hideOffline();
+            }
+        }
     }
 
     public void swapDirection() {

@@ -10,9 +10,10 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 public interface LocalRepository {
-    Maybe<TranslateResult> translate(TranslationRequest request);
+    Single<TranslateResult> translate(TranslationRequest request);
     long addTranslation(TranslateResult translateResult);
     Flowable<List<TranslationRowModel>> getHistory();
 

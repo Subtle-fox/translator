@@ -21,6 +21,7 @@ import com.andyanika.translator.di.module.TranslationFragmentModule;
 import com.andyanika.translator.features.select_lang.Extras;
 import com.andyanika.translator.ui.MainActivity;
 import com.andyanika.translator.ui.Screens;
+import com.jakewharton.rxbinding2.InitialValueObservable;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import javax.inject.Inject;
@@ -31,9 +32,6 @@ import ru.terrakok.cicerone.Router;
 public class TranslationFragment extends Fragment implements TranslationView {
     @Inject
     TranslationPresenter presenter;
-
-    @Inject
-    TranslationTextWatcher textWatcher;
 
     @Inject
     Router router;
@@ -47,9 +45,11 @@ public class TranslationFragment extends Fragment implements TranslationView {
     private View errorLayout;
     private View clearBtn;
     private View retryBtn;
+    private View offlineIcon;
     private Button srcLangBtn;
     private Button dstLangBtn;
     private ImageButton swapLangBtn;
+    private InitialValueObservable<CharSequence> textObservable;
 
     private void prepareComponent(MainActivity mainActivity) {
         TranslationFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new TranslationFragmentModule(this));
@@ -72,6 +72,8 @@ public class TranslationFragment extends Fragment implements TranslationView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         editInput = view.findViewById(R.id.edit_input);
+        textObservable = RxTextView.textChanges(editInput);
+
         txtTranslated = view.findViewById(R.id.txt_translated);
         progress = view.findViewById(R.id.search_progress);
         errorLayout = view.findViewById(R.id.error_layout);
@@ -80,6 +82,7 @@ public class TranslationFragment extends Fragment implements TranslationView {
         srcLangBtn = view.findViewById(R.id.btn_lang_src);
         dstLangBtn = view.findViewById(R.id.btn_lang_dst);
         swapLangBtn = view.findViewById(R.id.btn_lang_swap);
+        offlineIcon = view.findViewById(R.id.icon_offline);
 
         presenter.load();
     }
@@ -94,9 +97,6 @@ public class TranslationFragment extends Fragment implements TranslationView {
         retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
         clearBtn.setOnClickListener(v -> presenter.clear());
 
-
-
-//        editInput.addTextChangedListener(textWatcher);
         retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
 
         srcLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC));
@@ -107,7 +107,7 @@ public class TranslationFragment extends Fragment implements TranslationView {
 
     @Override
     public void onStop() {
-        presenter.unsubscribe();
+        presenter.dispose();
         retryBtn.setOnClickListener(null);
         srcLangBtn.setOnClickListener(null);
         dstLangBtn.setOnClickListener(null);
@@ -151,6 +151,16 @@ public class TranslationFragment extends Fragment implements TranslationView {
     }
 
     @Override
+    public void showOffline() {
+        offlineIcon.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideOffline() {
+        offlineIcon.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
     public void showClearBtn() {
         clearBtn.setVisibility(View.VISIBLE);
     }
@@ -169,8 +179,13 @@ public class TranslationFragment extends Fragment implements TranslationView {
     }
 
     @Override
+    public void clearTranslation() {
+        txtTranslated.setText("");
+    }
+
+    @Override
     public Observable<CharSequence> getSearchTextObservable() {
-        return RxTextView.textChanges(editInput);
+        return textObservable;
     }
 
 
@@ -178,7 +193,6 @@ public class TranslationFragment extends Fragment implements TranslationView {
     public void onDestroy() {
         presenter.dispose();
         presenter = null;
-        textWatcher = null;
         super.onDestroy();
     }
 }

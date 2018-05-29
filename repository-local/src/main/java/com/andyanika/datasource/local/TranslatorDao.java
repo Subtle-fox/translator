@@ -13,7 +13,7 @@ import com.andyanika.datasource.local.model.WordModel;
 import java.util.List;
 
 import io.reactivex.Flowable;
-import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 @Dao
 public interface TranslatorDao {
@@ -46,5 +46,5 @@ public interface TranslatorDao {
             "WHERE src = :text " +
             "AND lang_src = :langSrc " +
             "AND lang_dst = :langDst")
-    Maybe<WordModel> getTranslation(String text, String langSrc, String langDst);
+    Single<WordModel> getTranslation(String text, String langSrc, String langDst);
 }

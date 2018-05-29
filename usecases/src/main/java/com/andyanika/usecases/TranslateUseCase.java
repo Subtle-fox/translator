@@ -29,25 +29,35 @@ public class TranslateUseCase {
         }
 
         System.out.println("try translate");
-        Observable<TranslateResult> localObservable = localRepository.translate(request)
-                .doOnComplete(() -> System.out.println("maybe completed"))
-                .toObservable();
+
 
         Observable<TranslateResult> remoteObservable = remoteRepository.translate(request)
+                .filter(translateResult -> !text.equalsIgnoreCase(translateResult.textTranslated))
                 .doOnNext(translateResult -> {
-                    System.out.println("remote next");
-                    try {
-                        System.out.println("save to local");
-                        localRepository.addTranslation(translateResult);
-                    } catch (Exception e) {
-                        // somethign goes wrong while saving into db
-                        e.printStackTrace();
+                    System.out.println("remote next" + translateResult.textTranslated);
+
+                    if (!text.equalsIgnoreCase(translateResult.textTranslated)) {
+                        try {
+                            System.out.println("save to local");
+                            localRepository.addTranslation(translateResult);
+                        } catch (Exception e) {
+                            // somethign goes wrong while saving into db
+                            e.printStackTrace();
+                        }
                     }
                 })
                 .doOnComplete(() -> System.out.println("remote completed"))
                 .doOnError(t -> System.out.println("remote error"))
-                .onErrorResumeNext(localObservable);
+                .onErrorReturnItem(TranslateResult.createErrorResult(text, direction, true))
+                .doOnDispose(() -> System.out.println("remote disposed"));
 
-        return localObservable.concatWith(remoteObservable);
+        Observable<TranslateResult> localObservable = localRepository.translate(request)
+                .toObservable()
+                .doOnComplete(() -> System.out.println("maybe completed"))
+                .doOnError(t -> System.out.println("### maybe error"))
+                .onErrorResumeNext(remoteObservable)
+                .doOnDispose(() -> System.out.println("maybe disposed"));
+
+        return localObservable;
     }
 }
