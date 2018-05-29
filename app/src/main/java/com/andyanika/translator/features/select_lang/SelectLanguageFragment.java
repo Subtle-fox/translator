@@ -27,8 +27,7 @@ public class SelectLanguageFragment extends Fragment implements SelectLanguageVi
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    @Inject
-    SelectLanguagePresenter presenter;
+    SelectLanguageViewModel viewModel;
 
     public static SelectLanguageFragment create(String mode) {
         Bundle extra = new Bundle();
@@ -58,28 +57,29 @@ public class SelectLanguageFragment extends Fragment implements SelectLanguageVi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String mode = getArguments().getString(Extras.SELECT_MODE);
-        presenter.setMode(mode);
-
-        SelectLanguageViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(SelectLanguageViewModel.class);
-        viewModel.data.observe(this, adapter::setData);
-        viewModel.load(presenter.isSrcMode());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SelectLanguageViewModel.class);
+        viewModel.data.observe(this, adapter::setData);
+        if (savedInstanceState == null) {
+            viewModel.setMode(getArguments().getString(Extras.SELECT_MODE));
+            viewModel.loadData();
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        presenter.subscribe(adapter.getObservable());
+        viewModel.subscribeItemClick(adapter.getObservable());
     }
 
     @Override
     public void onStop() {
-        presenter.dispose();
+        viewModel.unsubscribeItemClick();
         super.onStop();
     }
 }

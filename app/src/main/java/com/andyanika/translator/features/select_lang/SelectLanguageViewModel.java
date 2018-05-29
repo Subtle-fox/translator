@@ -5,34 +5,65 @@ import android.arch.lifecycle.ViewModel;
 
 import com.andyanika.translator.common.models.LanguageRowModel;
 import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.translator.ui.Screens;
 import com.andyanika.usecases.GetLanguagesUseCase;
+import com.andyanika.usecases.SelectLanguageUseCase;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
+import ru.terrakok.cicerone.Router;
 
 @FragmentScope
 public class SelectLanguageViewModel extends ViewModel {
-    private Disposable disposable;
+    MutableLiveData<List<LanguageRowModel>> data = new MutableLiveData<>();
 
-    public MutableLiveData<List<LanguageRowModel>> data = new MutableLiveData<>();
-    private GetLanguagesUseCase useCase;
+    private final GetLanguagesUseCase getLanguagesUseCase;
+    private final SelectLanguageUseCase selectLanguageUseCase;
+    private final Router router;
+    private Disposable listDisposable;
+    private Disposable itemClickDisposable;
+    private boolean isSrcMode;
 
     @Inject
-    SelectLanguageViewModel(GetLanguagesUseCase useCase) {
-        this.useCase = useCase;
+    SelectLanguageViewModel(GetLanguagesUseCase getLanguagesUseCase, SelectLanguageUseCase selectLanguageUseCase, Router router) {
+        this.router = router;
+        this.getLanguagesUseCase = getLanguagesUseCase;
+        this.selectLanguageUseCase = selectLanguageUseCase;
     }
 
-    public void load(boolean isSrcMode) {
-        disposable = useCase.run(isSrcMode).subscribe(data::postValue);
+    void setMode(String mode) {
+        isSrcMode = Extras.MODE_SRC.equals(mode);
+    }
+
+    public void loadData() {
+        listDisposable = getLanguagesUseCase.run(isSrcMode).subscribe(data::postValue);
+    }
+
+    public void subscribeItemClick(Single<LanguageRowModel> single) {
+        itemClickDisposable = single.flatMapCompletable(model -> {
+            if (isSrcMode) {
+                return selectLanguageUseCase.setSrc(model.code);
+            } else {
+                return selectLanguageUseCase.setDst(model.code);
+            }
+        }).subscribe(() -> router.backTo(Screens.TRANSLATION));
+    }
+
+    public void unsubscribeItemClick() {
+        if (itemClickDisposable != null && !itemClickDisposable.isDisposed()) {
+            itemClickDisposable.dispose();
+        }
     }
 
     @Override
     protected void onCleared() {
-        if (disposable != null && !disposable.isDisposed()) {
-            disposable.dispose();
+        unsubscribeItemClick();
+        if (listDisposable != null && !listDisposable.isDisposed()) {
+            listDisposable.dispose();
         }
         super.onCleared();
     }
