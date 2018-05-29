@@ -6,19 +6,23 @@ import android.widget.TextView;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.LanguageRowModel;
-import com.andyanika.translator.ui.ListItemClickListener;
+
+import io.reactivex.subjects.Subject;
 
 public class SelectLanguageViewHolder extends RecyclerView.ViewHolder {
     private TextView title;
     private TextView description;
     private View currentIcon;
 
-    SelectLanguageViewHolder(View itemView, ListItemClickListener clickListener) {
+    SelectLanguageViewHolder(View itemView, Subject<Integer> subject) {
         super(itemView);
         title = itemView.findViewById(R.id.title);
         description = itemView.findViewById(R.id.description);
         currentIcon = itemView.findViewById(R.id.view_current);
-        itemView.setOnClickListener(v -> clickListener.onClick(getAdapterPosition()));
+        itemView.setOnClickListener(v -> {
+            subject.onNext(getAdapterPosition());
+            subject.onComplete();
+        });
     }
 
     public void bind(LanguageRowModel model) {

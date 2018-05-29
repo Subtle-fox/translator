@@ -10,37 +10,30 @@ import android.view.ViewGroup;
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.LanguageRowModel;
 import com.andyanika.translator.di.FragmentScope;
-import com.andyanika.translator.ui.Callback;
-import com.andyanika.translator.ui.ListItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Single;
+import io.reactivex.subjects.PublishSubject;
+
 @FragmentScope
 public class SelectLanguageListAdapter extends RecyclerView.Adapter<SelectLanguageViewHolder> {
     private ArrayList<LanguageRowModel> data = new ArrayList<>();
-    private Callback<LanguageRowModel> callback;
+    private PublishSubject<Integer> subject = PublishSubject.create();
 
     @Inject
     SelectLanguageListAdapter() {
+
     }
 
-    void setCallback(Callback<LanguageRowModel> callback) {
-        this.callback = callback;
+    Single<LanguageRowModel> getObservable() {
+        return subject.map(position -> data.get(position)).singleOrError();
     }
 
-    private final ListItemClickListener clickListener = new ListItemClickListener() {
-        @Override
-        public void onClick(final int position) {
-            if (callback != null) {
-                callback.onClick(data.get(position));
-            }
-        }
-    };
-
-    public void setData(@Nullable List<LanguageRowModel> newData) {
+    void setData(@Nullable List<LanguageRowModel> newData) {
         data = newData == null ? new ArrayList<>() : new ArrayList<>(newData);
         notifyDataSetChanged();
     }
@@ -50,7 +43,7 @@ public class SelectLanguageListAdapter extends RecyclerView.Adapter<SelectLangua
     public SelectLanguageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.listview_row_select_language, parent, false);
-        return new SelectLanguageViewHolder(itemView, clickListener);
+        return new SelectLanguageViewHolder(itemView, subject);
     }
 
     @Override

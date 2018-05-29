@@ -2,23 +2,19 @@ package com.andyanika.translator.features.select_lang;
 
 import com.andyanika.translator.common.models.LanguageRowModel;
 import com.andyanika.translator.di.FragmentScope;
-import com.andyanika.translator.ui.Callback;
 import com.andyanika.translator.ui.Screens;
 import com.andyanika.usecases.SelectLanguageUseCase;
 
 import javax.inject.Inject;
 
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import ru.terrakok.cicerone.Router;
 
 @FragmentScope
-public class SelectLanguagePresenter implements Callback<LanguageRowModel> {
+public class SelectLanguagePresenter {
     private final SelectLanguageUseCase selectLanguageUseCase;
     private final Router router;
-    private boolean consumed;
     private boolean isSrcMode;
     private Disposable disposable;
 
@@ -36,26 +32,19 @@ public class SelectLanguagePresenter implements Callback<LanguageRowModel> {
         return isSrcMode;
     }
 
-    @Override
-    public void onClick(LanguageRowModel model) {
-        if (!consumed) {
-            consumed = true;
-            Completable completable;
-            if (isSrcMode) {
-                completable = selectLanguageUseCase.setSrc(model.code);
-            } else {
-                completable = selectLanguageUseCase.setDst(model.code);
-            }
-            disposable = completable
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> router.backTo(Screens.TRANSLATION));
+    void dispose() {
+        if (disposable != null && !disposable.isDisposed()) {
+            disposable.dispose();
         }
     }
 
-    void dispose() {
-        if (disposable != null && disposable.isDisposed()) {
-            disposable.dispose();
-        }
+    public void subscribe(Single<LanguageRowModel> single) {
+        disposable = single.flatMapCompletable(model -> {
+            if (isSrcMode) {
+                return selectLanguageUseCase.setSrc(model.code);
+            } else {
+                return selectLanguageUseCase.setDst(model.code);
+            }
+        }).subscribe(() -> router.backTo(Screens.TRANSLATION));
     }
 }

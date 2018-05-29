@@ -14,7 +14,7 @@ import io.reactivex.Single;
 
 public interface LocalRepository {
     Single<TranslateResult> translate(TranslationRequest request);
-    long addTranslation(TranslateResult translateResult);
+    void addTranslation(TranslateResult translateResult);
     Flowable<List<TranslationRowModel>> getHistory();
 
     Flowable<List<TranslationRowModel>> getFavorites();

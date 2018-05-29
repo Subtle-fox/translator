@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Flowable;
-import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 class LocalRepositoryImpl implements LocalRepository {
@@ -52,9 +51,9 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public long addTranslation(TranslateResult translateResult) {
+    public void addTranslation(TranslateResult translateResult) {
         WordModel model = adapter.toWordModel(translateResult);
-        return dao.addTranslation(model);
+        dao.addTranslation(model);
     }
 
     @Override

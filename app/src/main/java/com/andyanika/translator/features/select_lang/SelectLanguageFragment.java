@@ -74,18 +74,12 @@ public class SelectLanguageFragment extends Fragment implements SelectLanguageVi
     @Override
     public void onStart() {
         super.onStart();
-        adapter.setCallback(presenter);
+        presenter.subscribe(adapter.getObservable());
     }
 
     @Override
     public void onStop() {
-        adapter.setCallback(null);
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
         presenter.dispose();
-        super.onDestroy();
+        super.onStop();
     }
 }
