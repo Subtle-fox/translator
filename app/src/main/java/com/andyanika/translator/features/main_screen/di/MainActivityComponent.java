@@ -1,10 +1,15 @@
-package com.andyanika.translator.di.component;
+package com.andyanika.translator.features.main_screen.di;
 
 import com.andyanika.translator.di.ActivityScope;
+import com.andyanika.translator.di.component.SelectLanguageComponent;
 import com.andyanika.translator.di.module.*;
 import com.andyanika.translator.features.favorites.di.FavoriteFragmentComponent;
 import com.andyanika.translator.features.favorites.di.FavoriteFragmentModule;
-import com.andyanika.translator.ui.MainActivity;
+import com.andyanika.translator.features.history.di.HistoryFragmentComponent;
+import com.andyanika.translator.features.history.di.HistoryFragmentModule;
+import com.andyanika.translator.features.translate.di.TranslationFragmentComponent;
+import com.andyanika.translator.features.translate.di.TranslationFragmentModule;
+import com.andyanika.translator.features.main_screen.MainActivity;
 import dagger.Subcomponent;
 
 @ActivityScope

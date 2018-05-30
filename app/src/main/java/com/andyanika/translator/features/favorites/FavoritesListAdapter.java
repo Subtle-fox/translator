@@ -31,7 +31,7 @@ public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHold
         this.subject = subject;
     }
 
-    public Observable<TranslationRowModel> getSubject() {
+    public Observable<TranslationRowModel> getObservable() {
         return subject.map(position -> data.get(position));
     }
 

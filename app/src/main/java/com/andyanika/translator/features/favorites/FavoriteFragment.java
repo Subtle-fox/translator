@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import com.andyanika.translator.R;
 import com.andyanika.translator.features.favorites.di.FavoriteFragmentComponent;
 import com.andyanika.translator.features.favorites.di.FavoriteFragmentModule;
-import com.andyanika.translator.ui.MainActivity;
+import com.andyanika.translator.features.main_screen.MainActivity;
 
 import javax.inject.Inject;
 
@@ -62,7 +62,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView {
     @Override
     public void onStart() {
         super.onStart();
-        viewModel.subscribeItemClick(adapter.getSubject());
+        viewModel.subscribeItemClick(adapter.getObservable());
     }
 
     @Override

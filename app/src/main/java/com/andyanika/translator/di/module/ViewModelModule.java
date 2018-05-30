@@ -15,12 +15,6 @@ import dagger.multibindings.IntoMap;
 public abstract class ViewModelModule {
     @Binds
     @IntoMap
-    @ViewModelKey(HistoryViewModel.class)
-    abstract ViewModel bindHistoryViewModel(HistoryViewModel viewModel);
-
-
-    @Binds
-    @IntoMap
     @ViewModelKey(SelectLanguageViewModel.class)
     abstract ViewModel bindSelectLanguageViewModel(SelectLanguageViewModel viewModel);
 }

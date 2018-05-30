@@ -9,36 +9,31 @@ import android.view.ViewGroup;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.ui.ListItemClickListener;
-import com.andyanika.usecases.AddFavoriteUseCase;
-import com.andyanika.usecases.RemoveFavoriteUseCase;
+import com.andyanika.translator.di.FragmentScope;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.Subject;
+
+@FragmentScope
 public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
     private ArrayList<TranslationRowModel> data = new ArrayList<>();
-    private AddFavoriteUseCase addFavoriteUseCase;
-    private RemoveFavoriteUseCase removeFavoriteUseCase;
+    private Subject<Integer> subject;
 
-    public HistoryListAdapter(AddFavoriteUseCase addFavoriteUseCase, RemoveFavoriteUseCase removeFavoriteUseCase) {
-        this.addFavoriteUseCase = addFavoriteUseCase;
-        this.removeFavoriteUseCase = removeFavoriteUseCase;
+    @Inject
+    HistoryListAdapter(Subject<Integer> subject) {
+        this.subject = subject;
     }
 
-    private final ListItemClickListener clickListener = new ListItemClickListener() {
-        @Override
-        public void onClick(final int position) {
-            TranslationRowModel model = data.get(position);
-            if (model.isFavorite) {
-                removeFavoriteUseCase.run(model.id);
-            } else {
-                addFavoriteUseCase.run(model.id);
-            }
-        }
-    };
+    Observable<TranslationRowModel> getObservable() {
+        return subject.map(position -> data.get(position));
+    }
 
-    public void setData(@Nullable List<TranslationRowModel> data) {
+    void setData(@Nullable List<TranslationRowModel> data) {
         this.data = data == null ? new ArrayList<>() : new ArrayList<>(data);
         notifyDataSetChanged();
     }
@@ -48,7 +43,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
     public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.listview_row, parent, false);
-        return new HistoryViewHolder(itemView, clickListener);
+        return new HistoryViewHolder(itemView, subject);
     }
 
     @Override

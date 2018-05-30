@@ -3,8 +3,9 @@ package com.andyanika.translator.di.component;
 import com.andyanika.datasource.local.LocalRepositoryModule;
 import com.andyanika.translator.App;
 import com.andyanika.translator.di.module.AppModule;
-import com.andyanika.translator.di.module.MainActivityModule;
+import com.andyanika.translator.features.main_screen.di.MainActivityModule;
 import com.andyanika.translator.di.module.NavigationModule;
+import com.andyanika.translator.features.main_screen.di.MainActivityComponent;
 import com.andyanika.translator.network.RemoteRepositoryModule;
 import dagger.Component;
 

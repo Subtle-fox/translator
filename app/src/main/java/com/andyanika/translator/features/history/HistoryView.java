@@ -1,6 +1,9 @@
 package com.andyanika.translator.features.history;
 
 
-public interface HistoryView {
+import io.reactivex.Observable;
 
+public interface HistoryView {
+    void showClearBtn();
+    void hideClearBtn();
 }

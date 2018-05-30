@@ -1,0 +1,20 @@
+package com.andyanika.translator.features.history.di;
+
+import android.arch.lifecycle.ViewModel;
+
+import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.translator.di.ViewModelKey;
+import com.andyanika.translator.features.history.HistoryViewModel;
+
+import dagger.Binds;
+import dagger.Module;
+import dagger.multibindings.IntoMap;
+
+@Module
+abstract class HistoryViewModelModule {
+    @Binds
+    @IntoMap
+    @FragmentScope
+    @ViewModelKey(HistoryViewModel.class)
+    abstract ViewModel bindViewModel(HistoryViewModel viewModel);
+}

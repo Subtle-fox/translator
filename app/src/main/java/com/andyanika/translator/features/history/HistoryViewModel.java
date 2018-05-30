@@ -2,40 +2,73 @@ package com.andyanika.translator.features.history;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import com.andyanika.translator.common.models.TranslateResult;
+import android.text.TextUtils;
+
 import com.andyanika.translator.common.models.TranslationRowModel;
 import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.usecases.AddFavoriteUseCase;
 import com.andyanika.usecases.HistoryUseCase;
+import com.andyanika.usecases.RemoveFavoriteUseCase;
 
-import javax.inject.Inject;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
 @FragmentScope
 public class HistoryViewModel extends ViewModel {
-    private Disposable disposable;
+    final MutableLiveData<List<TranslationRowModel>> data = new MutableLiveData<>();
+    final MutableLiveData<Boolean> showClearBtn = new MutableLiveData<>();
 
-    public MutableLiveData<List<TranslationRowModel>> data = new MutableLiveData<>();
+    private final HistoryUseCase historyUseCase;
+    private final AddFavoriteUseCase addFavoriteUseCase;
+    private final RemoveFavoriteUseCase removeFavoriteUseCase;
+
+    private Disposable listDisposable;
+    private Disposable itemClickDisposable;
 
     @Inject
-    HistoryViewModel(HistoryUseCase historyUseCase) {
-        disposable = historyUseCase.run(null).subscribe(data::postValue);
+    HistoryViewModel(HistoryUseCase historyUseCase, AddFavoriteUseCase addFavoriteUseCase, RemoveFavoriteUseCase removeFavoriteUseCase) {
+        this.historyUseCase = historyUseCase;
+        this.addFavoriteUseCase = addFavoriteUseCase;
+        this.removeFavoriteUseCase = removeFavoriteUseCase;
+        showClearBtn.setValue(false);
     }
 
-    public void load() {
-        filter(null);
+    void subscribeSearch(Observable<CharSequence> searchTextObservable) {
+        listDisposable = searchTextObservable
+                .startWith("")
+                .map(CharSequence::toString)
+                .distinctUntilChanged(String::equals)
+                .doOnNext(s -> showClearBtn.postValue(!TextUtils.isEmpty(s)))
+                .flatMap(str -> historyUseCase.run(str).toObservable())
+                .subscribe(data::postValue);
     }
 
-    public void filter(final String filter) {
-        // TODO: 16.05.2018
+    void subscribeItemClick(Observable<TranslationRowModel> observable) {
+        itemClickDisposable = observable.flatMapCompletable(model -> {
+            if (model.isFavorite) {
+                return removeFavoriteUseCase.run(model.id);
+            } else {
+                return addFavoriteUseCase.run(model.id);
+            }
+        }).subscribe(() -> System.out.println("favorites changed"));
+    }
+
+    void unsubscribe() {
+        if (itemClickDisposable != null && !itemClickDisposable.isDisposed()) {
+            itemClickDisposable.dispose();
+        }
+        if (listDisposable != null && !listDisposable.isDisposed()) {
+            listDisposable.dispose();
+        }
     }
 
     @Override
     protected void onCleared() {
-        if (!disposable.isDisposed()) {
-            disposable.dispose();
-        }
+        unsubscribe();
         super.onCleared();
     }
 }

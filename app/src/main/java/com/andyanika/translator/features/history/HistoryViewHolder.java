@@ -9,7 +9,8 @@ import android.widget.TextView;
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.ui.ListItemClickListener;
+
+import io.reactivex.Observer;
 
 public class HistoryViewHolder extends RecyclerView.ViewHolder {
     private TextView title;
@@ -18,7 +19,7 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
     private TextView langDst;
     private ImageButton favoriteButton;
 
-    HistoryViewHolder(View itemView, final ListItemClickListener clickListener) {
+    HistoryViewHolder(View itemView, final Observer<Integer> clickObserver) {
         super(itemView);
         title = itemView.findViewById(R.id.title);
         description = itemView.findViewById(R.id.description);
@@ -26,7 +27,7 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
         langDst = itemView.findViewById(R.id.txt_lang_dst);
         favoriteButton = itemView.findViewById(R.id.btn_favorite);
         favoriteButton.setImageResource(R.drawable.ic_star);
-        favoriteButton.setOnClickListener(v -> clickListener.onClick(getAdapterPosition()));
+        favoriteButton.setOnClickListener(v -> clickObserver.onNext(getAdapterPosition()));
     }
 
     public void bind(TranslationRowModel model) {
