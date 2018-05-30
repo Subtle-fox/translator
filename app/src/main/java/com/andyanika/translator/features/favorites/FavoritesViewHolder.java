@@ -8,7 +8,8 @@ import android.widget.TextView;
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.ui.ListItemClickListener;
+
+import io.reactivex.Observer;
 
 public class FavoritesViewHolder extends RecyclerView.ViewHolder {
     private TextView title;
@@ -16,7 +17,7 @@ public class FavoritesViewHolder extends RecyclerView.ViewHolder {
     private TextView langSrc;
     private TextView langDst;
 
-    FavoritesViewHolder(View itemView, final ListItemClickListener clickListener) {
+    FavoritesViewHolder(View itemView, final Observer<Integer> clickObserver) {
         super(itemView);
         title = itemView.findViewById(R.id.title);
         description = itemView.findViewById(R.id.description);
@@ -24,7 +25,7 @@ public class FavoritesViewHolder extends RecyclerView.ViewHolder {
         langDst = itemView.findViewById(R.id.txt_lang_dst);
         ImageButton favoriteButton = itemView.findViewById(R.id.btn_favorite);
         favoriteButton.setImageResource(R.drawable.ic_close);
-        favoriteButton.setOnClickListener(v -> clickListener.onClick(getAdapterPosition()));
+        favoriteButton.setOnClickListener(v -> clickObserver.onNext(getAdapterPosition()));
     }
 
     public void bind(TranslationRowModel model) {

@@ -2,6 +2,8 @@ package com.andyanika.translator.di.component;
 
 import com.andyanika.translator.di.ActivityScope;
 import com.andyanika.translator.di.module.*;
+import com.andyanika.translator.features.favorites.di.FavoriteFragmentComponent;
+import com.andyanika.translator.features.favorites.di.FavoriteFragmentModule;
 import com.andyanika.translator.ui.MainActivity;
 import dagger.Subcomponent;
 

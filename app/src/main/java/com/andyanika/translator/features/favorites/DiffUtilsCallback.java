@@ -13,7 +13,7 @@ public class DiffUtilsCallback extends DiffUtil.Callback {
     @NonNull
     private final List<TranslationRowModel> oldData;
 
-    public DiffUtilsCallback(@NonNull List<TranslationRowModel> newData, @NonNull List<TranslationRowModel> oldData) {
+    DiffUtilsCallback(@NonNull List<TranslationRowModel> newData, @NonNull List<TranslationRowModel> oldData) {
         this.newData = newData;
         this.oldData = oldData;
     }

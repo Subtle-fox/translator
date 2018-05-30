@@ -18,10 +18,6 @@ public abstract class ViewModelModule {
     @ViewModelKey(HistoryViewModel.class)
     abstract ViewModel bindHistoryViewModel(HistoryViewModel viewModel);
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(FavoritesViewModel.class)
-    abstract ViewModel bindFavoritesViewModel(FavoritesViewModel viewModel);
 
     @Binds
     @IntoMap
