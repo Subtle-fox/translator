@@ -31,10 +31,6 @@ public class MainActivityPresenter implements BottomNavigationView.OnNavigationI
         router.replaceScreen(Screens.FAVORITES);
     }
 
-    public void onBackPressed() {
-        router.exit();
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {

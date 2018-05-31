@@ -89,8 +89,6 @@ public class TranslationFragment extends Fragment implements TranslationView {
     public void onStart() {
         super.onStart();
 
-        // TODO: 24.05.2018 : make reactive
-        presenter.load();
         presenter.subscribe(textObservable);
         retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
         clearBtn.setOnClickListener(v -> presenter.clear());

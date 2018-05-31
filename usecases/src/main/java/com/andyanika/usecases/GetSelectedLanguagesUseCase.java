@@ -1,37 +1,28 @@
 package com.andyanika.usecases;
 
+import com.andyanika.translator.common.DirectionPair;
 import com.andyanika.translator.common.LocalRepository;
 import com.andyanika.translator.common.Resources;
-import com.andyanika.translator.common.models.LanguageDescription;
-import com.andyanika.translator.common.models.TranslateDirection;
+import com.andyanika.translator.common.models.LanguageCode;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
+import io.reactivex.functions.Function;
 
 public class GetSelectedLanguagesUseCase {
-    private final Resources resources;
     private final LocalRepository repository;
-    private final Scheduler ioScheduler;
+    private final Function<LanguageCode, String> toUiStringFunction;
 
     @Inject
-    public GetSelectedLanguagesUseCase(Resources resources, LocalRepository repository, @Named("io") Scheduler ioScheduler) {
-        this.resources = resources;
+    public GetSelectedLanguagesUseCase(Resources resources, LocalRepository repository) {
         this.repository = repository;
-        this.ioScheduler = ioScheduler;
+        this.toUiStringFunction = code -> resources.getString("lang_" + code.toString().toLowerCase());
     }
 
-    public Observable<LanguageDescription> run() {
-        TranslateDirection direction = repository.getLanguageDirection();
-        return Observable
-                .fromIterable(repository.getAvailableLanguages())
-                .subscribeOn(ioScheduler)
-                .filter(l -> l == direction.src || l == direction.dst)
-                .map(languageCode -> {
-                    String name = resources.getString("lang_" + languageCode.toString().toLowerCase());
-                    return new LanguageDescription(languageCode, name, languageCode == direction.src);
-                });
+    public Observable<DirectionPair<String>> run() {
+        Observable<String> srcLanguage = repository.getSrcLanguage().map(toUiStringFunction);
+        Observable<String> dstLanguage = repository.getDstLanguage().map(toUiStringFunction);
+        return srcLanguage.zipWith(dstLanguage, DirectionPair::new);
     }
 }

@@ -35,7 +35,7 @@ public class GetLanguagesUseCase {
         Observable<String> names = availableLanguageCodes.map(x -> resources.getString("lang_" + x.toString().toLowerCase()));
 
         return availableLanguageCodes
-                .zipWith(names, ((code, name) -> new LanguageRowModel(code, name, code == current)))
+                .zipWith(names, (code, name) -> new LanguageRowModel(code, name, code == current))
                 .toList()
                 .subscribeOn(ioScheduler);
     }

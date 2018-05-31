@@ -4,7 +4,6 @@ package com.andyanika.translator.features.translate;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.andyanika.translator.common.models.LanguageDescription;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.usecases.GetSelectedLanguagesUseCase;
@@ -19,7 +18,6 @@ import javax.inject.Named;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 @FragmentScope
@@ -82,7 +80,16 @@ public class TranslationPresenter {
         });
     }
 
+
     public void subscribe(Observable<CharSequence> searchTextObservable) {
+        getSelectedLanguagesUseCase
+                .run()
+                .observeOn(uiScheduler)
+                .subscribe(pair -> {
+                    view.setSrcLabel(pair.src);
+                    view.setDstLabel(pair.dst);
+                });
+
         searchTextObservable.subscribe(textSearchSubject);
 
         compositeDisposable.add(
@@ -143,24 +150,8 @@ public class TranslationPresenter {
     public void swapDirection() {
         compositeDisposable.add(
                 selectLanguageUseCase.swap()
-                        .subscribeOn(Schedulers.io())
                         .observeOn(uiScheduler)
-                        .subscribe(this::load));
-    }
-
-    public void load() {
-        Observable<LanguageDescription> cache = getSelectedLanguagesUseCase.run().cache();
-        compositeDisposable.add(cache
-                .filter(ls -> ls.isSrc)
-                .map(ls -> ls.description)
-                .observeOn(uiScheduler)
-                .subscribe(view::setSrcLabel));
-
-        compositeDisposable.add(cache
-                .filter(ls -> !ls.isSrc)
-                .map(ls -> ls.description)
-                .observeOn(uiScheduler)
-                .subscribe(view::setDstLabel));
+                        .subscribe());
     }
 
     void dispose() {

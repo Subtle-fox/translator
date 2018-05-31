@@ -10,6 +10,7 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 public interface LocalRepository {
@@ -22,6 +23,12 @@ public interface LocalRepository {
     void removeFavorite(int wordId);
 
     TranslateDirection getLanguageDirection();
+
+
     void setLanguageDirection(TranslateDirection direction);
+
     List<LanguageCode> getAvailableLanguages();
+
+    Observable<LanguageCode> getDstLanguage();
+    Observable<LanguageCode> getSrcLanguage();
 }

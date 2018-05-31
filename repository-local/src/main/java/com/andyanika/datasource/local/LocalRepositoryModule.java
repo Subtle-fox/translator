@@ -6,17 +6,19 @@ import android.content.SharedPreferences;
 
 import com.andyanika.translator.common.LocalRepository;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.Scheduler;
 
 @Module
 public class LocalRepositoryModule {
     @Provides
     @Singleton
-    public LocalRepository getDataSource(TranslatorDao dao, SharedPreferences preferences, ModelsAdapter adapter) {
-        return new LocalRepositoryImpl(dao, preferences, adapter);
+    public LocalRepository getDataSource(TranslatorDao dao, SharedPreferences preferences, ModelsAdapter adapter, @Named("io") Scheduler ioScheduler) {
+        return new LocalRepositoryImpl(dao, preferences, adapter, ioScheduler);
     }
 
     @Provides
