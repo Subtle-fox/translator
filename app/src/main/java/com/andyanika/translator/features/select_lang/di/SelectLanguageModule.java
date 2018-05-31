@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.history.di;
+package com.andyanika.translator.features.select_lang.di;
 
 import com.andyanika.translator.di.FragmentScope;
 
@@ -8,7 +8,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 @Module
-public class HistoryFragmentModule {
+public class SelectLanguageModule {
     @Provides
     @FragmentScope
     public Subject<Integer> provideObserver() {

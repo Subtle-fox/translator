@@ -14,13 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.andyanika.translator.R;
-import com.andyanika.translator.di.component.SelectLanguageComponent;
-import com.andyanika.translator.di.module.SelectLanguageModule;
 import com.andyanika.translator.features.main_screen.MainActivity;
+import com.andyanika.translator.features.select_lang.di.SelectLanguageComponent;
+import com.andyanika.translator.features.select_lang.di.SelectLanguageModule;
 
 import javax.inject.Inject;
 
-public class SelectLanguageFragment extends Fragment implements SelectLanguageView {
+public class SelectLanguageFragment extends Fragment {
     @Inject
     SelectLanguageListAdapter adapter;
 
@@ -38,13 +38,15 @@ public class SelectLanguageFragment extends Fragment implements SelectLanguageVi
     }
 
     private void prepareComponent(MainActivity mainActivity) {
-        SelectLanguageComponent fragmentComponent = mainActivity.getActivityComponent().plus(new SelectLanguageModule(this));
+        SelectLanguageComponent fragmentComponent = mainActivity.getActivityComponent().plus(new SelectLanguageModule());
         fragmentComponent.inject(this);
     }
 
     @Override
     public void onAttach(Context context) {
-        prepareComponent(((MainActivity) context));
+        MainActivity mainActivity = (MainActivity) context;
+        mainActivity.setTitle(R.string.title_select_language);
+        prepareComponent(mainActivity);
         super.onAttach(context);
     }
 

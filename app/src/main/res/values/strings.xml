@@ -4,6 +4,7 @@
     <string name="title_translate">Translate</string>
     <string name="title_history">History</string>
     <string name="title_notifications">Favorites</string>
+    <string name="title_select_language">Select Language</string>
 
     <string name="error_no_internet">No internet connection :(</string>
     <string name="retry_again">Try again</string>

@@ -19,19 +19,27 @@ import io.reactivex.disposables.Disposable;
 public class FavoritesViewModel extends ViewModel {
     final MutableLiveData<List<TranslationRowModel>> data = new MutableLiveData<>();
 
-    private final Disposable listDisposable;
+    private final GetFavoritesUseCase getFavoritesUseCase;
     private final RemoveFavoriteUseCase removeFavoriteUseCase;
+    private Disposable listDisposable;
     private Disposable itemClickDisposable;
 
     @Inject
     FavoritesViewModel(GetFavoritesUseCase getFavoritesUseCase, RemoveFavoriteUseCase removeFavoriteUseCase) {
-        this.listDisposable = getFavoritesUseCase.run(null).subscribe(data::postValue);
+        this.getFavoritesUseCase = getFavoritesUseCase;
         this.removeFavoriteUseCase = removeFavoriteUseCase;
+    }
+
+    void load() {
+        if (listDisposable == null || listDisposable.isDisposed()) {
+            listDisposable = getFavoritesUseCase.run().subscribe(data::postValue);
+        }
     }
 
     void subscribeItemClick(Observable<TranslationRowModel> observable) {
         itemClickDisposable = observable
-                .subscribe(model -> removeFavoriteUseCase.run(model.id));
+                .flatMapCompletable(model -> removeFavoriteUseCase.run(model.id))
+                .subscribe(() -> System.out.println("favorite removed"));
     }
 
     void unsubscribeItemClick() {

@@ -18,15 +18,16 @@ import javax.inject.Inject;
 
 import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 @FragmentScope
 public class SelectLanguageListAdapter extends RecyclerView.Adapter<SelectLanguageViewHolder> {
     private ArrayList<LanguageRowModel> data = new ArrayList<>();
-    private PublishSubject<Integer> subject = PublishSubject.create();
+    private Subject<Integer> subject;
 
     @Inject
-    SelectLanguageListAdapter() {
-
+    SelectLanguageListAdapter(Subject<Integer> subject) {
+        this.subject = subject;
     }
 
     Single<LanguageRowModel> getObservable() {

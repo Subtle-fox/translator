@@ -3,6 +3,7 @@ package com.andyanika.translator.features.main_screen;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import com.andyanika.translator.R;
 import com.andyanika.translator.di.ActivityScope;
 import com.andyanika.translator.features.favorites.FavoriteFragment;
 import com.andyanika.translator.features.history.HistoryFragment;
@@ -62,6 +63,12 @@ public class MainActivityNavigator extends SupportFragmentNavigator {
     @Override
     protected void exit() {
         activity.finish();
+    }
+
+    @Override
+    protected void back() {
+        activity.setTitle(R.string.app_name);
+        super.back();
     }
 
     @Override

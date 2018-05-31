@@ -21,7 +21,9 @@ public class TranslateUseCase {
         this.remoteRepository = remoteRepository;
     }
 
-    public Observable<TranslateResult> translate(@NonNull String text) {
+    public Observable<TranslateResult> run(@NonNull String text) {
+        // runs in background thread by default
+
         TranslateDirection direction = localRepository.getLanguageDirection();
         TranslationRequest request = new TranslationRequest(text, direction);
         if (text.isEmpty()) {

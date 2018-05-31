@@ -14,9 +14,10 @@ import com.andyanika.usecases.TranslateUseCase;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -27,6 +28,7 @@ public class TranslationPresenter {
     private final TranslationView view;
     private TranslateUseCase translateUseCase;
     private SelectLanguageUseCase selectLanguageUseCase;
+    private Scheduler uiScheduler;
 
     private GetSelectedLanguagesUseCase getSelectedLanguagesUseCase;
 
@@ -36,11 +38,13 @@ public class TranslationPresenter {
     TranslationPresenter(TranslationView view,
                          TranslateUseCase translateUseCase,
                          GetSelectedLanguagesUseCase getSelectedLanguagesUseCase,
-                         SelectLanguageUseCase selectLanguageUseCase) {
+                         SelectLanguageUseCase selectLanguageUseCase,
+                         @Named("ui") Scheduler uiScheduler) {
         this.view = view;
         this.translateUseCase = translateUseCase;
         this.getSelectedLanguagesUseCase = getSelectedLanguagesUseCase;
         this.selectLanguageUseCase = selectLanguageUseCase;
+        this.uiScheduler = uiScheduler;
         this.compositeDisposable = new CompositeDisposable();
     }
 
@@ -54,28 +58,30 @@ public class TranslationPresenter {
         view.clearResult();
     }
 
-    private void showProgress() {
-        AndroidSchedulers.mainThread().scheduleDirect(() -> {
-            System.out.println("received on each");
-            view.hideClearBtn();
+    private void showProgress(CharSequence charSequence) {
+        uiScheduler.scheduleDirect(() -> {
             view.hideErrorLayout();
-            view.showProgress();
             view.hideOffline();
+            view.hideClearBtn();
+
+            if (TextUtils.isEmpty(charSequence)) {
+                view.hideProgress();
+                view.clearTranslation();
+            } else {
+                view.showProgress();
+            }
         });
     }
 
-    public void subscribe() {
+    public void subscribe(Observable<CharSequence> searchTextObservable) {
         compositeDisposable.add(
-                view.getSearchTextObservable()
-                        .doOnNext(x -> System.out.println("begining " + x))
-                        .filter(charSequence -> !TextUtils.isEmpty(charSequence))
-                        .doOnNext(x -> System.out.println("received before debounce " + x))
-                        .doOnNext(charSequence -> showProgress())
-                        .debounce(DELAY, TimeUnit.SECONDS)
-                        .doOnNext(x -> System.out.println("received after debounce " + x))
+                searchTextObservable
                         .map(CharSequence::toString)
-                        .flatMap(str -> translateUseCase.translate(str))
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .distinctUntilChanged(String::equals)
+                        .doOnNext(this::showProgress)
+                        .debounce(DELAY, TimeUnit.SECONDS)
+                        .flatMap(str -> translateUseCase.run(str))
+                        .observeOn(uiScheduler)
                         .subscribe(
                                 translateResult -> {
                                     System.out.println("--- >>> next: " + translateResult.textTranslated);
@@ -118,26 +124,22 @@ public class TranslationPresenter {
         compositeDisposable.add(
                 selectLanguageUseCase.swap()
                         .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .observeOn(uiScheduler)
                         .subscribe(this::load));
     }
 
     public void load() {
-        System.out.println("subscribe");
-
         Observable<LanguageDescription> cache = getSelectedLanguagesUseCase.run().cache();
         compositeDisposable.add(cache
-                .doOnNext(s -> System.out.println("on next 1 : " + s.description))
                 .filter(ls -> ls.isSrc)
-                .doOnNext(s -> System.out.println("on map 1 : " + s.description))
                 .map(ls -> ls.description)
+                .observeOn(uiScheduler)
                 .subscribe(view::setSrcLabel));
 
         compositeDisposable.add(cache
-                .doOnNext(s -> System.out.println("on next 2 : " + s.description))
                 .filter(ls -> !ls.isSrc)
-                .doOnNext(s -> System.out.println("on map 2 : " + s.description))
                 .map(ls -> ls.description)
+                .observeOn(uiScheduler)
                 .subscribe(view::setDstLabel));
     }
 

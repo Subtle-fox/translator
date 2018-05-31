@@ -29,6 +29,7 @@ public class HistoryUseCase {
 
     private boolean filter(TranslateResult result, String filter) {
         // TODO: 31.05.2018: implement via Room query
+        // runs in background thread by default
         return filter == null
                 || filter.isEmpty()
                 || result.textSrc.contains(filter)

@@ -61,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        navigator.back();
+    }
+
     public int getFragmentContainerId() {
         return R.id.content_frame;
     }

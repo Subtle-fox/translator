@@ -23,7 +23,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import javax.inject.Inject;
 
-public class HistoryFragment extends Fragment implements HistoryView {
+public class HistoryFragment extends Fragment {
     @Inject
     HistoryListAdapter adapter;
 
@@ -37,7 +37,7 @@ public class HistoryFragment extends Fragment implements HistoryView {
 
 
     private void prepareComponent(MainActivity mainActivity) {
-        HistoryFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new HistoryFragmentModule(this));
+        HistoryFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new HistoryFragmentModule());
         fragmentComponent.inject(this);
     }
 
@@ -81,9 +81,7 @@ public class HistoryFragment extends Fragment implements HistoryView {
     @Override
     public void onStart() {
         super.onStart();
-
         clearBtn.setOnClickListener(v -> viewModel.showClearBtn.setValue(false));
-
         viewModel.subscribeSearch(textObservable);
         viewModel.subscribeItemClick(adapter.getObservable());
     }
@@ -93,15 +91,5 @@ public class HistoryFragment extends Fragment implements HistoryView {
         clearBtn.setOnClickListener(null);
         viewModel.unsubscribe();
         super.onStop();
-    }
-
-    @Override
-    public void showClearBtn() {
-        clearBtn.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideClearBtn() {
-        clearBtn.setVisibility(View.INVISIBLE);
     }
 }

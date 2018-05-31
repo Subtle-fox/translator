@@ -16,10 +16,10 @@ import android.widget.TextView;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.features.main_screen.MainActivity;
+import com.andyanika.translator.features.select_lang.Extras;
 import com.andyanika.translator.features.translate.di.TranslationFragmentComponent;
 import com.andyanika.translator.features.translate.di.TranslationFragmentModule;
-import com.andyanika.translator.features.select_lang.Extras;
-import com.andyanika.translator.features.main_screen.MainActivity;
 import com.andyanika.translator.ui.Screens;
 import com.jakewharton.rxbinding2.InitialValueObservable;
 import com.jakewharton.rxbinding2.widget.RxTextView;
@@ -91,7 +91,7 @@ public class TranslationFragment extends Fragment implements TranslationView {
 
         // TODO: 24.05.2018 : make reactive
         presenter.load();
-        presenter.subscribe();
+        presenter.subscribe(textObservable);
         retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
         clearBtn.setOnClickListener(v -> presenter.clear());
 
@@ -170,22 +170,13 @@ public class TranslationFragment extends Fragment implements TranslationView {
 
     @Override
     public void clearResult() {
-        if (editInput.getText().length() > 0) {
-            editInput.getText().clear();
-        }
-        txtTranslated.setText("");
+        editInput.getText().clear();
     }
 
     @Override
     public void clearTranslation() {
         txtTranslated.setText("");
     }
-
-    @Override
-    public Observable<CharSequence> getSearchTextObservable() {
-        return textObservable;
-    }
-
 
     @Override
     public void onDestroy() {

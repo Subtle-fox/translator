@@ -20,7 +20,7 @@ import com.andyanika.translator.features.main_screen.MainActivity;
 
 import javax.inject.Inject;
 
-public class FavoriteFragment extends Fragment implements FavoriteView {
+public class FavoriteFragment extends Fragment {
     @Inject
     FavoritesListAdapter adapter;
 
@@ -50,13 +50,14 @@ public class FavoriteFragment extends Fragment implements FavoriteView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
-        viewModel.data.observe(this, adapter::setData);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
+        viewModel.data.observe(this, adapter::setData);
+        viewModel.load();
     }
 
     @Override

@@ -17,7 +17,8 @@ public class GetFavoritesUseCase {
         this.repository = repository;
     }
 
-    public Flowable<List<TranslationRowModel>> run(String filter) {
+    public Flowable<List<TranslationRowModel>> run() {
+        // runs in background thread by default
         return repository.getFavorites();
     }
 }
