@@ -4,6 +4,7 @@ package com.andyanika.translator.features.translate;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.andyanika.translator.common.models.LanguageDescription;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.usecases.GetSelectedLanguagesUseCase;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -121,19 +123,22 @@ public class TranslationPresenter {
     }
 
     public void load() {
-        compositeDisposable.add(
-                getSelectedLanguagesUseCase.getSrc()
-                        .map(ls -> ls.description)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(view::setSrcLabel));
+        System.out.println("subscribe");
 
-        compositeDisposable.add(
-                getSelectedLanguagesUseCase.getDst()
-                        .map(ls -> ls.description)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(view::setDstLabel));
+        Observable<LanguageDescription> cache = getSelectedLanguagesUseCase.run().cache();
+        compositeDisposable.add(cache
+                .doOnNext(s -> System.out.println("on next 1 : " + s.description))
+                .filter(ls -> ls.isSrc)
+                .doOnNext(s -> System.out.println("on map 1 : " + s.description))
+                .map(ls -> ls.description)
+                .subscribe(view::setSrcLabel));
+
+        compositeDisposable.add(cache
+                .doOnNext(s -> System.out.println("on next 2 : " + s.description))
+                .filter(ls -> !ls.isSrc)
+                .doOnNext(s -> System.out.println("on map 2 : " + s.description))
+                .map(ls -> ls.description)
+                .subscribe(view::setDstLabel));
     }
 
     void dispose() {

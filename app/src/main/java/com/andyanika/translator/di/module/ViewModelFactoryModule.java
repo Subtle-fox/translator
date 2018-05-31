@@ -11,5 +11,5 @@ import dagger.Module;
 @Module
 public abstract class ViewModelFactoryModule {
     @Binds
-    abstract ViewModelProvider.Factory bindUserViewModel(ViewModelFactory factory);
+    abstract ViewModelProvider.Factory bindViewModel(ViewModelFactory factory);
 }

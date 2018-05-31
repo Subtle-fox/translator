@@ -83,8 +83,6 @@ public class TranslationFragment extends Fragment implements TranslationView {
         dstLangBtn = view.findViewById(R.id.btn_lang_dst);
         swapLangBtn = view.findViewById(R.id.btn_lang_swap);
         offlineIcon = view.findViewById(R.id.icon_offline);
-
-        presenter.load();
     }
 
     @Override
