@@ -10,7 +10,7 @@ import com.andyanika.translator.common.models.TranslationRowModel;
 public class ModelsAdapter {
     TranslateResult toTranslationResult(WordModel dbModel) {
         TranslateDirection direction = new TranslateDirection(LanguageCode.valueOf(dbModel.languageSrc), LanguageCode.valueOf(dbModel.languageDst));
-        return new TranslateResult(dbModel.textSrc, dbModel.textDst, direction);
+        return new TranslateResult(dbModel.textSrc, dbModel.textDst, direction, true);
     }
 
     TranslationRowModel toTranslationRowModel(WordModel dbModel) {
@@ -20,7 +20,7 @@ public class ModelsAdapter {
 
     TranslationRowModel toTranslationRowModel(WordFavoriteModel dbModel) {
         TranslateDirection direction = new TranslateDirection(LanguageCode.valueOf(dbModel.languageSrc), LanguageCode.valueOf(dbModel.languageDst));
-        TranslateResult translateResult = new TranslateResult(dbModel.textSrc, dbModel.textDst, direction);
+        TranslateResult translateResult = new TranslateResult(dbModel.textSrc, dbModel.textDst, direction, true);
         return new TranslationRowModel(dbModel.id, translateResult, dbModel.favoriteId > 0);
     }
 

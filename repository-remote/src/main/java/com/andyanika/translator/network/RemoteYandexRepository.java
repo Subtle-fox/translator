@@ -24,27 +24,4 @@ class RemoteYandexRepository implements RemoteRepository {
         String direction = directionBuilder.buildParam(request.direction);
         return api.translate(key, request.text, direction).map(response -> modelsAdapter.convert(request, response));
     }
-
-//    @Override
-//    public TranslateResult translate(TranslationRequest request) throws IOException {
-//        String direction = directionBuilder.buildParam(request.direction);
-//        Call<TranslationResponse> translate = api.translate(key, request.text, direction);
-//        TranslationResponse response = parseResult(translate.execute());
-//        return modelsAdapter.convert(request, response);
-//    }
-//
-//    @Override
-//    public AvailableLanguagesResult getAvailableLanguages(LanguageCode languageCode) throws IOException {
-//        Response<ResponseBody> response = api.getAvailableLanguages(key, languageCode.toString().toLowerCase()).execute();
-//        parseResult(response);
-//        return new AvailableLanguagesResult();
-//    }
-//
-//    private <T> T parseResult(Response<T> response) throws IOException {
-//        if (response.isSuccessful()) {
-//            return response.body();
-//        } else {
-//            throw new IOException(response.message());
-//        }
-
 }

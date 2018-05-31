@@ -21,12 +21,12 @@ public class TranslateUseCase {
         this.remoteRepository = remoteRepository;
     }
 
-    public Observable<TranslateResult> run(@NonNull String text) {
+    public Observable<TranslateResult> run(@NonNull String srcText) {
         // runs in background thread by default
 
         TranslateDirection direction = localRepository.getLanguageDirection();
-        TranslationRequest request = new TranslationRequest(text, direction);
-        if (text.isEmpty()) {
+        TranslationRequest request = new TranslationRequest(srcText, direction);
+        if (srcText.isEmpty()) {
             return Observable.empty();
         }
 
@@ -34,31 +34,33 @@ public class TranslateUseCase {
 
 
         Observable<TranslateResult> remoteObservable = remoteRepository.translate(request)
-                .filter(translateResult -> !text.equalsIgnoreCase(translateResult.textTranslated))
-                .doOnNext(translateResult -> {
-                    System.out.println("remote next" + translateResult.textTranslated);
-
-                    if (!text.equalsIgnoreCase(translateResult.textTranslated)) {
+                .map(result -> {
+                    System.out.println("remote next" + result.textTranslated);
+                    if (!srcText.equalsIgnoreCase(result.textTranslated)) {
                         try {
                             System.out.println("save to local");
-                            localRepository.addTranslation(translateResult);
+                            localRepository.addTranslation(result);
+                            return result;
                         } catch (Exception e) {
                             // somethign goes wrong while saving into db
                             e.printStackTrace();
+                            return TranslateResult.createEmptyResult(srcText, direction, false);
                         }
+                    } else {
+                        return TranslateResult.createEmptyResult(srcText, direction, false);
                     }
                 })
                 .doOnComplete(() -> System.out.println("remote completed"))
                 .doOnError(t -> System.out.println("remote error"))
-                .onErrorReturnItem(TranslateResult.createErrorResult(text, direction, true))
-                .doOnDispose(() -> System.out.println("remote disposed"));
+                .doOnDispose(() -> System.out.println("remote disposed"))
+                .onErrorReturnItem(TranslateResult.createEmptyResult(srcText, direction, true));
 
         Observable<TranslateResult> localObservable = localRepository.translate(request)
                 .toObservable()
-                .doOnComplete(() -> System.out.println("maybe completed"))
-                .doOnError(t -> System.out.println("### maybe error"))
-                .onErrorResumeNext(remoteObservable)
-                .doOnDispose(() -> System.out.println("maybe disposed"));
+                .doOnComplete(() -> System.out.println("local completed"))
+                .doOnError(t -> System.out.println("### local error"))
+                .doOnDispose(() -> System.out.println("local disposed"))
+                .onErrorResumeNext(remoteObservable);
 
         return localObservable;
     }

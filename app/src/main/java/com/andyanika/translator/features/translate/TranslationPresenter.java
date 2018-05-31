@@ -20,6 +20,7 @@ import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 
 @FragmentScope
 public class TranslationPresenter {
@@ -33,6 +34,8 @@ public class TranslationPresenter {
     private GetSelectedLanguagesUseCase getSelectedLanguagesUseCase;
 
     private CompositeDisposable compositeDisposable;
+
+    private PublishSubject<CharSequence> textSearchSubject = PublishSubject.create();
 
     @Inject
     TranslationPresenter(TranslationView view,
@@ -49,6 +52,12 @@ public class TranslationPresenter {
     }
 
     public void translate(@NonNull final String text) {
+        textSearchSubject
+                .repeat(1)
+                .doOnNext(charSequence -> {
+                    textSearchSubject.onNext(charSequence);
+                }).subscribe();
+
         // TODO: 29.05.2018
     }
 
@@ -74,8 +83,10 @@ public class TranslationPresenter {
     }
 
     public void subscribe(Observable<CharSequence> searchTextObservable) {
+        searchTextObservable.subscribe(textSearchSubject);
+
         compositeDisposable.add(
-                searchTextObservable
+                textSearchSubject
                         .map(CharSequence::toString)
                         .distinctUntilChanged(String::equals)
                         .doOnNext(this::showProgress)
@@ -89,34 +100,43 @@ public class TranslationPresenter {
                                 },
                                 throwable -> {
                                     System.out.println("--- ### error");
-                                    throwable.printStackTrace();
-
-                                    view.showErrorLayout();
-                                    view.clearTranslation();
-                                    view.hideProgress();
-                                    view.showClearBtn();
-                                    view.hideOffline();
+                                    processError(throwable);
                                 },
                                 () -> System.out.println("--- $$$ completed")));
     }
 
+    private void processError(Throwable throwable) {
+        throwable.printStackTrace();
+
+        view.showErrorLayout();
+        view.clearTranslation();
+        view.hideProgress();
+        view.showClearBtn();
+        view.hideOffline();
+    }
+
     private void processResult(TranslateResult result) {
-        if (!result.isSuccess) {
-            view.showErrorLayout();
-            view.clearTranslation();
-            view.hideProgress();
-            view.showClearBtn();
-            if (!result.isOffline) {
-                view.showOffline();
-            }
-        } else {
+        if (result.isFound) {
             view.showTranslation(result);
             view.hideProgress();
             view.showClearBtn();
 
-            if (!result.isOffline) {
+            if (result.isOffline) {
+                view.showOffline();
+            } else {
                 view.hideOffline();
             }
+        } else {
+            if (result.isError) {
+                view.showErrorLayout();
+                view.clearTranslation();
+            } else {
+                view.showTranslation(result);
+            }
+
+            view.hideProgress();
+            view.showClearBtn();
+            view.hideOffline();
         }
     }
 
