@@ -1,10 +1,11 @@
-package com.andyanika.translator.ui;
+package com.andyanika.translator.features.main_screen;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
 
 import com.andyanika.translator.R;
+import com.andyanika.translator.ui.Screens;
 
 import javax.inject.Inject;
 

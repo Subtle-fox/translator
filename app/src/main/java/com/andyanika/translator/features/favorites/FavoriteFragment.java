@@ -1,6 +1,5 @@
 package com.andyanika.translator.features.favorites;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -13,16 +12,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.andyanika.translator.R;
-import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.di.component.FavoriteFragmentComponent;
-import com.andyanika.translator.di.module.FavoriteFragmentModule;
-import com.andyanika.translator.features.history.HistoryListAdapter;
-import com.andyanika.translator.ui.MainActivity;
+import com.andyanika.translator.features.favorites.di.FavoriteFragmentComponent;
+import com.andyanika.translator.features.favorites.di.FavoriteFragmentModule;
+import com.andyanika.translator.features.main_screen.MainActivity;
 
 import javax.inject.Inject;
-import java.util.List;
 
 public class FavoriteFragment extends Fragment implements FavoriteView {
     @Inject
@@ -31,10 +27,10 @@ public class FavoriteFragment extends Fragment implements FavoriteView {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    private RecyclerView recyclerView;
+    private FavoritesViewModel viewModel;
 
     private void prepareComponent(MainActivity mainActivity) {
-        FavoriteFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new FavoriteFragmentModule(this));
+        FavoriteFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new FavoriteFragmentModule());
         fragmentComponent.inject(this);
     }
 
@@ -54,12 +50,24 @@ public class FavoriteFragment extends Fragment implements FavoriteView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FavoritesViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
         viewModel.data.observe(this, adapter::setData);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        viewModel.subscribeItemClick(adapter.getObservable());
+    }
+
+    @Override
+    public void onStop() {
+        viewModel.unsubscribeItemClick();
+        super.onStop();
     }
 }

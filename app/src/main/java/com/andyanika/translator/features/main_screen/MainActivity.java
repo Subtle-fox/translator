@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui;
+package com.andyanika.translator.features.main_screen;
 
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.andyanika.translator.App;
 import com.andyanika.translator.R;
-import com.andyanika.translator.di.component.MainActivityComponent;
-import com.andyanika.translator.di.module.MainActivityModule;
+import com.andyanika.translator.features.main_screen.di.MainActivityComponent;
+import com.andyanika.translator.features.main_screen.di.MainActivityModule;
 
 import javax.inject.Inject;
 

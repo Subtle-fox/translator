@@ -1,7 +1,7 @@
-package com.andyanika.translator.di.module;
+package com.andyanika.translator.features.main_screen.di;
 
 import com.andyanika.translator.di.ActivityScope;
-import com.andyanika.translator.ui.MainActivity;
+import com.andyanika.translator.features.main_screen.MainActivity;
 
 import dagger.Module;
 import dagger.Provides;

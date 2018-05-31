@@ -1,6 +1,5 @@
 package com.andyanika.translator.features.history;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -10,21 +9,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
 import com.andyanika.translator.R;
-import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.di.component.HistoryFragmentComponent;
-import com.andyanika.translator.di.module.HistoryFragmentModule;
-import com.andyanika.translator.ui.MainActivity;
+import com.andyanika.translator.features.history.di.HistoryFragmentComponent;
+import com.andyanika.translator.features.history.di.HistoryFragmentModule;
+import com.andyanika.translator.features.main_screen.MainActivity;
+import com.jakewharton.rxbinding2.InitialValueObservable;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import javax.inject.Inject;
-import java.util.List;
 
 public class HistoryFragment extends Fragment implements HistoryView {
     @Inject
@@ -33,9 +30,11 @@ public class HistoryFragment extends Fragment implements HistoryView {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    private HistoryTextWatcher textWatcher;
+    private HistoryViewModel viewModel;
     private EditText editInput;
-    private RecyclerView recyclerView;
+    private View clearBtn;
+    private InitialValueObservable<CharSequence> textObservable;
+
 
     private void prepareComponent(MainActivity mainActivity) {
         HistoryFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new HistoryFragmentModule(this));
@@ -58,15 +57,23 @@ public class HistoryFragment extends Fragment implements HistoryView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        HistoryViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(HistoryViewModel.class);
-        viewModel.data.observe(this, adapter::setData);
-        viewModel.load();
-
-        textWatcher = new HistoryTextWatcher(viewModel);
-
         editInput = view.findViewById(R.id.edit_input);
+        textObservable = RxTextView.textChanges(editInput);
+        clearBtn = view.findViewById(R.id.btn_clear);
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(HistoryViewModel.class);
+        viewModel.data.observe(this, adapter::setData);
+        viewModel.showClearBtn.observe(this, show -> {
+            if (show) {
+                clearBtn.setVisibility(View.VISIBLE);
+            } else {
+                clearBtn.setVisibility(View.INVISIBLE);
+                editInput.setText("");
+            }
+        });
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
@@ -74,35 +81,27 @@ public class HistoryFragment extends Fragment implements HistoryView {
     @Override
     public void onStart() {
         super.onStart();
-        editInput.addTextChangedListener(textWatcher);
+
+        clearBtn.setOnClickListener(v -> viewModel.showClearBtn.setValue(false));
+
+        viewModel.subscribeSearch(textObservable);
+        viewModel.subscribeItemClick(adapter.getObservable());
     }
 
     @Override
     public void onStop() {
-        editInput.removeTextChangedListener(textWatcher);
+        clearBtn.setOnClickListener(null);
+        viewModel.unsubscribe();
         super.onStop();
     }
 
-    class HistoryTextWatcher implements TextWatcher {
-        private HistoryViewModel viewModel;
+    @Override
+    public void showClearBtn() {
+        clearBtn.setVisibility(View.VISIBLE);
+    }
 
-        HistoryTextWatcher(HistoryViewModel viewModel) {
-            this.viewModel = viewModel;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            viewModel.filter(s.toString());
-        }
+    @Override
+    public void hideClearBtn() {
+        clearBtn.setVisibility(View.INVISIBLE);
     }
 }

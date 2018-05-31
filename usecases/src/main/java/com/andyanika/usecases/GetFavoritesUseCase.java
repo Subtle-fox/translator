@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Flowable;
 
-public class GetFavoritesUseCase implements Usecase<String, Flowable<List<TranslationRowModel>>> {
+public class GetFavoritesUseCase {
     private LocalRepository repository;
 
     @Inject
@@ -17,7 +17,6 @@ public class GetFavoritesUseCase implements Usecase<String, Flowable<List<Transl
         this.repository = repository;
     }
 
-    @Override
     public Flowable<List<TranslationRowModel>> run(String filter) {
         return repository.getFavorites();
     }

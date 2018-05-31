@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import com.andyanika.translator.R;
 import com.andyanika.translator.di.component.SelectLanguageComponent;
 import com.andyanika.translator.di.module.SelectLanguageModule;
-import com.andyanika.translator.ui.MainActivity;
+import com.andyanika.translator.features.main_screen.MainActivity;
 
 import javax.inject.Inject;
 
