@@ -3,10 +3,11 @@ package com.andyanika.usecases;
 import com.andyanika.translator.common.LocalRepository;
 import com.andyanika.translator.common.Resources;
 import com.andyanika.translator.common.models.LanguageCode;
-import com.andyanika.translator.common.models.TranslateDirection;
+import com.andyanika.translator.common.models.LanguageDescription;
 import com.andyanika.translator.common.models.LanguageRowModel;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,16 +28,29 @@ public class GetLanguagesUseCase {
         this.ioScheduler = ioScheduler;
     }
 
-    public Single<List<LanguageRowModel>> run(boolean selectSource) {
-        TranslateDirection translateDirection = repository.getLanguageDirection();
-        LanguageCode current = selectSource ? translateDirection.src : translateDirection.dst;
+    public Observable<List<LanguageRowModel>> run(boolean selectSource) {
+        Observable<LanguageCode> selectedLanguage;
+        if (selectSource) {
+            selectedLanguage = repository.getSrcLanguage();
+        } else {
+            selectedLanguage = repository.getDstLanguage();
+        }
 
-        Observable<LanguageCode> availableLanguageCodes = Observable.fromIterable(repository.getAvailableLanguages());
-        Observable<String> names = availableLanguageCodes.map(x -> resources.getString("lang_" + x.toString().toLowerCase()));
+        Observable<LanguageDescription> availableLanguages = repository
+                .getAvailableLanguagesObservable()
+                .map(x -> new LanguageDescription(x, resources.getString("lang_" + x.toString().toLowerCase()), true))
+                .doOnNext(s -> System.out.println("available"))
+                .doOnComplete(() -> System.out.println("available completed"));
+        ;
 
-        return availableLanguageCodes
-                .zipWith(names, (code, name) -> new LanguageRowModel(code, name, code == current))
-                .toList()
+        Observable<LanguageRowModel> combineLatest =
+                availableLanguages.withLatestFrom(selectedLanguage, (d, code) -> new LanguageRowModel(d.code, d.description, d.code == code))
+                        .doOnNext(x -> System.out.println("combined"))
+                        .doOnComplete(() -> System.out.println("combine completed"));
+
+        return combineLatest
+                .buffer(1, TimeUnit.SECONDS)
+                .doOnNext(l -> System.out.println("list size " + l.size()))
                 .subscribeOn(ioScheduler);
     }
 }

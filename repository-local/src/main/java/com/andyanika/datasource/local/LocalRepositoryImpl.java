@@ -11,7 +11,6 @@ import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 import com.andyanika.translator.common.models.TranslationRowModel;
 
-import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -41,7 +40,7 @@ class LocalRepositoryImpl implements LocalRepository {
     public Flowable<List<TranslationRowModel>> getHistory() {
         return dao.getHistory()
                 .flatMap(list -> Flowable.fromIterable(list)
-                        .map(item -> adapter.toTranslationRowModel(item)).toList()
+                        .map(adapter::toTranslationRowModel).toList()
                         .toFlowable());
     }
 
@@ -49,7 +48,7 @@ class LocalRepositoryImpl implements LocalRepository {
     public Flowable<List<TranslationRowModel>> getFavorites() {
         return dao.getFavorites()
                 .flatMap(list -> Flowable.fromIterable(list)
-                        .map(item -> adapter.toTranslationRowModel(item)).toList()
+                        .map(adapter::toTranslationRowModel).toList()
                         .toFlowable());
     }
 
@@ -78,13 +77,6 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public TranslateDirection getLanguageDirection() {
-        String langSrc = preferences.getString("language_src", null);
-        String langDst = preferences.getString("language_dst", null);
-        return new TranslateDirection(LanguageCode.tryParse(langSrc, LanguageCode.RU), LanguageCode.tryParse(langDst, LanguageCode.EN));
-    }
-
-    @Override
     public Observable<LanguageCode> getSrcLanguage() {
         return srcLanguageSubject
                 .startWith(Observable.fromCallable(() -> {
@@ -109,6 +101,7 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public void setLanguageDirection(TranslateDirection direction) {
+        System.out.println("save repository direction ");
         preferences
                 .edit()
                 .putString("language_src", direction.src.toString())
@@ -120,8 +113,7 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public List<LanguageCode> getAvailableLanguages() {
-        // TODO: somehow fetched/ stored / cached
-        return Arrays.asList(LanguageCode.values());
+    public Observable<LanguageCode> getAvailableLanguagesObservable() {
+        return Observable.fromArray(LanguageCode.values());
     }
 }

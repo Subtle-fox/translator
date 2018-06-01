@@ -50,6 +50,7 @@ public class SelectLanguageViewModel extends ViewModel {
     public void subscribeItemClick(Single<LanguageRowModel> single) {
         itemClickDisposable = single
                 .flatMapCompletable(model -> {
+                    System.out.println("click received, mode " + isSrcMode);
                     if (isSrcMode) {
                         return selectLanguageUseCase.setSrc(model.code);
                     } else {
@@ -57,7 +58,10 @@ public class SelectLanguageViewModel extends ViewModel {
                     }
                 })
                 .observeOn(uiScheduler)
-                .subscribe(() -> router.backTo(Screens.TRANSLATION));
+                .subscribe(() -> {
+                    System.out.println("subscrived -> navigate back");
+                    router.backTo(Screens.TRANSLATION);
+                });
     }
 
     public void unsubscribeItemClick() {

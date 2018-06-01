@@ -21,36 +21,29 @@ public class SelectLanguageUseCase {
     }
 
     public Completable setSrc(LanguageCode code) {
-        return Completable
-                .fromAction(() -> {
-                    TranslateDirection oldDirection = repository.getLanguageDirection();
-                    TranslateDirection newDirection = normalize(new TranslateDirection(code, oldDirection.dst), oldDirection);
-                    repository.setLanguageDirection(newDirection);
-                })
-                .onErrorComplete()
-                .subscribeOn(ioScheduler);
+        return Completable.fromObservable(
+                repository.getSrcLanguage()
+                        .zipWith(repository.getDstLanguage(), TranslateDirection::new)
+                        .take(1)
+                        .map(oldDirection -> normalize(new TranslateDirection(code, oldDirection.dst), oldDirection))
+                        .doOnNext(repository::setLanguageDirection));
     }
 
     public Completable setDst(LanguageCode code) {
-        return Completable
-                .fromAction(() -> {
-                    TranslateDirection oldDirection = repository.getLanguageDirection();
-                    TranslateDirection newDirection = normalize(new TranslateDirection(oldDirection.src, code), oldDirection);
-                    repository.setLanguageDirection(newDirection);
-                })
-                .onErrorComplete()
-                .subscribeOn(ioScheduler);
+        return Completable.fromObservable(
+                repository.getSrcLanguage()
+                        .zipWith(repository.getDstLanguage(), TranslateDirection::new)
+                        .take(1)
+                        .map(oldDirection -> normalize(new TranslateDirection(oldDirection.src, code), oldDirection))
+                        .doOnNext(repository::setLanguageDirection));
     }
 
     public Completable swap() {
-        return Completable
-                .fromRunnable(() -> {
-                    TranslateDirection oldDirection = repository.getLanguageDirection();
-                    TranslateDirection newDirection = new TranslateDirection(oldDirection.dst, oldDirection.src);
-                    repository.setLanguageDirection(newDirection);
-                })
-                .onErrorComplete()
-                .subscribeOn(ioScheduler);
+        return Completable.fromObservable(
+                repository.getSrcLanguage()
+                        .zipWith(repository.getDstLanguage(), (src, dst) -> new TranslateDirection(dst, src))
+                        .take(1)
+                        .doOnNext(repository::setLanguageDirection));
     }
 
     TranslateDirection normalize(TranslateDirection newDirection, TranslateDirection oldDirection) {

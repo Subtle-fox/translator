@@ -22,13 +22,8 @@ public interface LocalRepository {
     void addFavorites(int wordId);
     void removeFavorite(int wordId);
 
-    TranslateDirection getLanguageDirection();
-
-
     void setLanguageDirection(TranslateDirection direction);
-
-    List<LanguageCode> getAvailableLanguages();
-
+    Observable<LanguageCode> getAvailableLanguagesObservable();
     Observable<LanguageCode> getSrcLanguage();
     Observable<LanguageCode> getDstLanguage();
 }
