@@ -29,6 +29,6 @@ public interface LocalRepository {
 
     List<LanguageCode> getAvailableLanguages();
 
-    Observable<LanguageCode> getDstLanguage();
     Observable<LanguageCode> getSrcLanguage();
+    Observable<LanguageCode> getDstLanguage();
 }

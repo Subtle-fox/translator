@@ -17,7 +17,7 @@ import javax.inject.Named;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 
 @FragmentScope
@@ -31,7 +31,9 @@ public class TranslationPresenter {
 
     private GetSelectedLanguagesUseCase getSelectedLanguagesUseCase;
 
-    private CompositeDisposable compositeDisposable;
+    private Disposable searchDisposable;
+    private Disposable languageDisposable;
+    private Disposable swapDisposable;
 
     private PublishSubject<CharSequence> textSearchSubject = PublishSubject.create();
 
@@ -46,7 +48,6 @@ public class TranslationPresenter {
         this.getSelectedLanguagesUseCase = getSelectedLanguagesUseCase;
         this.selectLanguageUseCase = selectLanguageUseCase;
         this.uiScheduler = uiScheduler;
-        this.compositeDisposable = new CompositeDisposable();
     }
 
     public void translate(@NonNull final String text) {
@@ -82,7 +83,7 @@ public class TranslationPresenter {
 
 
     public void subscribe(Observable<CharSequence> searchTextObservable) {
-        getSelectedLanguagesUseCase
+        languageDisposable = getSelectedLanguagesUseCase
                 .run()
                 .observeOn(uiScheduler)
                 .subscribe(pair -> {
@@ -92,24 +93,14 @@ public class TranslationPresenter {
 
         searchTextObservable.subscribe(textSearchSubject);
 
-        compositeDisposable.add(
-                textSearchSubject
-                        .map(CharSequence::toString)
-                        .distinctUntilChanged(String::equals)
-                        .doOnNext(this::showProgress)
-                        .debounce(DELAY, TimeUnit.SECONDS)
-                        .flatMap(str -> translateUseCase.run(str))
-                        .observeOn(uiScheduler)
-                        .subscribe(
-                                translateResult -> {
-                                    System.out.println("--- >>> next: " + translateResult.textTranslated);
-                                    processResult(translateResult);
-                                },
-                                throwable -> {
-                                    System.out.println("--- ### error");
-                                    processError(throwable);
-                                },
-                                () -> System.out.println("--- $$$ completed")));
+        searchDisposable = textSearchSubject
+                .map(CharSequence::toString)
+                .distinctUntilChanged(String::equals)
+                .doOnNext(this::showProgress)
+                .debounce(DELAY, TimeUnit.SECONDS)
+                .flatMap(str -> translateUseCase.run(str))
+                .observeOn(uiScheduler)
+                .subscribe(this::processResult, this::processError);
     }
 
     private void processError(Throwable throwable) {
@@ -123,38 +114,55 @@ public class TranslationPresenter {
     }
 
     private void processResult(TranslateResult result) {
+        System.out.println("process result: " + result.textTranslated);
         if (result.isFound) {
-            view.showTranslation(result);
-            view.hideProgress();
-            view.showClearBtn();
-
-            if (result.isOffline) {
-                view.showOffline();
-            } else {
-                view.hideOffline();
-            }
+            processFoundResult(result);
         } else {
-            if (result.isError) {
-                view.showErrorLayout();
-                view.clearTranslation();
-            } else {
-                view.showTranslation(result);
-            }
+            processEmptyResult(result);
+        }
+    }
 
-            view.hideProgress();
-            view.showClearBtn();
+    private void processFoundResult(TranslateResult result) {
+        view.showTranslation(result);
+        view.hideProgress();
+        view.showClearBtn();
+
+        if (result.isOffline) {
+            view.showOffline();
+        } else {
             view.hideOffline();
         }
     }
 
+    private void processEmptyResult(TranslateResult result) {
+        if (result.isError) {
+            view.showErrorLayout();
+            view.clearTranslation();
+        } else {
+            view.showTranslation(result);
+        }
+
+        view.hideProgress();
+        view.showClearBtn();
+        view.hideOffline();
+    }
+
     public void swapDirection() {
-        compositeDisposable.add(
-                selectLanguageUseCase.swap()
-                        .observeOn(uiScheduler)
-                        .subscribe());
+        swapDisposable = selectLanguageUseCase
+                .swap()
+                .observeOn(uiScheduler)
+                .subscribe();
     }
 
     void dispose() {
-        compositeDisposable.dispose();
+        dispose(searchDisposable);
+        dispose(languageDisposable);
+        dispose(swapDisposable);
+    }
+
+    private void dispose(Disposable disposable) {
+        if (disposable != null && !disposable.isDisposed()) {
+            disposable.dispose();
+        }
     }
 }

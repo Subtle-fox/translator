@@ -26,6 +26,10 @@ class LocalRepositoryImpl implements LocalRepository {
     private ModelsAdapter adapter;
     private Scheduler ioScheduler;
 
+    private PublishSubject<LanguageCode> srcLanguageSubject = PublishSubject.create();
+    private PublishSubject<LanguageCode> dstLanguageSubject = PublishSubject.create();
+
+
     LocalRepositoryImpl(TranslatorDao dao, SharedPreferences preferences, ModelsAdapter adapter, Scheduler ioScheduler) {
         this.dao = dao;
         this.preferences = preferences;
@@ -80,12 +84,9 @@ class LocalRepositoryImpl implements LocalRepository {
         return new TranslateDirection(LanguageCode.tryParse(langSrc, LanguageCode.RU), LanguageCode.tryParse(langDst, LanguageCode.EN));
     }
 
-    PublishSubject<LanguageCode> subjectSrc = PublishSubject.create();
-    PublishSubject<LanguageCode> subjectDst = PublishSubject.create();
-
     @Override
     public Observable<LanguageCode> getSrcLanguage() {
-        return subjectSrc
+        return srcLanguageSubject
                 .startWith(Observable.fromCallable(() -> {
                             String s = preferences.getString("language_src", null);
                             return LanguageCode.tryParse(s, LanguageCode.RU);
@@ -96,7 +97,7 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public Observable<LanguageCode> getDstLanguage() {
-        return subjectSrc
+        return dstLanguageSubject
                 .startWith(Observable.fromCallable(() -> {
                             String s = preferences.getString("language_dst", null);
                             return LanguageCode.tryParse(s, LanguageCode.EN);
@@ -114,8 +115,8 @@ class LocalRepositoryImpl implements LocalRepository {
                 .putString("language_dst", direction.dst.toString())
                 .apply();
 
-        subjectSrc.onNext(direction.src);
-        subjectDst.onNext(direction.dst);
+        srcLanguageSubject.onNext(direction.src);
+        dstLanguageSubject.onNext(direction.dst);
     }
 
     @Override

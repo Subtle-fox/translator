@@ -21,8 +21,8 @@ public class GetSelectedLanguagesUseCase {
     }
 
     public Observable<DirectionPair<String>> run() {
-        Observable<String> srcLanguage = repository.getSrcLanguage().map(toUiStringFunction);
-        Observable<String> dstLanguage = repository.getDstLanguage().map(toUiStringFunction);
-        return srcLanguage.zipWith(dstLanguage, DirectionPair::new);
+        Observable<String> srcLanguage = repository.getSrcLanguage().map(toUiStringFunction).doOnNext(d -> System.out.println("src: " + d));
+        Observable<String> dstLanguage = repository.getDstLanguage().map(toUiStringFunction).doOnNext(d -> System.out.println("dts: " + d));
+        return srcLanguage.zipWith(dstLanguage, DirectionPair::new).doOnNext(d -> System.out.println("zip: " + d.src + ":" + d.dst));
     }
 }
