@@ -35,7 +35,7 @@ public class TranslationPresenter {
     private Disposable languageDisposable;
     private Disposable swapDisposable;
 
-    private PublishSubject<CharSequence> textSearchSubject = PublishSubject.create();
+    private PublishSubject<Void> retrySubject = PublishSubject.create();
 
     @Inject
     TranslationPresenter(TranslationView view,
@@ -51,13 +51,7 @@ public class TranslationPresenter {
     }
 
     public void translate(@NonNull final String text) {
-        textSearchSubject
-                .repeat(1)
-                .doOnNext(charSequence -> {
-                    textSearchSubject.onNext(charSequence);
-                }).subscribe();
-
-        // TODO: 29.05.2018
+        retrySubject.onNext(null);
     }
 
     public void clear() {
@@ -91,14 +85,15 @@ public class TranslationPresenter {
                     view.setDstLabel(pair.dst);
                 });
 
-        searchTextObservable.subscribe(textSearchSubject);
+//        searchTextObservable.subscribe(textSearchSubject);
 
-        searchDisposable = textSearchSubject
+        searchDisposable = searchTextObservable
                 .map(CharSequence::toString)
                 .distinctUntilChanged(String::equals)
                 .doOnNext(this::showProgress)
                 .debounce(DELAY, TimeUnit.SECONDS)
                 .flatMap(str -> translateUseCase.run(str))
+                .retryWhen(retryHandler -> retryHandler.flatMap(nothing -> retrySubject))
                 .observeOn(uiScheduler)
                 .subscribe(this::processResult, this::processError);
     }
