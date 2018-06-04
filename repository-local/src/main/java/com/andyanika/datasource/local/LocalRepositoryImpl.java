@@ -114,6 +114,6 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public Observable<LanguageCode> getAvailableLanguagesObservable() {
-        return Observable.fromArray(LanguageCode.values());
+        return Observable.fromArray(LanguageCode.values()).cache();
     }
 }

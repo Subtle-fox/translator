@@ -7,14 +7,12 @@ import com.andyanika.translator.common.models.LanguageDescription;
 import com.andyanika.translator.common.models.LanguageRowModel;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
-import io.reactivex.Single;
 
 public class GetLanguagesUseCase {
     private final Resources resources;
@@ -29,28 +27,24 @@ public class GetLanguagesUseCase {
     }
 
     public Observable<List<LanguageRowModel>> run(boolean selectSource) {
-        Observable<LanguageCode> selectedLanguage;
-        if (selectSource) {
-            selectedLanguage = repository.getSrcLanguage();
-        } else {
-            selectedLanguage = repository.getDstLanguage();
-        }
+        Observable<LanguageCode> selectedLanguage =
+                selectSource
+                        ? repository.getSrcLanguage()
+                        : repository.getDstLanguage();
 
         Observable<LanguageDescription> availableLanguages = repository
                 .getAvailableLanguagesObservable()
-                .map(x -> new LanguageDescription(x, resources.getString("lang_" + x.toString().toLowerCase()), true))
-                .doOnNext(s -> System.out.println("available"))
-                .doOnComplete(() -> System.out.println("available completed"));
-        ;
+                .map(code -> new LanguageDescription(code, resources.getString("lang_" + code.toString().toLowerCase()), selectSource));
 
-        Observable<LanguageRowModel> combineLatest =
-                availableLanguages.withLatestFrom(selectedLanguage, (d, code) -> new LanguageRowModel(d.code, d.description, d.code == code))
-                        .doOnNext(x -> System.out.println("combined"))
-                        .doOnComplete(() -> System.out.println("combine completed"));
+        Observable<LanguageRowModel> combineLatest = selectedLanguage
+                .take(1)
+                .flatMap(code -> availableLanguages
+                        .map(desc -> new LanguageRowModel(desc.code, desc.description, desc.code == code))
+                );
+
 
         return combineLatest
-                .buffer(1, TimeUnit.SECONDS)
-                .doOnNext(l -> System.out.println("list size " + l.size()))
+                .buffer(100)
                 .subscribeOn(ioScheduler);
     }
 }
