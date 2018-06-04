@@ -22,7 +22,7 @@ public class TranslateUseCase {
         this.remoteRepository = remoteRepository;
     }
 
-    public Observable<TranslateResult> run(@NonNull String srcText) {
+    public Observable<TranslateResult> translate(@NonNull String srcText) {
         if (srcText.isEmpty()) {
             return Observable.empty();
         }

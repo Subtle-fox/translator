@@ -5,6 +5,7 @@ import com.andyanika.translator.features.translate.TranslationView;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.subjects.PublishSubject;
 
 @Module
 public class TranslationFragmentModule {
@@ -18,5 +19,11 @@ public class TranslationFragmentModule {
     @FragmentScope
     public TranslationView getView() {
         return view;
+    }
+
+    @Provides
+    @FragmentScope
+    public PublishSubject<String> provideRetrySubject() {
+        return PublishSubject.create();
     }
 }

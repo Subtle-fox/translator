@@ -26,7 +26,6 @@ import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
 import ru.terrakok.cicerone.Router;
 
 public class TranslationFragment extends Fragment implements TranslationView {
@@ -90,15 +89,11 @@ public class TranslationFragment extends Fragment implements TranslationView {
         super.onStart();
 
         presenter.subscribe(textObservable);
-        retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
-        clearBtn.setOnClickListener(v -> presenter.clear());
-
-        retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
-
         srcLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC));
         dstLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST));
-
         swapLangBtn.setOnClickListener(v -> presenter.swapDirection());
+        clearBtn.setOnClickListener(v -> presenter.clear());
+        retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
     }
 
     @Override

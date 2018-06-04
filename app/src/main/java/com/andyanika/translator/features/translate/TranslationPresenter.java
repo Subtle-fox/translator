@@ -22,7 +22,7 @@ import io.reactivex.subjects.PublishSubject;
 
 @FragmentScope
 public class TranslationPresenter {
-    private static final long DELAY = 2;
+    private static final long DELAY = 1;
 
     private final TranslationView view;
     private TranslateUseCase translateUseCase;
@@ -35,23 +35,25 @@ public class TranslationPresenter {
     private Disposable languageDisposable;
     private Disposable swapDisposable;
 
-    private PublishSubject<Void> retrySubject = PublishSubject.create();
+    private PublishSubject<String> retrySubject;
 
     @Inject
     TranslationPresenter(TranslationView view,
                          TranslateUseCase translateUseCase,
                          GetSelectedLanguagesUseCase getSelectedLanguagesUseCase,
                          SelectLanguageUseCase selectLanguageUseCase,
+                         PublishSubject<String> retrySubject,
                          @Named("ui") Scheduler uiScheduler) {
         this.view = view;
         this.translateUseCase = translateUseCase;
         this.getSelectedLanguagesUseCase = getSelectedLanguagesUseCase;
         this.selectLanguageUseCase = selectLanguageUseCase;
         this.uiScheduler = uiScheduler;
+        this.retrySubject = retrySubject;
     }
 
     public void translate(@NonNull final String text) {
-        retrySubject.onNext(null);
+        retrySubject.onNext(text);
     }
 
     public void clear() {
@@ -85,15 +87,14 @@ public class TranslationPresenter {
                     view.setDstLabel(pair.dst);
                 });
 
-//        searchTextObservable.subscribe(textSearchSubject);
-
         searchDisposable = searchTextObservable
+                .distinctUntilChanged(CharSequence::equals)
                 .map(CharSequence::toString)
                 .distinctUntilChanged(String::equals)
+                .mergeWith(retrySubject)
                 .doOnNext(this::showProgress)
                 .debounce(DELAY, TimeUnit.SECONDS)
-                .flatMap(str -> translateUseCase.run(str))
-                .retryWhen(retryHandler -> retryHandler.flatMap(nothing -> retrySubject))
+                .switchMap(str -> translateUseCase.translate(str))
                 .observeOn(uiScheduler)
                 .subscribe(this::processResult, this::processError);
     }
