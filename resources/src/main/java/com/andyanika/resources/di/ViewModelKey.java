@@ -1,4 +1,4 @@
-package com.andyanika.translator.di;
+package com.andyanika.resources.di;
 
 import android.arch.lifecycle.ViewModel;
 import dagger.MapKey;

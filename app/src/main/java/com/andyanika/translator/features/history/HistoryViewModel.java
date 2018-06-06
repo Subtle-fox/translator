@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModel;
 import android.text.TextUtils;
 
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.usecases.AddFavoriteUseCase;
 import com.andyanika.usecases.HistoryUseCase;
 import com.andyanika.usecases.RemoveFavoriteUseCase;

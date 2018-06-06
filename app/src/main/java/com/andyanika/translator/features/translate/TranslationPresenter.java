@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.usecases.GetSelectedLanguagesUseCase;
 import com.andyanika.usecases.SelectLanguageUseCase;
 import com.andyanika.usecases.TranslateUseCase;

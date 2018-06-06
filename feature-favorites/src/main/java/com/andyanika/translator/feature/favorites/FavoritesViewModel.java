@@ -1,10 +1,10 @@
-package com.andyanika.translator.features.favorites;
+package com.andyanika.translator.feature.favorites;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.di.FragmentScope;
 import com.andyanika.usecases.GetFavoritesUseCase;
 import com.andyanika.usecases.RemoveFavoriteUseCase;
 

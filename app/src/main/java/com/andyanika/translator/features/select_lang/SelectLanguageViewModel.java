@@ -4,7 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.andyanika.translator.common.models.LanguageRowModel;
-import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.ui.Screens;
 import com.andyanika.usecases.GetLanguagesUseCase;
 import com.andyanika.usecases.SelectLanguageUseCase;

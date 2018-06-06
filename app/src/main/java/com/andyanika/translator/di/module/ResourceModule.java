@@ -3,9 +3,7 @@ package com.andyanika.translator.di.module;
 import android.content.Context;
 
 import com.andyanika.translator.common.Resources;
-import com.andyanika.translator.di.ActivityScope;
-
-import javax.inject.Singleton;
+import com.andyanika.resources.di.ActivityScope;
 
 import dagger.Module;
 import dagger.Provides;

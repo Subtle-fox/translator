@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.favorites;
+package com.andyanika.translator.feature.favorites;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -13,30 +13,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.andyanika.translator.R;
-import com.andyanika.translator.features.favorites.di.FavoriteFragmentComponent;
-import com.andyanika.translator.features.favorites.di.FavoriteFragmentModule;
-import com.andyanika.translator.features.main_screen.MainActivity;
-
 import javax.inject.Inject;
 
-public class FavoriteFragment extends Fragment {
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.AndroidSupportInjection;
+import dagger.android.support.DaggerFragment;
+
+public class FavoriteFragment extends DaggerFragment {
     @Inject
     FavoritesListAdapter adapter;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
+    @Inject
+    DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
+
     private FavoritesViewModel viewModel;
 
-    private void prepareComponent(MainActivity mainActivity) {
-        FavoriteFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new FavoriteFragmentModule());
-        fragmentComponent.inject(this);
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return fragmentDispatchingAndroidInjector;
     }
 
     @Override
     public void onAttach(Context context) {
-        prepareComponent(((MainActivity) context));
+        AndroidSupportInjection.inject(this);
         super.onAttach(context);
     }
 

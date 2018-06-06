@@ -2,8 +2,8 @@ package com.andyanika.translator.features.history.di;
 
 import android.arch.lifecycle.ViewModel;
 
-import com.andyanika.translator.di.FragmentScope;
-import com.andyanika.translator.di.ViewModelKey;
+import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.resources.di.ViewModelKey;
 import com.andyanika.translator.features.history.HistoryViewModel;
 
 import dagger.Binds;

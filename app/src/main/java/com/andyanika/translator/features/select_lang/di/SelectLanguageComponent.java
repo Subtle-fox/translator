@@ -1,6 +1,6 @@
 package com.andyanika.translator.features.select_lang.di;
 
-import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.features.select_lang.SelectLanguageFragment;
 
 import dagger.Subcomponent;

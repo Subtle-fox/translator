@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.LanguageRowModel;
-import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.resources.di.FragmentScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Single;
-import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 @FragmentScope

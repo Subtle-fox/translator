@@ -1,6 +1,6 @@
 package com.andyanika.translator.features.translate.di;
 
-import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.features.translate.TranslationView;
 
 import dagger.Module;

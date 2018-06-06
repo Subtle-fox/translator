@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.resources.di.FragmentScope;
 
 import java.util.ArrayList;
 import java.util.List;

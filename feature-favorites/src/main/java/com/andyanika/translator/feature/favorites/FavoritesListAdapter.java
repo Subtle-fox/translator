@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.favorites;
+package com.andyanika.translator.feature.favorites;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,9 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.andyanika.translator.R;
+import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.models.TranslationRowModel;
-import com.andyanika.translator.di.FragmentScope;
 
 import java.util.ArrayList;
 import java.util.List;

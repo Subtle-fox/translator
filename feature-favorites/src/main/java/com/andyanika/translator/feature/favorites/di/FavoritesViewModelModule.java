@@ -1,10 +1,10 @@
-package com.andyanika.translator.features.favorites.di;
+package com.andyanika.translator.feature.favorites.di;
 
 import android.arch.lifecycle.ViewModel;
 
-import com.andyanika.translator.di.FragmentScope;
-import com.andyanika.translator.di.ViewModelKey;
-import com.andyanika.translator.features.favorites.FavoritesViewModel;
+import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.resources.di.ViewModelKey;
+import com.andyanika.translator.feature.favorites.FavoritesViewModel;
 
 import dagger.Binds;
 import dagger.Module;

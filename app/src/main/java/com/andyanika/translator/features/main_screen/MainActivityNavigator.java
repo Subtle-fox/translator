@@ -3,9 +3,9 @@ package com.andyanika.translator.features.main_screen;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import com.andyanika.resources.di.ActivityScope;
 import com.andyanika.translator.R;
-import com.andyanika.translator.di.ActivityScope;
-import com.andyanika.translator.features.favorites.FavoriteFragment;
+import com.andyanika.translator.feature.favorites.FavoriteFragment;
 import com.andyanika.translator.features.history.HistoryFragment;
 import com.andyanika.translator.features.select_lang.SelectLanguageFragment;
 import com.andyanika.translator.features.translate.TranslationFragment;

@@ -1,6 +1,6 @@
-include ':app', ':feature-favorites',
+include ':app',
+        ':feature-favorites',
         ':resources',
-//        ':feature-select-lang',
         ':repository-remote',
         ':repository-local',
         ':usecases',

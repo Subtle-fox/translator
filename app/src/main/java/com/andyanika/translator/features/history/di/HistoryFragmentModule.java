@@ -1,6 +1,6 @@
 package com.andyanika.translator.features.history.di;
 
-import com.andyanika.translator.di.FragmentScope;
+import com.andyanika.resources.di.FragmentScope;
 
 import dagger.Module;
 import dagger.Provides;

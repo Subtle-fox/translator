@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.favorites;
+package com.andyanika.translator.feature.favorites;
 
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
