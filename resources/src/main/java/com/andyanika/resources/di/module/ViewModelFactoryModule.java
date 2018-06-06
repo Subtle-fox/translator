@@ -1,4 +1,4 @@
-package com.andyanika.translator.di.module;
+package com.andyanika.resources.di.module;
 
 import android.arch.lifecycle.ViewModelProvider;
 import dagger.Binds;

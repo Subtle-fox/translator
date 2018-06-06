@@ -1,16 +1,11 @@
-package com.andyanika.translator.di.component;
+package com.andyanika.translator.di;
 
 import com.andyanika.datasource.local.LocalRepositoryModule;
 import com.andyanika.translator.App;
-import com.andyanika.translator.di.module.AppModule;
-import com.andyanika.translator.di.module.NavigationModule;
-import com.andyanika.translator.di.module.SchedulersModule;
 import com.andyanika.translator.feature.favorites.di.FavoritesComponentModule;
 import com.andyanika.translator.feature.history.di.HistoryComponentModule;
 import com.andyanika.translator.feature.select_lang.di.SelectLanguageComponentModule;
 import com.andyanika.translator.feature.translate.di.TranslationComponentModule;
-import com.andyanika.translator.features.main_screen.di.MainActivityComponent;
-import com.andyanika.translator.features.main_screen.di.MainActivityModule;
 import com.andyanika.translator.network.RemoteRepositoryModule;
 
 import javax.inject.Singleton;

@@ -1,4 +1,4 @@
-package com.andyanika.translator.di.module;
+package com.andyanika.translator.di;
 
 import android.content.Context;
 import dagger.Module;

@@ -1,7 +1,7 @@
 package com.andyanika.translator.feature.history.di;
 
 import com.andyanika.resources.di.FragmentScope;
-import com.andyanika.translator.di.module.ViewModelFactoryModule;
+import com.andyanika.resources.di.module.ViewModelFactoryModule;
 import com.andyanika.translator.feature.history.HistoryFragment;
 
 import dagger.Subcomponent;

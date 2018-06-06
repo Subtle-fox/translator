@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.main_screen;
+package com.andyanika.translator;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;

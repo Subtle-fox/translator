@@ -3,9 +3,9 @@ package com.andyanika.translator;
 import android.app.Application;
 import android.support.v4.app.Fragment;
 
-import com.andyanika.translator.di.component.AppComponent;
-import com.andyanika.translator.di.component.DaggerAppComponent;
-import com.andyanika.translator.di.module.AppModule;
+import com.andyanika.translator.di.AppComponent;
+import com.andyanika.translator.di.AppModule;
+import com.andyanika.translator.di.DaggerAppComponent;
 
 import javax.inject.Inject;
 

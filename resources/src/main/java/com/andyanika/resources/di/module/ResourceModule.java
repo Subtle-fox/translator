@@ -1,4 +1,4 @@
-package com.andyanika.translator.di.module;
+package com.andyanika.resources.di.module;
 
 import android.content.Context;
 

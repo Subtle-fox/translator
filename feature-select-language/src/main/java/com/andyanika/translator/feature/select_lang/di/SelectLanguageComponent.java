@@ -1,8 +1,8 @@
 package com.andyanika.translator.feature.select_lang.di;
 
 import com.andyanika.resources.di.FragmentScope;
-import com.andyanika.translator.di.module.ResourceModule;
-import com.andyanika.translator.di.module.ViewModelFactoryModule;
+import com.andyanika.resources.di.module.ResourceModule;
+import com.andyanika.resources.di.module.ViewModelFactoryModule;
 import com.andyanika.translator.feature.select_lang.SelectLanguageFragment;
 
 import dagger.Subcomponent;
