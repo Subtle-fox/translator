@@ -2,6 +2,7 @@ package com.andyanika.translator.di.module;
 
 import android.content.Context;
 
+import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.Resources;
 import com.andyanika.resources.di.ActivityScope;
 
@@ -10,7 +11,7 @@ import dagger.Provides;
 
 @Module
 public class ResourceModule {
-    @ActivityScope
+    @FragmentScope
     @Provides
     Resources provideResources(Context activityContext) {
         return new Resources() {

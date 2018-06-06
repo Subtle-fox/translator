@@ -1,6 +1,5 @@
 package com.andyanika.translator.features.translate;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,13 +13,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.andyanika.resources.Screens;
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.feature.select_lang.Extras;
 import com.andyanika.translator.features.main_screen.MainActivity;
-import com.andyanika.translator.features.select_lang.Extras;
 import com.andyanika.translator.features.translate.di.TranslationFragmentComponent;
 import com.andyanika.translator.features.translate.di.TranslationFragmentModule;
-import com.andyanika.translator.ui.Screens;
 import com.jakewharton.rxbinding2.InitialValueObservable;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
@@ -34,9 +33,6 @@ public class TranslationFragment extends Fragment implements TranslationView {
 
     @Inject
     Router router;
-
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
 
     private EditText editInput;
     private TextView txtTranslated;

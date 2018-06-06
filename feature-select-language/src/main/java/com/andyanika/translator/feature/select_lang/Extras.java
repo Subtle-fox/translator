@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.select_lang;
+package com.andyanika.translator.feature.select_lang;
 
 public interface Extras {
     String SELECT_MODE = "features.select_lang.extras.select_language_mode";

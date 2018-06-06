@@ -1,11 +1,11 @@
-package com.andyanika.translator.features.select_lang;
+package com.andyanika.translator.feature.select_lang;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.andyanika.translator.common.models.LanguageRowModel;
+import com.andyanika.resources.Screens;
 import com.andyanika.resources.di.FragmentScope;
-import com.andyanika.translator.ui.Screens;
+import com.andyanika.translator.common.models.LanguageRowModel;
 import com.andyanika.usecases.GetLanguagesUseCase;
 import com.andyanika.usecases.SelectLanguageUseCase;
 

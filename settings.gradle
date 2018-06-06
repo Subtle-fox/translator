@@ -1,5 +1,6 @@
 include ':app',
         ':feature-favorites',
+        ':feature-select-language',
         ':resources',
         ':repository-remote',
         ':repository-local',

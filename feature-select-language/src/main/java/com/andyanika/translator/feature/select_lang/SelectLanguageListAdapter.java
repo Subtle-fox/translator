@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.select_lang;
+package com.andyanika.translator.feature.select_lang;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,9 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.andyanika.translator.R;
-import com.andyanika.translator.common.models.LanguageRowModel;
 import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.translator.common.models.LanguageRowModel;
 
 import java.util.ArrayList;
 import java.util.List;

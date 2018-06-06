@@ -1,4 +1,4 @@
-package com.andyanika.translator.ui;
+package com.andyanika.resources;
 
 public interface Screens {
     String TRANSLATION = "screens.translation";

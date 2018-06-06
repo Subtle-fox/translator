@@ -18,6 +18,8 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':common')
+
     implementation "com.android.support:appcompat-v7:${support_lib_version}"
 
     implementation "com.google.dagger:dagger:${dagger_version}"

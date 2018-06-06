@@ -1,10 +1,9 @@
-package com.andyanika.translator.features.select_lang;
+package com.andyanika.translator.feature.select_lang;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.LanguageRowModel;
 
 import io.reactivex.subjects.Subject;

@@ -5,7 +5,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
 
 import com.andyanika.translator.R;
-import com.andyanika.translator.ui.Screens;
+import com.andyanika.resources.Screens;
 
 import javax.inject.Inject;
 

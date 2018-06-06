@@ -11,7 +11,7 @@ import dagger.android.support.FragmentKey;
 import dagger.multibindings.IntoMap;
 
 @Module(subcomponents = FavoriteFragmentComponent.class)
-public abstract class FavoritesSubcomponentModule {
+public abstract class FavoritesComponentModule {
     @Binds
     @IntoMap
     @FragmentKey(FavoriteFragment.class)

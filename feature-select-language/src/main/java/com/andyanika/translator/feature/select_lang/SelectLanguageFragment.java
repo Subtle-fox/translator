@@ -1,33 +1,31 @@
-package com.andyanika.translator.features.select_lang;
+package com.andyanika.translator.feature.select_lang;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.andyanika.translator.R;
-import com.andyanika.translator.features.main_screen.MainActivity;
-import com.andyanika.translator.features.select_lang.di.SelectLanguageComponent;
-import com.andyanika.translator.features.select_lang.di.SelectLanguageModule;
-
 import javax.inject.Inject;
 
-public class SelectLanguageFragment extends Fragment {
+import dagger.android.support.AndroidSupportInjection;
+import dagger.android.support.DaggerFragment;
+
+public class SelectLanguageFragment extends DaggerFragment {
     @Inject
     SelectLanguageListAdapter adapter;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    SelectLanguageViewModel viewModel;
+    private SelectLanguageViewModel viewModel;
 
     public static SelectLanguageFragment create(String mode) {
         Bundle extra = new Bundle();
@@ -37,16 +35,11 @@ public class SelectLanguageFragment extends Fragment {
         return fragment;
     }
 
-    private void prepareComponent(MainActivity mainActivity) {
-        SelectLanguageComponent fragmentComponent = mainActivity.getActivityComponent().plus(new SelectLanguageModule());
-        fragmentComponent.inject(this);
-    }
-
     @Override
     public void onAttach(Context context) {
-        MainActivity mainActivity = (MainActivity) context;
+        AndroidSupportInjection.inject(this);
+        Activity mainActivity = (Activity) context;
         mainActivity.setTitle(R.string.title_select_language);
-        prepareComponent(mainActivity);
         super.onAttach(context);
     }
 

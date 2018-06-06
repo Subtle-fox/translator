@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.select_lang.di;
+package com.andyanika.translator.feature.select_lang.di;
 
 import com.andyanika.resources.di.FragmentScope;
 
