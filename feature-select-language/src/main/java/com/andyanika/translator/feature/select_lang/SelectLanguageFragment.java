@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.andyanika.resources.Extras;
+
 import javax.inject.Inject;
 
 import dagger.android.support.AndroidSupportInjection;

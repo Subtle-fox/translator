@@ -1,10 +1,9 @@
-package com.andyanika.translator.features.translate;
+package com.andyanika.translator.feature.translate;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +12,19 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.andyanika.resources.Extras;
 import com.andyanika.resources.Screens;
-import com.andyanika.translator.R;
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.feature.select_lang.Extras;
-import com.andyanika.translator.features.main_screen.MainActivity;
-import com.andyanika.translator.features.translate.di.TranslationFragmentComponent;
-import com.andyanika.translator.features.translate.di.TranslationFragmentModule;
 import com.jakewharton.rxbinding2.InitialValueObservable;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import javax.inject.Inject;
 
+import dagger.android.support.AndroidSupportInjection;
+import dagger.android.support.DaggerFragment;
 import ru.terrakok.cicerone.Router;
 
-public class TranslationFragment extends Fragment implements TranslationView {
+public class TranslationFragment extends DaggerFragment implements TranslationView {
     @Inject
     TranslationPresenter presenter;
 
@@ -46,14 +43,9 @@ public class TranslationFragment extends Fragment implements TranslationView {
     private ImageButton swapLangBtn;
     private InitialValueObservable<CharSequence> textObservable;
 
-    private void prepareComponent(MainActivity mainActivity) {
-        TranslationFragmentComponent fragmentComponent = mainActivity.getActivityComponent().plus(new TranslationFragmentModule(this));
-        fragmentComponent.inject(this);
-    }
-
     @Override
     public void onAttach(Context context) {
-        prepareComponent(((MainActivity) context));
+        AndroidSupportInjection.inject(this);
         super.onAttach(context);
     }
 
