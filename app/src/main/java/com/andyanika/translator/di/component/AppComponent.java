@@ -6,6 +6,7 @@ import com.andyanika.translator.di.module.AppModule;
 import com.andyanika.translator.di.module.NavigationModule;
 import com.andyanika.translator.di.module.SchedulersModule;
 import com.andyanika.translator.feature.favorites.di.FavoritesComponentModule;
+import com.andyanika.translator.feature.history.di.HistoryComponentModule;
 import com.andyanika.translator.feature.select_lang.di.SelectLanguageComponentModule;
 import com.andyanika.translator.features.main_screen.di.MainActivityComponent;
 import com.andyanika.translator.features.main_screen.di.MainActivityModule;
@@ -24,7 +25,8 @@ import dagger.Component;
         SchedulersModule.class,
 
         FavoritesComponentModule.class,
-        SelectLanguageComponentModule.class
+        SelectLanguageComponentModule.class,
+        HistoryComponentModule.class,
 })
 public interface AppComponent {
     void inject(App app);

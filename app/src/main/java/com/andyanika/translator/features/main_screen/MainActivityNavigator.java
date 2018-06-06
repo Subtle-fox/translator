@@ -7,8 +7,8 @@ import com.andyanika.resources.Screens;
 import com.andyanika.resources.di.ActivityScope;
 import com.andyanika.translator.R;
 import com.andyanika.translator.feature.favorites.FavoriteFragment;
+import com.andyanika.translator.feature.history.HistoryFragment;
 import com.andyanika.translator.feature.select_lang.SelectLanguageFragment;
-import com.andyanika.translator.features.history.HistoryFragment;
 import com.andyanika.translator.features.translate.TranslationFragment;
 
 import javax.inject.Inject;

@@ -1,11 +1,11 @@
-package com.andyanika.translator.features.history;
+package com.andyanika.translator.feature.history;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.text.TextUtils;
 
-import com.andyanika.translator.common.models.TranslationRowModel;
 import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.translator.common.models.TranslationRowModel;
 import com.andyanika.usecases.AddFavoriteUseCase;
 import com.andyanika.usecases.HistoryUseCase;
 import com.andyanika.usecases.RemoveFavoriteUseCase;

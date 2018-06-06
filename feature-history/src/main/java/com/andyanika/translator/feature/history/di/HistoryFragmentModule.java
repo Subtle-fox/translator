@@ -1,4 +1,4 @@
-package com.andyanika.translator.features.history.di;
+package com.andyanika.translator.feature.history.di;
 
 import com.andyanika.resources.di.FragmentScope;
 
