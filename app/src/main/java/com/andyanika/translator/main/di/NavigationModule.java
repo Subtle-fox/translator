@@ -1,4 +1,4 @@
-package com.andyanika.translator.di;
+package com.andyanika.translator.main.di;
 
 import javax.inject.Singleton;
 

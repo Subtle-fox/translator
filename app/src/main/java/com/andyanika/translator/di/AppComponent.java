@@ -6,6 +6,9 @@ import com.andyanika.translator.feature.favorites.di.FavoritesComponentModule;
 import com.andyanika.translator.feature.history.di.HistoryComponentModule;
 import com.andyanika.translator.feature.select_lang.di.SelectLanguageComponentModule;
 import com.andyanika.translator.feature.translate.di.TranslationComponentModule;
+import com.andyanika.translator.main.di.MainActivityComponent;
+import com.andyanika.translator.main.di.MainActivityModule;
+import com.andyanika.translator.main.di.NavigationModule;
 import com.andyanika.translator.network.RemoteRepositoryModule;
 
 import javax.inject.Singleton;

@@ -1,8 +1,8 @@
-package com.andyanika.translator.di;
+package com.andyanika.translator.main.di;
 
 import com.andyanika.resources.di.ActivityScope;
 import com.andyanika.resources.di.module.ViewModelFactoryModule;
-import com.andyanika.translator.MainActivity;
+import com.andyanika.translator.main.MainActivity;
 
 import dagger.Subcomponent;
 

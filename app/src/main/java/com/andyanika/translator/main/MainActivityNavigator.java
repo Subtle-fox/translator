@@ -1,14 +1,16 @@
-package com.andyanika.translator;
+package com.andyanika.translator.main;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
 import com.andyanika.resources.Screens;
 import com.andyanika.resources.di.ActivityScope;
+import com.andyanika.translator.R;
 import com.andyanika.translator.feature.favorites.FavoriteFragment;
 import com.andyanika.translator.feature.history.HistoryFragment;
 import com.andyanika.translator.feature.select_lang.SelectLanguageFragment;
 import com.andyanika.translator.feature.translate.TranslationFragment;
+import com.andyanika.translator.main.MainActivity;
 
 import javax.inject.Inject;
 
@@ -65,7 +67,7 @@ public class MainActivityNavigator extends SupportFragmentNavigator {
     }
 
     @Override
-    protected void back() {
+    public void back() {
         activity.setTitle(R.string.app_name);
         super.back();
     }
