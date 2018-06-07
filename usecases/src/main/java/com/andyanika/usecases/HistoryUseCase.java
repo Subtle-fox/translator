@@ -5,7 +5,6 @@ import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRowModel;
 
 import java.util.List;
-import java.util.Observable;
 
 import javax.inject.Inject;
 
@@ -19,9 +18,10 @@ public class HistoryUseCase {
         this.repository = repository;
     }
 
-    public Flowable<List<TranslationRowModel>> run(String filter) {
+    public Flowable<List<TranslationRowModel>> run(String filter, int limit) {
         return repository
                 .getHistory()
+                .take(limit)
                 .flatMap(list -> Flowable.fromIterable(list)
                         .filter(item -> filter(item.translateResult, filter)).toList()
                         .toFlowable());

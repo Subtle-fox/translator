@@ -2,7 +2,6 @@ package com.andyanika.usecases;
 
 import com.andyanika.translator.common.LocalRepository;
 import com.andyanika.translator.common.RemoteRepository;
-import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateDirection;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
@@ -22,7 +21,7 @@ public class TranslateUseCase {
         this.remoteRepository = remoteRepository;
     }
 
-    public Observable<TranslateResult> translate(@NonNull String srcText) {
+    public Observable<TranslateResult> run(@NonNull String srcText) {
         if (srcText.isEmpty()) {
             return Observable.empty();
         }

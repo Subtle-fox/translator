@@ -18,6 +18,8 @@ import dagger.android.support.AndroidSupportInjection;
 import dagger.android.support.DaggerFragment;
 
 public class FavoriteFragment extends DaggerFragment {
+    private final static int LIMIT = 100;
+
     @Inject
     FavoritesListAdapter adapter;
 
@@ -49,7 +51,7 @@ public class FavoriteFragment extends DaggerFragment {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
         viewModel.data.observe(this, adapter::setData);
-        viewModel.load();
+        viewModel.load(LIMIT);
     }
 
     @Override

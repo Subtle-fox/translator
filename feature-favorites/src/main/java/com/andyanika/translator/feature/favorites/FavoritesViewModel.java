@@ -30,9 +30,9 @@ public class FavoritesViewModel extends ViewModel {
         this.removeFavoriteUseCase = removeFavoriteUseCase;
     }
 
-    void load() {
+    void load(int limit) {
         if (listDisposable == null || listDisposable.isDisposed()) {
-            listDisposable = getFavoritesUseCase.run().subscribe(data::postValue);
+            listDisposable = getFavoritesUseCase.run(limit).subscribe(data::postValue);
         }
     }
 

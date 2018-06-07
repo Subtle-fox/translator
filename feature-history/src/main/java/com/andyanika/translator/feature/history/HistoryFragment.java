@@ -22,6 +22,8 @@ import dagger.android.support.AndroidSupportInjection;
 import dagger.android.support.DaggerFragment;
 
 public class HistoryFragment extends DaggerFragment {
+    private final static int LIMIT = 100;
+
     @Inject
     HistoryListAdapter adapter;
 
@@ -74,7 +76,7 @@ public class HistoryFragment extends DaggerFragment {
     public void onStart() {
         super.onStart();
         clearBtn.setOnClickListener(v -> viewModel.showClearBtn.setValue(false));
-        viewModel.subscribeSearch(textObservable);
+        viewModel.subscribeSearch(textObservable, LIMIT);
         viewModel.subscribeItemClick(adapter.getObservable());
     }
 

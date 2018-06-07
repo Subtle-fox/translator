@@ -1,7 +1,6 @@
 package com.andyanika.translator.feature.select_lang.di;
 
 import com.andyanika.resources.di.FragmentScope;
-import com.andyanika.resources.di.module.ResourceModule;
 import com.andyanika.resources.di.module.ViewModelFactoryModule;
 import com.andyanika.translator.feature.select_lang.SelectLanguageFragment;
 
@@ -12,7 +11,6 @@ import dagger.android.AndroidInjector;
 @Subcomponent(modules = {
         SelectLanguageModule.class,
         SelectLanguageViewModelModule.class,
-        ResourceModule.class,
         ViewModelFactoryModule.class
 })
 public interface SelectLanguageComponent extends AndroidInjector<SelectLanguageFragment> {

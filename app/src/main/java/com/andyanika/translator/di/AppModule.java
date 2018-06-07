@@ -1,10 +1,12 @@
 package com.andyanika.translator.di;
 
 import android.content.Context;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
-
-import javax.inject.Singleton;
 
 @Module
 public class AppModule {
@@ -16,6 +18,7 @@ public class AppModule {
 
     @Provides
     @Singleton
+    @Named("app")
     Context provideAppContext() {
         return appContext;
     }

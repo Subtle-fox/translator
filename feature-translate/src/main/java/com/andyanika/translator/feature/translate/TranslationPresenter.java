@@ -94,7 +94,7 @@ public class TranslationPresenter {
                 .mergeWith(retrySubject)
                 .doOnNext(this::showProgress)
                 .debounce(DELAY, TimeUnit.SECONDS)
-                .switchMap(str -> translateUseCase.translate(str))
+                .switchMap(str -> translateUseCase.run(str))
                 .observeOn(uiScheduler)
                 .subscribe(this::processResult, this::processError);
     }

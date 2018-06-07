@@ -23,7 +23,7 @@ public class LocalRepositoryModule {
 
     @Provides
     @Singleton
-    public TranslatorDao provideDatabase(Context context) {
+    public TranslatorDao provideDatabase(@Named("app") Context context) {
         return Room.databaseBuilder(context, DatabaseTranslator.class, "words_database").build().translatorDao();
     }
 
@@ -35,7 +35,7 @@ public class LocalRepositoryModule {
 
     @Provides
     @Singleton
-    public SharedPreferences providePreferences(Context ctx) {
+    public SharedPreferences providePreferences(@Named("app") Context ctx) {
         return ctx.getSharedPreferences("config", Context.MODE_PRIVATE);
     }
 }

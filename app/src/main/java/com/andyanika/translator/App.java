@@ -1,7 +1,7 @@
 package com.andyanika.translator;
 
+import android.app.Activity;
 import android.app.Application;
-import android.support.v4.app.Fragment;
 
 import com.andyanika.translator.di.AppComponent;
 import com.andyanika.translator.di.AppModule;
@@ -11,14 +11,14 @@ import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.android.HasActivityInjector;
 
-public class App extends Application implements HasSupportFragmentInjector {
+public class App extends Application implements HasActivityInjector {
 
     private static AppComponent appComponent;
 
     @Inject
-    DispatchingAndroidInjector<Fragment> dispatchingActivityInjector;
+    DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
 
     @Override
     public void onCreate() {
@@ -39,7 +39,7 @@ public class App extends Application implements HasSupportFragmentInjector {
     }
 
     @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
+    public AndroidInjector<Activity> activityInjector() {
         return dispatchingActivityInjector;
     }
 }

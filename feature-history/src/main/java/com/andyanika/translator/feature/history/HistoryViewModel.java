@@ -37,13 +37,13 @@ public class HistoryViewModel extends ViewModel {
         showClearBtn.setValue(false);
     }
 
-    void subscribeSearch(Observable<CharSequence> searchTextObservable) {
+    void subscribeSearch(Observable<CharSequence> searchTextObservable, int limit) {
         listDisposable = searchTextObservable
                 .startWith("")
                 .map(CharSequence::toString)
                 .distinctUntilChanged(String::equals)
                 .doOnNext(s -> showClearBtn.postValue(!TextUtils.isEmpty(s)))
-                .flatMap(str -> historyUseCase.run(str).toObservable())
+                .flatMap(str -> historyUseCase.run(str, limit).toObservable())
                 .subscribe(data::postValue);
     }
 
