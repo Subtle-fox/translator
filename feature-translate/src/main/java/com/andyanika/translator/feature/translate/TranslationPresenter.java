@@ -5,10 +5,10 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase;
+import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
+import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase;
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.usecases.GetSelectedLanguagesUseCase;
-import com.andyanika.usecases.SelectLanguageUseCase;
-import com.andyanika.usecases.TranslateUseCase;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,11 +25,10 @@ public class TranslationPresenter {
     private static final long DELAY = 1;
 
     private final TranslationView view;
-    private TranslateUseCase translateUseCase;
+    private TranslationUseCase translateUseCase;
     private SelectLanguageUseCase selectLanguageUseCase;
+    private GetSelectedLanguageUseCase getSelectedLanguagesUseCase;
     private Scheduler uiScheduler;
-
-    private GetSelectedLanguagesUseCase getSelectedLanguagesUseCase;
 
     private Disposable searchDisposable;
     private Disposable languageDisposable;
@@ -39,8 +38,8 @@ public class TranslationPresenter {
 
     @Inject
     TranslationPresenter(TranslationView view,
-                         TranslateUseCase translateUseCase,
-                         GetSelectedLanguagesUseCase getSelectedLanguagesUseCase,
+                         TranslationUseCase translateUseCase,
+                         GetSelectedLanguageUseCase getSelectedLanguagesUseCase,
                          SelectLanguageUseCase selectLanguageUseCase,
                          PublishSubject<String> retrySubject,
                          @Named("ui") Scheduler uiScheduler) {

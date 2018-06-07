@@ -6,9 +6,9 @@ import android.arch.lifecycle.ViewModel;
 import com.andyanika.resources.Extras;
 import com.andyanika.resources.Screens;
 import com.andyanika.resources.di.FragmentScope;
-import com.andyanika.translator.common.models.LanguageRowModel;
-import com.andyanika.usecases.GetLanguagesUseCase;
-import com.andyanika.usecases.SelectLanguageUseCase;
+import com.andyanika.translator.common.interfaces.usecase.GetLanguagesUseCase;
+import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
+import com.andyanika.translator.common.models.UiLanguageModel;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import ru.terrakok.cicerone.Router;
 
 @FragmentScope
 public class SelectLanguageViewModel extends ViewModel {
-    MutableLiveData<List<LanguageRowModel>> data = new MutableLiveData<>();
+    MutableLiveData<List<UiLanguageModel>> data = new MutableLiveData<>();
 
     private final GetLanguagesUseCase getLanguagesUseCase;
     private final SelectLanguageUseCase selectLanguageUseCase;
@@ -48,7 +48,7 @@ public class SelectLanguageViewModel extends ViewModel {
         listDisposable = getLanguagesUseCase.run(isSrcMode).subscribe(data::postValue);
     }
 
-    public void subscribeItemClick(Single<LanguageRowModel> single) {
+    public void subscribeItemClick(Single<UiLanguageModel> single) {
         itemClickDisposable = single
                 .flatMapCompletable(model -> {
                     System.out.println("click received, mode " + isSrcMode);

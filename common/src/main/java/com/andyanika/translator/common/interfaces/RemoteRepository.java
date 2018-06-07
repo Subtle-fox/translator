@@ -1,9 +1,7 @@
-package com.andyanika.translator.common;
+package com.andyanika.translator.common.interfaces;
 
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
-
-import java.io.IOException;
 
 import io.reactivex.Observable;
 

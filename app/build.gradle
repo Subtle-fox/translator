@@ -11,8 +11,6 @@ android {
         targetSdkVersion targetSdk
         minSdkVersion minSdk
         buildToolsVersion build_tools_version
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -49,14 +47,10 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:${dagger_version}"
     annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
 
+    implementation "ru.terrakok.cicerone:cicerone:${cicerone_version}"
+
     implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
     implementation "io.reactivex.rxjava2:rxandroid:${rx_android_version}"
-    implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.1.1'
 
-    implementation 'ru.terrakok.cicerone:cicerone:3.0.0'
-
-
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation "junit:junit:${junit_version}"
 }

@@ -4,7 +4,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.andyanika.translator.common.LocalRepository;
+import com.andyanika.translator.common.interfaces.LocalRepository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

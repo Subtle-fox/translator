@@ -3,7 +3,7 @@ package com.andyanika.resources.di.module;
 import android.content.Context;
 
 import com.andyanika.resources.di.ActivityScope;
-import com.andyanika.translator.common.Resources;
+import com.andyanika.translator.common.interfaces.Resources;
 
 import javax.inject.Named;
 

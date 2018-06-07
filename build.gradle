@@ -21,6 +21,11 @@ ext {
 
     rx_java_version = '2.1.5'
     rx_android_version = '2.0.1'
+    rx_binding_version = '2.1.1'
+
+    cicerone_version = '3.0.0'
+
+    junit_version = '4.12'
 }
 
 buildscript {

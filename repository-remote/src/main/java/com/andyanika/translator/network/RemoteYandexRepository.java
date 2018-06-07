@@ -1,6 +1,6 @@
 package com.andyanika.translator.network;
 
-import com.andyanika.translator.common.RemoteRepository;
+import com.andyanika.translator.common.interfaces.RemoteRepository;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
 

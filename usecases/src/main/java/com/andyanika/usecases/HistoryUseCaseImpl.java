@@ -1,8 +1,9 @@
 package com.andyanika.usecases;
 
-import com.andyanika.translator.common.LocalRepository;
+import com.andyanika.translator.common.interfaces.LocalRepository;
+import com.andyanika.translator.common.interfaces.usecase.HistoryUseCase;
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.TranslationRowModel;
+import com.andyanika.translator.common.models.UiTranslationModel;
 
 import java.util.List;
 
@@ -10,15 +11,16 @@ import javax.inject.Inject;
 
 import io.reactivex.Flowable;
 
-public class HistoryUseCase {
+public class HistoryUseCaseImpl implements HistoryUseCase {
     private LocalRepository repository;
 
     @Inject
-    public HistoryUseCase(LocalRepository repository) {
+    public HistoryUseCaseImpl(LocalRepository repository) {
         this.repository = repository;
     }
 
-    public Flowable<List<TranslationRowModel>> run(String filter, int limit) {
+    @Override
+    public Flowable<List<UiTranslationModel>> run(String filter, int limit) {
         return repository
                 .getHistory()
                 .take(limit)

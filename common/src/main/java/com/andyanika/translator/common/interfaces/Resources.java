@@ -1,4 +1,4 @@
-package com.andyanika.translator.common;
+package com.andyanika.translator.common.interfaces;
 
 public interface Resources {
     String getString(int resourceId);

@@ -1,11 +1,12 @@
 package com.andyanika.translator.network;
 
-import com.andyanika.translator.common.RemoteRepository;
-import dagger.Module;
-import dagger.Provides;
+import com.andyanika.translator.common.interfaces.RemoteRepository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 
 @Module(includes = NetworkModule.class)
 public class RemoteRepositoryModule {

@@ -7,7 +7,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.TranslationRowModel;
+import com.andyanika.translator.common.models.UiTranslationModel;
 
 import io.reactivex.Observer;
 
@@ -29,7 +29,7 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
         favoriteButton.setOnClickListener(v -> clickObserver.onNext(getAdapterPosition()));
     }
 
-    public void bind(TranslationRowModel model) {
+    public void bind(UiTranslationModel model) {
         TranslateResult result = model.translateResult;
 
         title.setText(result.textSrc);

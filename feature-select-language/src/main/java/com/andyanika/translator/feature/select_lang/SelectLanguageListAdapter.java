@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.andyanika.resources.di.FragmentScope;
-import com.andyanika.translator.common.models.LanguageRowModel;
+import com.andyanika.translator.common.models.UiLanguageModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import io.reactivex.subjects.Subject;
 
 @FragmentScope
 public class SelectLanguageListAdapter extends RecyclerView.Adapter<SelectLanguageViewHolder> {
-    private ArrayList<LanguageRowModel> data = new ArrayList<>();
+    private ArrayList<UiLanguageModel> data = new ArrayList<>();
     private Subject<Integer> subject;
 
     @Inject
@@ -28,11 +28,11 @@ public class SelectLanguageListAdapter extends RecyclerView.Adapter<SelectLangua
         this.subject = subject;
     }
 
-    Single<LanguageRowModel> getObservable() {
+    Single<UiLanguageModel> getObservable() {
         return subject.map(position -> data.get(position)).singleOrError();
     }
 
-    void setData(@Nullable List<LanguageRowModel> newData) {
+    void setData(@Nullable List<UiLanguageModel> newData) {
         data = newData == null ? new ArrayList<>() : new ArrayList<>(newData);
         notifyDataSetChanged();
     }

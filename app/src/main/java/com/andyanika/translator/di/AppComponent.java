@@ -17,7 +17,8 @@ import dagger.Component;
         LocalRepositoryModule.class,
         RemoteRepositoryModule.class,
         SchedulersModule.class,
-        MainActivityComponentModule.class
+        MainActivityComponentModule.class,
+        UseCaseModule.class
 })
 public interface AppComponent {
     void inject(App app);

@@ -4,12 +4,12 @@ import android.content.SharedPreferences;
 
 import com.andyanika.datasource.local.model.FavoriteModel;
 import com.andyanika.datasource.local.model.WordModel;
-import com.andyanika.translator.common.LocalRepository;
+import com.andyanika.translator.common.interfaces.LocalRepository;
 import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateDirection;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
-import com.andyanika.translator.common.models.TranslationRowModel;
+import com.andyanika.translator.common.models.UiTranslationModel;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Flowable<List<TranslationRowModel>> getHistory() {
+    public Flowable<List<UiTranslationModel>> getHistory() {
         return dao.getHistory()
                 .flatMap(list -> Flowable.fromIterable(list)
                         .map(adapter::toTranslationRowModel).toList()
@@ -45,7 +45,7 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Flowable<List<TranslationRowModel>> getFavorites() {
+    public Flowable<List<UiTranslationModel>> getFavorites() {
         return dao.getFavorites()
                 .flatMap(list -> Flowable.fromIterable(list)
                         .map(adapter::toTranslationRowModel).toList()

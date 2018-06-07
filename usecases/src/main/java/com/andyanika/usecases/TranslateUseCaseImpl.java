@@ -1,7 +1,8 @@
 package com.andyanika.usecases;
 
-import com.andyanika.translator.common.LocalRepository;
-import com.andyanika.translator.common.RemoteRepository;
+import com.andyanika.translator.common.interfaces.LocalRepository;
+import com.andyanika.translator.common.interfaces.RemoteRepository;
+import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase;
 import com.andyanika.translator.common.models.TranslateDirection;
 import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.TranslationRequest;
@@ -11,16 +12,17 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
 
-public class TranslateUseCase {
+public class TranslateUseCaseImpl implements TranslationUseCase {
     private LocalRepository localRepository;
     private RemoteRepository remoteRepository;
 
     @Inject
-    public TranslateUseCase(LocalRepository localRepository, RemoteRepository remoteRepository) {
+    public TranslateUseCaseImpl(LocalRepository localRepository, RemoteRepository remoteRepository) {
         this.localRepository = localRepository;
         this.remoteRepository = remoteRepository;
     }
 
+    @Override
     public Observable<TranslateResult> run(@NonNull String srcText) {
         if (srcText.isEmpty()) {
             return Observable.empty();

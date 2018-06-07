@@ -1,6 +1,7 @@
 package com.andyanika.usecases;
 
-import com.andyanika.translator.common.LocalRepository;
+import com.andyanika.translator.common.interfaces.LocalRepository;
+import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
 import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateDirection;
 
@@ -10,16 +11,17 @@ import javax.inject.Named;
 import io.reactivex.Completable;
 import io.reactivex.Scheduler;
 
-public class SelectLanguageUseCase {
+public class SelectLanguageUseCaseImpl implements SelectLanguageUseCase {
     private final LocalRepository repository;
     private Scheduler ioScheduler;
 
     @Inject
-    public SelectLanguageUseCase(LocalRepository repository, @Named("io") Scheduler ioScheduler) {
+    public SelectLanguageUseCaseImpl(LocalRepository repository, @Named("io") Scheduler ioScheduler) {
         this.repository = repository;
         this.ioScheduler = ioScheduler;
     }
 
+    @Override
     public Completable setSrc(LanguageCode code) {
         return Completable.fromObservable(
                 repository.getSrcLanguage()
@@ -29,6 +31,7 @@ public class SelectLanguageUseCase {
                         .doOnNext(repository::setLanguageDirection));
     }
 
+    @Override
     public Completable setDst(LanguageCode code) {
         return Completable.fromObservable(
                 repository.getSrcLanguage()
@@ -38,6 +41,7 @@ public class SelectLanguageUseCase {
                         .doOnNext(repository::setLanguageDirection));
     }
 
+    @Override
     public Completable swap() {
         return Completable.fromObservable(
                 repository.getSrcLanguage()

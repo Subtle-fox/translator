@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.andyanika.resources.di.FragmentScope;
-import com.andyanika.translator.common.models.TranslationRowModel;
+import com.andyanika.translator.common.models.UiTranslationModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import io.reactivex.subjects.Subject;
 
 @FragmentScope
 public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
-    private ArrayList<TranslationRowModel> data = new ArrayList<>();
+    private ArrayList<UiTranslationModel> data = new ArrayList<>();
     private Subject<Integer> subject;
 
     @Inject
@@ -28,11 +28,11 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
         this.subject = subject;
     }
 
-    Observable<TranslationRowModel> getObservable() {
+    Observable<UiTranslationModel> getObservable() {
         return subject.map(position -> data.get(position));
     }
 
-    void setData(@Nullable List<TranslationRowModel> data) {
+    void setData(@Nullable List<UiTranslationModel> data) {
         this.data = data == null ? new ArrayList<>() : new ArrayList<>(data);
         notifyDataSetChanged();
     }
@@ -47,7 +47,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        TranslationRowModel translateResult = data.get(position);
+        UiTranslationModel translateResult = data.get(position);
         holder.bind(translateResult);
     }
 

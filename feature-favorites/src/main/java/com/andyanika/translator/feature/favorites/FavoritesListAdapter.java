@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.andyanika.resources.di.FragmentScope;
-import com.andyanika.translator.common.models.TranslationRowModel;
+import com.andyanika.translator.common.models.UiTranslationModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import io.reactivex.subjects.Subject;
 
 @FragmentScope
 public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHolder> {
-    private ArrayList<TranslationRowModel> data;
+    private ArrayList<UiTranslationModel> data;
     private Subject<Integer> subject;
 
     @Inject
@@ -30,12 +30,12 @@ public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHold
         this.subject = subject;
     }
 
-    public Observable<TranslationRowModel> getObservable() {
+    public Observable<UiTranslationModel> getObservable() {
         return subject.map(position -> data.get(position));
     }
 
-    public void setData(@Nullable List<TranslationRowModel> newData) {
-        List<TranslationRowModel> oldData = data;
+    public void setData(@Nullable List<UiTranslationModel> newData) {
+        List<UiTranslationModel> oldData = data;
         data = newData == null ? new ArrayList<>() : new ArrayList<>(newData);
 
         DiffUtilsCallback diffUtilsCallback = new DiffUtilsCallback(data, oldData);
@@ -52,7 +52,7 @@ public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHold
 
     @Override
     public void onBindViewHolder(@NonNull FavoritesViewHolder holder, int position) {
-        TranslationRowModel translateResult = data.get(position);
+        UiTranslationModel translateResult = data.get(position);
         holder.bind(translateResult);
     }
 

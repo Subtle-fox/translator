@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.andyanika.translator.R;
-import com.andyanika.translator.main.di.MainActivityComponent;
 
 import javax.inject.Inject;
 
@@ -18,8 +17,6 @@ import ru.terrakok.cicerone.NavigatorHolder;
 
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
-    private MainActivityComponent activityComponent;
-
     @Inject
     MainActivityPresenter presenter;
 
@@ -39,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        prepareComponent();
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -49,16 +46,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         if (savedInstanceState == null) {
             presenter.navigateToTranslation();
         }
-    }
-
-    private void prepareComponent() {
-        AndroidInjection.inject(this);
-//        activityComponent = App.getAppComponent().plus(new MainActivityModule(this));
-//        activityComponent.inject(this);
-    }
-
-    public MainActivityComponent getActivityComponent() {
-        return activityComponent;
     }
 
     @Override

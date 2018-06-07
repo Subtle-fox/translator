@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.andyanika.translator.common.models.LanguageRowModel;
+import com.andyanika.translator.common.models.UiLanguageModel;
 
 import io.reactivex.subjects.Subject;
 
@@ -24,7 +24,7 @@ public class SelectLanguageViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void bind(LanguageRowModel model) {
+    public void bind(UiLanguageModel model) {
         title.setText(model.code.toString());
         description.setText(model.description);
         currentIcon.setVisibility(model.isCurrent ? View.VISIBLE : View.GONE);
