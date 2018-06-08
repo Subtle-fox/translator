@@ -5,19 +5,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/background</item>
-    </style>
-
-    <style name="clickableView">
-        <item name="android:foreground">?android:selectableItemBackground</item>
-        <item name="android:background">?android:selectableItemBackground</item>
-    </style>
-
-    <style name="toolbar.btn" parent="clickableView">
-        <item name="android:layout_width">@dimen/toolbar_height</item>
-        <item name="android:layout_height">@dimen/toolbar_height</item>
-        <item name="android:padding">@dimen/padding_default</item>
-        <item name="android:layout_gravity">center_vertical</item>
-
+        <item name="buttonStyle">@style/btn</item>
     </style>
 
     <style name="AppTheme.Progress">
@@ -29,7 +17,7 @@
     <!--
         ### List
     -->
-    <style name="listItem" parent="clickableView">
+    <style name="listItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">@dimen/padding_default</item>
@@ -37,6 +25,7 @@
         <item name="android:paddingTop">@dimen/padding_default</item>
         <item name="android:paddingBottom">@dimen/padding_default</item>
         <item name="android:gravity">center_vertical</item>
+        <item name="android:background">?android:selectableItemBackground</item>
     </style>
 
     <style name="listItem.1Line">
@@ -50,7 +39,7 @@
     <!--
         ### Buttons
     -->
-    <style name="btn" parent="Widget.AppCompat.Button">
+    <style name="btn" parent="Widget.AppCompat.Button.Colored">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:layout_height">@dimen/btn_height</item>
@@ -59,27 +48,22 @@
         <item name="android:paddingLeft">@dimen/btn_padding</item>
         <item name="android:paddingRight">@dimen/btn_padding</item>
         <item name="android:textColor">@color/colorPrimaryAlt</item>
-        <item name="android:background">@drawable/btn_raised_accent</item>
         <item name="android:clickable">true</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
 
-    <!-- Заполненняемая по ширине экрана кнопка  -->
-    <style name="btn.filled">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginLeft">@dimen/space_xs</item>
-        <item name="android:layout_marginRight">@dimen/space_xs</item>
-        <item name="android:height">@dimen/btn_height</item>
-        <item name="android:textSize">@dimen/txt_size_button</item>
+    <style name="btnFavorite">
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
     </style>
 
-    <!-- Заполненняемая по ширине экрана кнопка с фоном и закругленными краями -->
-    <style name="btn.filled.accent">
-        <item name="android:background">@drawable/btn_raised_accent</item>
-        <item name="android:textColor">@color/colorPrimaryAlt</item>
+    <style name="btnToolbar" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">@dimen/toolbar_height</item>
+        <item name="android:layout_height">@dimen/toolbar_height</item>
+        <item name="android:padding">@dimen/padding_default</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:maxHeight">24dp</item>
     </style>
-
 
     <!--
         ### TextView
@@ -111,9 +95,5 @@
         <item name="android:layout_margin">@dimen/margin_default</item>
         <item name="android:textSize">@dimen/txt_size_large</item>
         <item name="android:textColor">@color/txt_primary</item>
-    </style>
-
-    <style name="btnFavorite">
-        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
     </style>
 </resources>
