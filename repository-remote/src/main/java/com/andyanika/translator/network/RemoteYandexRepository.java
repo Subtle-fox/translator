@@ -1,5 +1,6 @@
 package com.andyanika.translator.network;
 
+import com.andyanika.datasource.remote.BuildConfig;
 import com.andyanika.translator.common.interfaces.RemoteRepository;
 import com.andyanika.translator.common.models.TranslateRequest;
 import com.andyanika.translator.common.models.TranslateResult;
@@ -16,7 +17,10 @@ class RemoteYandexRepository implements RemoteRepository {
         this.api = api;
         this.directionBuilder = directionBuilder;
         this.modelsAdapter = modelsAdapter;
-        this.key = "trnsl.1.1.20180425T102131Z.2f89797675600432.d96e99dc90d3a48a0db9128c85bddfaeea265ef4";
+        this.key = BuildConfig.ApiKey;
+        if (key.isEmpty()) {
+            System.err.println("Yandex api key not defined in gradle.properties");
+        }
     }
 
     @Override
