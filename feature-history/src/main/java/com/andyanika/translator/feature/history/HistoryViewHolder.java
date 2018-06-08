@@ -6,8 +6,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.andyanika.translator.common.models.FavoriteModel;
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.UiTranslationModel;
 
 import io.reactivex.Observer;
 
@@ -29,11 +29,11 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
         favoriteButton.setOnClickListener(v -> clickObserver.onNext(getAdapterPosition()));
     }
 
-    public void bind(UiTranslationModel model) {
+    public void bind(FavoriteModel model) {
         TranslateResult result = model.translateResult;
 
         title.setText(result.textSrc);
-        description.setText(result.textTranslated);
+        description.setText(result.textDst);
         langSrc.setText(result.direction.src.toString());
         langDst.setText(result.direction.dst.toString());
         int color = model.isFavorite ? Color.RED : Color.BLACK;

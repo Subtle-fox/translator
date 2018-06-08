@@ -6,9 +6,10 @@ import android.arch.lifecycle.ViewModel;
 import com.andyanika.resources.Extras;
 import com.andyanika.resources.Screens;
 import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.translator.common.interfaces.ScreenRouter;
 import com.andyanika.translator.common.interfaces.usecase.GetLanguagesUseCase;
 import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
-import com.andyanika.translator.common.models.UiLanguageModel;
+import com.andyanika.translator.common.models.ui.DisplayLanguageModel;
 
 import java.util.List;
 
@@ -18,22 +19,21 @@ import javax.inject.Named;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
-import ru.terrakok.cicerone.Router;
 
 @FragmentScope
 public class SelectLanguageViewModel extends ViewModel {
-    MutableLiveData<List<UiLanguageModel>> data = new MutableLiveData<>();
+    MutableLiveData<List<DisplayLanguageModel>> data = new MutableLiveData<>();
 
     private final GetLanguagesUseCase getLanguagesUseCase;
     private final SelectLanguageUseCase selectLanguageUseCase;
     private final Scheduler uiScheduler;
-    private final Router router;
+    private final ScreenRouter router;
     private Disposable listDisposable;
     private Disposable itemClickDisposable;
     private boolean isSrcMode;
 
     @Inject
-    SelectLanguageViewModel(GetLanguagesUseCase getLanguagesUseCase, SelectLanguageUseCase selectLanguageUseCase, Router router, @Named("ui") Scheduler uiScheduler) {
+    SelectLanguageViewModel(GetLanguagesUseCase getLanguagesUseCase, SelectLanguageUseCase selectLanguageUseCase, ScreenRouter router, @Named("ui") Scheduler uiScheduler) {
         this.router = router;
         this.getLanguagesUseCase = getLanguagesUseCase;
         this.selectLanguageUseCase = selectLanguageUseCase;
@@ -48,7 +48,7 @@ public class SelectLanguageViewModel extends ViewModel {
         listDisposable = getLanguagesUseCase.run(isSrcMode).subscribe(data::postValue);
     }
 
-    public void subscribeItemClick(Single<UiLanguageModel> single) {
+    public void subscribeItemClick(Single<DisplayLanguageModel> single) {
         itemClickDisposable = single
                 .flatMapCompletable(model -> {
                     System.out.println("click received, mode " + isSrcMode);

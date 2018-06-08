@@ -1,8 +1,8 @@
 package com.andyanika.translator.network;
 
 import com.andyanika.translator.common.interfaces.RemoteRepository;
+import com.andyanika.translator.common.models.TranslateRequest;
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.TranslationRequest;
 
 import io.reactivex.Observable;
 
@@ -20,7 +20,7 @@ class RemoteYandexRepository implements RemoteRepository {
     }
 
     @Override
-    public Observable<TranslateResult> translate(TranslationRequest request) {
+    public Observable<TranslateResult> translate(TranslateRequest request) {
         String direction = directionBuilder.buildParam(request.direction);
         return api.translate(key, request.text, direction).map(response -> modelsAdapter.convert(request, response));
     }

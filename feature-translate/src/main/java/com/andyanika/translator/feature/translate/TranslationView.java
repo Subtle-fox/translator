@@ -1,10 +1,10 @@
 package com.andyanika.translator.feature.translate;
 
 
-import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
 
 public interface TranslationView {
-    void showTranslation(TranslateResult result);
+    void showTranslation(DisplayTranslateResult result);
     void showProgress();
     void hideProgress();
     void showErrorLayout();

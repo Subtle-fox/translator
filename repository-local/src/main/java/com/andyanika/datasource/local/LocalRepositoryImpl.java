@@ -2,14 +2,13 @@ package com.andyanika.datasource.local;
 
 import android.content.SharedPreferences;
 
-import com.andyanika.datasource.local.model.FavoriteModel;
 import com.andyanika.datasource.local.model.WordModel;
 import com.andyanika.translator.common.interfaces.LocalRepository;
+import com.andyanika.translator.common.models.FavoriteModel;
 import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateDirection;
+import com.andyanika.translator.common.models.TranslateRequest;
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.TranslationRequest;
-import com.andyanika.translator.common.models.UiTranslationModel;
 
 import java.util.List;
 
@@ -20,14 +19,13 @@ import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
 
 class LocalRepositoryImpl implements LocalRepository {
-    private TranslatorDao dao;
-    private SharedPreferences preferences;
-    private ModelsAdapter adapter;
-    private Scheduler ioScheduler;
+    private final TranslatorDao dao;
+    private final SharedPreferences preferences;
+    private final ModelsAdapter adapter;
+    private final Scheduler ioScheduler;
 
-    private PublishSubject<LanguageCode> srcLanguageSubject = PublishSubject.create();
-    private PublishSubject<LanguageCode> dstLanguageSubject = PublishSubject.create();
-
+    private final PublishSubject<LanguageCode> srcLanguageSubject = PublishSubject.create();
+    private final PublishSubject<LanguageCode> dstLanguageSubject = PublishSubject.create();
 
     LocalRepositoryImpl(TranslatorDao dao, SharedPreferences preferences, ModelsAdapter adapter, Scheduler ioScheduler) {
         this.dao = dao;
@@ -37,7 +35,7 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Flowable<List<UiTranslationModel>> getHistory() {
+    public Flowable<List<FavoriteModel>> getHistory() {
         return dao.getHistory()
                 .flatMap(list -> Flowable.fromIterable(list)
                         .map(adapter::toTranslationRowModel).toList()
@@ -45,7 +43,7 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Flowable<List<UiTranslationModel>> getFavorites() {
+    public Flowable<List<FavoriteModel>> getFavorites() {
         return dao.getFavorites()
                 .flatMap(list -> Flowable.fromIterable(list)
                         .map(adapter::toTranslationRowModel).toList()
@@ -53,7 +51,7 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Single<TranslateResult> translate(TranslationRequest request) {
+    public Single<TranslateResult> translate(TranslateRequest request) {
         return dao.getTranslation(request.text, request.direction.src.toString(), request.direction.dst.toString())
                 .map(adapter::toTranslationResult);
     }
@@ -66,13 +64,13 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public void addFavorites(int wordId) {
-        FavoriteModel model = new FavoriteModel(wordId);
+        com.andyanika.datasource.local.model.FavoriteModel model = new com.andyanika.datasource.local.model.FavoriteModel(wordId);
         dao.addFavorite(model);
     }
 
     @Override
     public void removeFavorite(int wordId) {
-        FavoriteModel model = new FavoriteModel(wordId);
+        com.andyanika.datasource.local.model.FavoriteModel model = new com.andyanika.datasource.local.model.FavoriteModel(wordId);
         dao.removeFavorite(model);
     }
 
@@ -100,7 +98,7 @@ class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public void setLanguageDirection(TranslateDirection direction) {
+    public void setLanguageDirection(TranslateDirection<LanguageCode> direction) {
         System.out.println("save repository direction ");
         preferences
                 .edit()

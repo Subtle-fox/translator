@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.GetFavoritesUseCase;
 import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
-import com.andyanika.translator.common.models.UiTranslationModel;
+import com.andyanika.translator.common.models.FavoriteModel;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import io.reactivex.disposables.Disposable;
 
 @FragmentScope
 public class FavoritesViewModel extends ViewModel {
-    final MutableLiveData<List<UiTranslationModel>> data = new MutableLiveData<>();
+    final MutableLiveData<List<FavoriteModel>> data = new MutableLiveData<>();
 
     private final GetFavoritesUseCase getFavoritesUseCase;
     private final RemoveFavoriteUseCase removeFavoriteUseCase;
@@ -36,7 +36,7 @@ public class FavoritesViewModel extends ViewModel {
         }
     }
 
-    void subscribeItemClick(Observable<UiTranslationModel> observable) {
+    void subscribeItemClick(Observable<FavoriteModel> observable) {
         itemClickDisposable = observable
                 .flatMapCompletable(model -> removeFavoriteUseCase.run(model.id))
                 .subscribe(() -> System.out.println("favorite removed"));

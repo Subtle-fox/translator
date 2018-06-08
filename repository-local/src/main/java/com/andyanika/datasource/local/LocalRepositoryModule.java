@@ -17,25 +17,25 @@ import io.reactivex.Scheduler;
 public class LocalRepositoryModule {
     @Provides
     @Singleton
-    public LocalRepository getDataSource(TranslatorDao dao, SharedPreferences preferences, ModelsAdapter adapter, @Named("io") Scheduler ioScheduler) {
+    LocalRepository getDataSource(TranslatorDao dao, SharedPreferences preferences, ModelsAdapter adapter, @Named("io") Scheduler ioScheduler) {
         return new LocalRepositoryImpl(dao, preferences, adapter, ioScheduler);
     }
 
     @Provides
     @Singleton
-    public TranslatorDao provideDatabase(@Named("app") Context context) {
+    TranslatorDao provideDatabase(@Named("app") Context context) {
         return Room.databaseBuilder(context, DatabaseTranslator.class, "words_database").build().translatorDao();
     }
 
     @Provides
     @Singleton
-    public ModelsAdapter provideAdapter() {
+    ModelsAdapter provideAdapter() {
         return new ModelsAdapter();
     }
 
     @Provides
     @Singleton
-    public SharedPreferences providePreferences(@Named("app") Context ctx) {
+    SharedPreferences providePreferences(@Named("app") Context ctx) {
         return ctx.getSharedPreferences("config", Context.MODE_PRIVATE);
     }
 }

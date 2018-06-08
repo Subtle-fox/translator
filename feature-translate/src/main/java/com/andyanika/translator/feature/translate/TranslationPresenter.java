@@ -8,7 +8,7 @@ import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase;
 import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
 import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase;
-import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,16 +25,16 @@ public class TranslationPresenter {
     private static final long DELAY = 1;
 
     private final TranslationView view;
-    private TranslationUseCase translateUseCase;
-    private SelectLanguageUseCase selectLanguageUseCase;
-    private GetSelectedLanguageUseCase getSelectedLanguagesUseCase;
-    private Scheduler uiScheduler;
+    private final TranslationUseCase translateUseCase;
+    private final SelectLanguageUseCase selectLanguageUseCase;
+    private final GetSelectedLanguageUseCase getSelectedLanguagesUseCase;
+    private final Scheduler uiScheduler;
+    private final Scheduler computationScheduler;
+    private final PublishSubject<String> retrySubject;
 
     private Disposable searchDisposable;
     private Disposable languageDisposable;
     private Disposable swapDisposable;
-
-    private PublishSubject<String> retrySubject;
 
     @Inject
     TranslationPresenter(TranslationView view,
@@ -42,13 +42,15 @@ public class TranslationPresenter {
                          GetSelectedLanguageUseCase getSelectedLanguagesUseCase,
                          SelectLanguageUseCase selectLanguageUseCase,
                          PublishSubject<String> retrySubject,
-                         @Named("ui") Scheduler uiScheduler) {
+                         @Named("ui") Scheduler uiScheduler,
+                         @Named("computation") Scheduler computationScheduler) {
         this.view = view;
         this.translateUseCase = translateUseCase;
         this.getSelectedLanguagesUseCase = getSelectedLanguagesUseCase;
         this.selectLanguageUseCase = selectLanguageUseCase;
         this.uiScheduler = uiScheduler;
         this.retrySubject = retrySubject;
+        this.computationScheduler = computationScheduler;
     }
 
     public void translate(@NonNull final String text) {
@@ -92,8 +94,8 @@ public class TranslationPresenter {
                 .distinctUntilChanged(String::equals)
                 .mergeWith(retrySubject)
                 .doOnNext(this::showProgress)
-                .debounce(DELAY, TimeUnit.SECONDS)
-                .switchMap(str -> translateUseCase.run(str))
+                .debounce(DELAY, TimeUnit.SECONDS, computationScheduler)
+                .switchMap(translateUseCase::run)
                 .observeOn(uiScheduler)
                 .subscribe(this::processResult, this::processError);
     }
@@ -108,7 +110,7 @@ public class TranslationPresenter {
         view.hideOffline();
     }
 
-    private void processResult(TranslateResult result) {
+    private void processResult(DisplayTranslateResult result) {
         System.out.println("process result: " + result.textTranslated);
         if (result.isFound) {
             processFoundResult(result);
@@ -117,7 +119,7 @@ public class TranslationPresenter {
         }
     }
 
-    private void processFoundResult(TranslateResult result) {
+    private void processFoundResult(DisplayTranslateResult result) {
         view.showTranslation(result);
         view.hideProgress();
         view.showClearBtn();
@@ -129,7 +131,7 @@ public class TranslationPresenter {
         }
     }
 
-    private void processEmptyResult(TranslateResult result) {
+    private void processEmptyResult(DisplayTranslateResult result) {
         if (result.isError) {
             view.showErrorLayout();
             view.clearTranslation();
@@ -146,7 +148,7 @@ public class TranslationPresenter {
         swapDisposable = selectLanguageUseCase
                 .swap()
                 .observeOn(uiScheduler)
-                .subscribe();
+                .subscribe(view::clearResult);
     }
 
     void dispose() {

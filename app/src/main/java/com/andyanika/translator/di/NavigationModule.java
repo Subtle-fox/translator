@@ -1,4 +1,6 @@
-package com.andyanika.translator.main.di;
+package com.andyanika.translator.di;
+
+import com.andyanika.translator.common.interfaces.ScreenRouter;
 
 import javax.inject.Singleton;
 
@@ -22,7 +24,7 @@ public class NavigationModule {
 
     @Provides
     @Singleton
-    Router provideRouter() {
+    Router provideCiceroneRouter() {
         return cicerone.getRouter();
     }
 
@@ -30,5 +32,21 @@ public class NavigationModule {
     @Singleton
     NavigatorHolder provideNavigatorHolder() {
         return cicerone.getNavigatorHolder();
+    }
+
+    @Provides
+    @Singleton
+    ScreenRouter provideScreenRouter(Router router) {
+        return new ScreenRouter() {
+            @Override
+            public void navigateTo(String screenKey, Object data) {
+                router.navigateTo(screenKey, data);
+            }
+
+            @Override
+            public void backTo(String screenKey) {
+                router.backTo(screenKey);
+            }
+        };
     }
 }

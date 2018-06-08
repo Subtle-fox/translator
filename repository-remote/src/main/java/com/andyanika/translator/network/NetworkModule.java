@@ -18,9 +18,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
 public class NetworkModule {
-    private final static int NETWORK_READ_TIMEOUT = 10;
-    private final static int NETWORK_WRITE_TIMEOUT = 10;
-    private final static int NETWORK_CONNECT_TIMEOUT = 10;
+    private final static int NETWORK_READ_TIMEOUT = 5;
+    private final static int NETWORK_WRITE_TIMEOUT = 5;
+    private final static int NETWORK_CONNECT_TIMEOUT = 15;
 
     @Provides
     @Named("yandex")

@@ -12,19 +12,19 @@ import dagger.Provides;
 public class RemoteRepositoryModule {
     @Singleton
     @Provides
-    public RemoteRepository provideYandexRepository(@Named("yandex") NetworkYandexApi api, TranslationParamsBuilder paramsBuilder, ModelsAdapter adapter) {
+    RemoteRepository provideYandexRepository(@Named("yandex") NetworkYandexApi api, TranslationParamsBuilder paramsBuilder, ModelsAdapter adapter) {
         return new RemoteYandexRepository(api, paramsBuilder, adapter);
     }
 
     @Singleton
     @Provides
-    public TranslationParamsBuilder provideTranslationParamsBuilder() {
+    TranslationParamsBuilder provideTranslationParamsBuilder() {
         return new TranslationParamsBuilder();
     }
 
     @Singleton
     @Provides
-    public ModelsAdapter provideModelAdapter() {
+    ModelsAdapter provideModelAdapter() {
         return new ModelsAdapter();
     }
 }

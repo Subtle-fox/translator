@@ -8,7 +8,7 @@ import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.AddFavoriteUseCase;
 import com.andyanika.translator.common.interfaces.usecase.HistoryUseCase;
 import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
-import com.andyanika.translator.common.models.UiTranslationModel;
+import com.andyanika.translator.common.models.FavoriteModel;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import io.reactivex.disposables.Disposable;
 
 @FragmentScope
 public class HistoryViewModel extends ViewModel {
-    final MutableLiveData<List<UiTranslationModel>> data = new MutableLiveData<>();
+    final MutableLiveData<List<FavoriteModel>> data = new MutableLiveData<>();
     final MutableLiveData<Boolean> showClearBtn = new MutableLiveData<>();
 
     private final HistoryUseCase historyUseCase;
@@ -47,7 +47,7 @@ public class HistoryViewModel extends ViewModel {
                 .subscribe(data::postValue);
     }
 
-    void subscribeItemClick(Observable<UiTranslationModel> observable) {
+    void subscribeItemClick(Observable<FavoriteModel> observable) {
         itemClickDisposable = observable.flatMapCompletable(model -> {
             if (model.isFavorite) {
                 return removeFavoriteUseCase.run(model.id);

@@ -10,12 +10,19 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 @Module
-public class SchedulersModule {
+class SchedulersModule {
     @Named("io")
     @Provides
     @Singleton
     Scheduler provideIoScheduler() {
         return Schedulers.io();
+    }
+
+    @Named("computation")
+    @Provides
+    @Singleton
+    Scheduler provideComputationScheduler() {
+        return Schedulers.computation();
     }
 
     @Named("ui")

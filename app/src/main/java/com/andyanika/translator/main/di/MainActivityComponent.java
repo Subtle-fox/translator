@@ -31,6 +31,4 @@ public interface MainActivityComponent extends AndroidInjector<MainActivity> {
             translationModule(new MainActivityModule(activity));
         }
     }
-
-//    Resources provideResource();
 }
