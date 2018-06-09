@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 @FragmentScope
 public class HistoryViewModel extends ViewModel {
@@ -50,11 +51,13 @@ public class HistoryViewModel extends ViewModel {
     void subscribeItemClick(Observable<FavoriteModel> observable) {
         itemClickDisposable = observable.flatMapCompletable(model -> {
             if (model.isFavorite) {
-                return removeFavoriteUseCase.run(model.id);
+                return removeFavoriteUseCase.run(model.id)
+                        .doOnComplete(() -> Timber.d("favorite removed"));
             } else {
-                return addFavoriteUseCase.run(model.id);
+                return addFavoriteUseCase.run(model.id)
+                        .doOnComplete(() -> Timber.d("favorite added"));
             }
-        }).subscribe(() -> System.out.println("favorites changed"));
+        }).subscribe();
     }
 
     void unsubscribe() {

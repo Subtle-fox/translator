@@ -2,4 +2,10 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
+
+    implementation "javax.annotation:jsr250-api:${javax_annotation_version}"
+    implementation "javax.inject:javax.inject:${javax_inject_version}"
+
+    api "com.jakewharton.timber:timber:${timber_version}"
+
 }

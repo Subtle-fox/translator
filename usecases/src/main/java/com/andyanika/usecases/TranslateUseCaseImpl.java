@@ -15,6 +15,7 @@ import javax.inject.Named;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.annotations.NonNull;
+import timber.log.Timber;
 
 class TranslateUseCaseImpl implements TranslationUseCase {
     private final LocalRepository localRepository;
@@ -46,32 +47,31 @@ class TranslateUseCaseImpl implements TranslationUseCase {
                 .zip(localRepository.getSrcLanguage(), localRepository.getDstLanguage(), TranslateDirection<LanguageCode>::new)
                 .take(1)
                 .map(direction -> new TranslateRequest(srcText, direction))
-                .doOnNext(translateRequest -> System.out.println("request next"));
+                .doOnNext(translateRequest -> Timber.d("translation request: %s", translateRequest.text));
     }
 
     Observable<DisplayTranslateResult> translateLocally(TranslateRequest request) {
         return localRepository.translate(request)
+                .doOnSuccess(r -> Timber.d("local next: %s", r.textDst))
                 .map(r -> new DisplayTranslateResult(r, true))
                 .toObservable()
-                .doOnComplete(() -> System.out.println("local completed"))
-                .doOnError(t -> System.out.println("### local error"));
+                .doOnComplete(() ->  Timber.d("local completed"))
+                .doOnError(t -> Timber.e("local error", t));
     }
 
     Observable<DisplayTranslateResult> translateRemotely(TranslateRequest request) {
         return remoteRepository.translate(request)
-                .map(result -> {
-                    System.out.println("remote next" + result.textDst);
-                    return getDisplayTranslateResult(request, result);
-                })
-                .doOnComplete(() -> System.out.println("remote completed"))
-                .doOnError(t -> System.out.println("remote error"))
+                .doOnNext(r -> Timber.d("remote next: %s", r.textDst))
+                .map(result -> getDisplayTranslateResult(request, result))
+                .doOnComplete(() ->  Timber.d("remote completed"))
+                .doOnError(t -> Timber.e("remote error", t))
                 .onErrorReturnItem(DisplayTranslateResult.createEmptyResult(request.text, request.direction, true));
     }
 
     private DisplayTranslateResult getDisplayTranslateResult(TranslateRequest request, TranslateResult result) {
         if (!request.text.equalsIgnoreCase(result.textDst)) {
             try {
-                System.out.println("save to local");
+                Timber.d("save to local repository");
                 localRepository.addTranslation(result);
                 return new DisplayTranslateResult(result, false);
             } catch (Exception e) {

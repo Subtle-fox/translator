@@ -17,6 +17,7 @@ import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
+import timber.log.Timber;
 
 class LocalRepositoryImpl implements LocalRepository {
     private final TranslatorDao dao;
@@ -99,7 +100,7 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public void setLanguageDirection(TranslateDirection<LanguageCode> direction) {
-        System.out.println("save repository direction ");
+        Timber.d("save repository direction: %s - %s", direction.src, direction.dst);
         preferences
                 .edit()
                 .putString("language_src", direction.src.toString())

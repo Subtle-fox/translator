@@ -19,6 +19,7 @@ import javax.inject.Named;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 @FragmentScope
 public class SelectLanguageViewModel extends ViewModel {
@@ -51,7 +52,7 @@ public class SelectLanguageViewModel extends ViewModel {
     public void subscribeItemClick(Single<DisplayLanguageModel> single) {
         itemClickDisposable = single
                 .flatMapCompletable(model -> {
-                    System.out.println("click received, mode " + isSrcMode);
+                    Timber.d("select language -> click received (isSrcMode = %b)", isSrcMode);
                     if (isSrcMode) {
                         return selectLanguageUseCase.setSrc(model.code);
                     } else {
@@ -59,10 +60,8 @@ public class SelectLanguageViewModel extends ViewModel {
                     }
                 })
                 .observeOn(uiScheduler)
-                .subscribe(() -> {
-                    System.out.println("subscrived -> navigate back");
-                    router.backTo(Screens.TRANSLATION);
-                });
+                .doOnComplete(() -> Timber.d("navigate back"))
+                .subscribe(() -> router.backTo(Screens.TRANSLATION));
     }
 
     public void unsubscribeItemClick() {

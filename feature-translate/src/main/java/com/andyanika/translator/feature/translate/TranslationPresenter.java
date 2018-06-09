@@ -19,6 +19,7 @@ import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
+import timber.log.Timber;
 
 @FragmentScope
 public class TranslationPresenter {
@@ -91,10 +92,12 @@ public class TranslationPresenter {
         searchDisposable = searchTextObservable
                 .distinctUntilChanged(CharSequence::equals)
                 .map(CharSequence::toString)
+                .doOnNext(t -> Timber.d("received new text: %s", t))
                 .distinctUntilChanged(String::equals)
                 .mergeWith(retrySubject)
                 .doOnNext(this::showProgress)
                 .debounce(DELAY, TimeUnit.SECONDS, computationScheduler)
+                .doOnNext(t -> Timber.d("after debounce: %s", t))
                 .switchMap(translateUseCase::run)
                 .observeOn(uiScheduler)
                 .subscribe(this::processResult, this::processError);
@@ -111,7 +114,7 @@ public class TranslationPresenter {
     }
 
     private void processResult(DisplayTranslateResult result) {
-        System.out.println("process result: " + result.textTranslated);
+        Timber.d("process result: %s", result.textTranslated);
         if (result.isFound) {
             processFoundResult(result);
         } else {
