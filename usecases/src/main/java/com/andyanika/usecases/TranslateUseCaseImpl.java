@@ -23,7 +23,7 @@ class TranslateUseCaseImpl implements TranslationUseCase {
     private final Scheduler ioScheduler;
 
     @Inject
-    TranslateUseCaseImpl(LocalRepository localRepository, RemoteRepository remoteRepository, @Named("io") Scheduler ioScheduler) {
+    TranslateUseCaseImpl(LocalRepository localRepository, @Named("yandex") RemoteRepository remoteRepository, @Named("io") Scheduler ioScheduler) {
         this.localRepository = localRepository;
         this.remoteRepository = remoteRepository;
         this.ioScheduler = ioScheduler;

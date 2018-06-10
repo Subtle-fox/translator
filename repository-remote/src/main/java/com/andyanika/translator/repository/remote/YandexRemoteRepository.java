@@ -1,19 +1,21 @@
-package com.andyanika.translator.network;
+package com.andyanika.translator.repository.remote;
 
-import com.andyanika.datasource.remote.BuildConfig;
 import com.andyanika.translator.common.interfaces.RemoteRepository;
 import com.andyanika.translator.common.models.TranslateRequest;
 import com.andyanika.translator.common.models.TranslateResult;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 
-class RemoteYandexRepository implements RemoteRepository {
-    private final NetworkYandexApi api;
-    private final TranslationParamsBuilder directionBuilder;
-    private ModelsAdapter modelsAdapter;
+class YandexRemoteRepository implements RemoteRepository {
+    private final YandexApi api;
+    private final YandexTranslationParamsBuilder directionBuilder;
+    private final YandexModelsAdapter modelsAdapter;
     private final String key;
 
-    RemoteYandexRepository(NetworkYandexApi api, TranslationParamsBuilder directionBuilder, ModelsAdapter modelsAdapter) {
+    @Inject
+    YandexRemoteRepository(YandexApi api, YandexTranslationParamsBuilder directionBuilder, YandexModelsAdapter modelsAdapter) {
         this.api = api;
         this.directionBuilder = directionBuilder;
         this.modelsAdapter = modelsAdapter;

@@ -1,10 +1,16 @@
-package com.andyanika.translator.network;
+package com.andyanika.translator.repository.remote;
 
 import com.andyanika.translator.common.models.TranslateRequest;
 import com.andyanika.translator.common.models.TranslateResult;
 
-class ModelsAdapter {
-    TranslateResult convert(TranslateRequest request, TranslationResponse response) {
+import javax.inject.Inject;
+
+class YandexModelsAdapter {
+    @Inject
+    YandexModelsAdapter() {
+    }
+
+    TranslateResult convert(TranslateRequest request, YandexTranslationResponse response) {
         StringBuilder res = new StringBuilder();
         for (String s : response.translatedText) {
             res.append(s).append('\n');

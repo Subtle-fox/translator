@@ -1,10 +1,10 @@
-package com.andyanika.translator.network;
+package com.andyanika.translator.repository.remote;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-class TranslationResponse {
+class YandexTranslationResponse {
     @SerializedName("code")
     int code;
 

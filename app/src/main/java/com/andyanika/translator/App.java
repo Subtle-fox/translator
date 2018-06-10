@@ -7,6 +7,8 @@ import android.util.Log;
 import com.andyanika.translator.di.AppComponent;
 import com.andyanika.translator.di.AppModule;
 import com.andyanika.translator.di.DaggerAppComponent;
+import com.andyanika.translator.repository.remote.DaggerRemoteRepositoryComponent;
+import com.andyanika.translator.repository.remote.RemoteRepositoryComponent;
 
 import javax.inject.Inject;
 
@@ -35,13 +37,13 @@ public class App extends Application implements HasActivityInjector {
         Timber.Tree tree = BuildConfig.DEBUG
                 ? new Timber.DebugTree()
                 : new Timber.Tree() {
-                    @Override
-                    protected void log(int priority, String tag, String message, Throwable t) {
-                        if (priority >= Log.ERROR) {
-                            System.err.println("Timber >>> " + message);
-                        }
-                    }
-                };
+            @Override
+            protected void log(int priority, String tag, String message, Throwable t) {
+                if (priority >= Log.ERROR) {
+                    System.err.println("Timber >>> " + message);
+                }
+            }
+        };
         Timber.plant(tree);
         Timber.d("logger initialized");
     }
@@ -51,8 +53,13 @@ public class App extends Application implements HasActivityInjector {
     }
 
     private AppComponent buildComponent() {
+        RemoteRepositoryComponent remoteRepositoryComponent = DaggerRemoteRepositoryComponent
+                .builder()
+                .build();
+
         return DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
+                .remoteRepositoryComponent(remoteRepositoryComponent)
                 .build();
     }
 
