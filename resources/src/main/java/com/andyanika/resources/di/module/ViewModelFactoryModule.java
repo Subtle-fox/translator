@@ -1,6 +1,7 @@
 package com.andyanika.resources.di.module;
 
 import android.arch.lifecycle.ViewModelProvider;
+
 import dagger.Binds;
 import dagger.Module;
 
@@ -11,5 +12,5 @@ import dagger.Module;
 @Module
 public abstract class ViewModelFactoryModule {
     @Binds
-    abstract ViewModelProvider.Factory bindViewModelFactory(ViewModelFactory factory);
+    public abstract ViewModelProvider.Factory bindViewModelFactory(ViewModelFactory factory);
 }

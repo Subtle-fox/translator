@@ -2,7 +2,7 @@ package com.andyanika.translator.main.di;
 
 import com.andyanika.resources.di.ActivityScope;
 import com.andyanika.resources.di.module.ResourceModule;
-import com.andyanika.translator.feature.favorites.di.FavoritesComponentModule;
+import com.andyanika.translator.feature.favorites.di.FavoritesBindingModule;
 import com.andyanika.translator.feature.history.di.HistoryComponentModule;
 import com.andyanika.translator.feature.select_lang.di.SelectLanguageComponentModule;
 import com.andyanika.translator.feature.translate.di.TranslationComponentModule;
@@ -16,7 +16,8 @@ import dagger.android.AndroidInjector;
         MainActivityModule.class,
         ResourceModule.class,
 
-        FavoritesComponentModule.class,
+        FavoritesBindingModule.class,
+
         SelectLanguageComponentModule.class,
         HistoryComponentModule.class,
         TranslationComponentModule.class

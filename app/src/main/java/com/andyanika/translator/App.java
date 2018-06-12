@@ -17,7 +17,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import timber.log.Timber;
 
-public class App extends Application implements HasActivityInjector {
+public class App extends Application /*DaggerApplication*/ implements HasActivityInjector {
 
     private static AppComponent appComponent;
 
@@ -67,4 +67,9 @@ public class App extends Application implements HasActivityInjector {
     public AndroidInjector<Activity> activityInjector() {
         return dispatchingActivityInjector;
     }
+
+//    @Override
+//    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+//        return appComponent;
+//    }
 }

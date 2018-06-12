@@ -13,11 +13,6 @@ import dagger.android.AndroidInjector;
 public interface TranslationFragmentComponent extends AndroidInjector<TranslationFragment> {
     @Subcomponent.Builder
     abstract class Builder extends AndroidInjector.Builder<TranslationFragment> {
-//        public abstract void translationModule(TranslationFragmentModule module);
-//
-//        @Override
-//        public void seedInstance(TranslationFragment fragment) {
-//            translationModule(new TranslationFragmentModule(fragment));
-//        }
+
     }
 }
