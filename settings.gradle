@@ -1,0 +1,11 @@
+include ':app',
+        ':feature-translate',
+        ':feature-select-language',
+        ':feature-history',
+        ':feature-favorites',
+
+        ':resources',
+        ':repository-remote',
+        ':repository-local',
+        ':usecases',
+        ':common'

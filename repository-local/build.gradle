@@ -1,0 +1,37 @@
+apply plugin: 'com.android.library'
+
+android {
+    defaultConfig {
+        versionCode pVersionCode
+        versionName pVersionName
+
+        compileSdkVersion = compileSdk
+        targetSdkVersion targetSdk
+        minSdkVersion minSdk
+        buildToolsVersion build_tools_version
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+
+        compileOptions {
+            sourceCompatibility = java_version
+            targetCompatibility = java_version
+        }
+    }
+}
+
+dependencies {
+    implementation project(path: ':common')
+
+    implementation "com.google.dagger:dagger:${dagger_version}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+
+    implementation "android.arch.persistence.room:runtime:${roomVersion}"
+    implementation "android.arch.persistence.room:rxjava2:${roomVersion}"
+    annotationProcessor "android.arch.persistence.room:compiler:${roomVersion}"
+
+    implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
+}

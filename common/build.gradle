@@ -1,0 +1,5 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
+}

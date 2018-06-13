@@ -1,0 +1,28 @@
+apply plugin: 'com.android.library'
+
+android {
+    defaultConfig {
+        versionCode pVersionCode
+        versionName pVersionName
+
+        compileSdkVersion = compileSdk
+        targetSdkVersion targetSdk
+        minSdkVersion minSdk
+        buildToolsVersion build_tools_version
+
+        compileOptions {
+            sourceCompatibility = java_version
+            targetCompatibility = java_version
+        }
+    }
+}
+
+dependencies {
+    implementation project(path: ':common')
+
+    implementation "com.android.support:appcompat-v7:${support_lib_version}"
+    implementation "com.android.support:design:${support_lib_version}"
+
+    implementation "com.google.dagger:dagger:${dagger_version}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+}

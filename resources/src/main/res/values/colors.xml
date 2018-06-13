@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimaryAlt">#FFF</color>
+    <color name="background">#FFF</color>
+
+    <color name="txt_primary">#de000000</color>
+    <color name="txt_secondary">#8a000000</color>
+    <color name="txt_disabled">#61000000</color>
+    <color name="txt_hint">@color/txt_disabled</color>
+
+    <color name="gray">#999</color>
+
+    <color name="btn_default">@color/colorAccent</color>
+    <color name="btn_disabled">#757575</color>
+    <color name="btn_pressed">@color/colorPrimaryDark</color>
+
+    <color name="bg_divider">#1F000000</color>
+</resources>

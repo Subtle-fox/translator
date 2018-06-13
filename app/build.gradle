@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+
+android {
+    defaultConfig {
+        applicationId "andyanika.translator"
+
+        versionCode pVersionCode
+        versionName pVersionName
+
+        compileSdkVersion = compileSdk
+        targetSdkVersion targetSdk
+        minSdkVersion minSdk
+        buildToolsVersion build_tools_version
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility java_version
+        targetCompatibility java_version
+    }
+}
+
+dependencies {
+    implementation project(path: ':common')
+    implementation project(path: ':resources')
+    implementation project(path: ':usecases')
+    implementation project(path: ':repository-local')
+    implementation project(path: ':repository-remote')
+
+    implementation project(path: ':feature-translate')
+    implementation project(path: ':feature-select-language')
+    implementation project(path: ':feature-history')
+    implementation project(path: ':feature-favorites')
+
+    implementation "com.android.support:appcompat-v7:${support_lib_version}"
+    implementation "com.android.support:design:${support_lib_version}"
+    implementation "com.android.support.constraint:constraint-layout:${constraint_version}"
+    implementation "android.arch.lifecycle:extensions:${arch_components_version}"
+
+    implementation "com.google.dagger:dagger:${dagger_version}"
+    implementation "com.google.dagger:dagger-android-support:${dagger_version}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+
+    implementation "ru.terrakok.cicerone:cicerone:${cicerone_version}"
+
+    implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
+    implementation "io.reactivex.rxjava2:rxandroid:${rx_android_version}"
+
+    testImplementation "junit:junit:${junit_version}"
+}
