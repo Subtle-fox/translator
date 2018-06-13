@@ -4,11 +4,11 @@ package com.andyanika.translator.feature.translate;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase;
 import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
 import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase;
-import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
+import com.andyanika.translator.common.scopes.FragmentScope;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,22 +19,23 @@ import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
+import timber.log.Timber;
 
 @FragmentScope
 public class TranslationPresenter {
     private static final long DELAY = 1;
 
     private final TranslationView view;
-    private TranslationUseCase translateUseCase;
-    private SelectLanguageUseCase selectLanguageUseCase;
-    private GetSelectedLanguageUseCase getSelectedLanguagesUseCase;
-    private Scheduler uiScheduler;
+    private final TranslationUseCase translateUseCase;
+    private final SelectLanguageUseCase selectLanguageUseCase;
+    private final GetSelectedLanguageUseCase getSelectedLanguagesUseCase;
+    private final Scheduler uiScheduler;
+    private final Scheduler computationScheduler;
+    private final PublishSubject<String> retrySubject;
 
     private Disposable searchDisposable;
     private Disposable languageDisposable;
     private Disposable swapDisposable;
-
-    private PublishSubject<String> retrySubject;
 
     @Inject
     TranslationPresenter(TranslationView view,
@@ -42,13 +43,15 @@ public class TranslationPresenter {
                          GetSelectedLanguageUseCase getSelectedLanguagesUseCase,
                          SelectLanguageUseCase selectLanguageUseCase,
                          PublishSubject<String> retrySubject,
-                         @Named("ui") Scheduler uiScheduler) {
+                         @Named("ui") Scheduler uiScheduler,
+                         @Named("computation") Scheduler computationScheduler) {
         this.view = view;
         this.translateUseCase = translateUseCase;
         this.getSelectedLanguagesUseCase = getSelectedLanguagesUseCase;
         this.selectLanguageUseCase = selectLanguageUseCase;
         this.uiScheduler = uiScheduler;
         this.retrySubject = retrySubject;
+        this.computationScheduler = computationScheduler;
     }
 
     public void translate(@NonNull final String text) {
@@ -87,13 +90,14 @@ public class TranslationPresenter {
                 });
 
         searchDisposable = searchTextObservable
-                .distinctUntilChanged(CharSequence::equals)
                 .map(CharSequence::toString)
+                .doOnNext(t -> Timber.d("received new text: %s", t))
                 .distinctUntilChanged(String::equals)
                 .mergeWith(retrySubject)
                 .doOnNext(this::showProgress)
-                .debounce(DELAY, TimeUnit.SECONDS)
-                .switchMap(str -> translateUseCase.run(str))
+                .debounce(DELAY, TimeUnit.SECONDS, computationScheduler)
+                .doOnNext(t -> Timber.d("after debounce: %s", t))
+                .switchMap(translateUseCase::run)
                 .observeOn(uiScheduler)
                 .subscribe(this::processResult, this::processError);
     }
@@ -108,8 +112,8 @@ public class TranslationPresenter {
         view.hideOffline();
     }
 
-    private void processResult(TranslateResult result) {
-        System.out.println("process result: " + result.textTranslated);
+    private void processResult(DisplayTranslateResult result) {
+        Timber.d("process result: %s", result.textTranslated);
         if (result.isFound) {
             processFoundResult(result);
         } else {
@@ -117,7 +121,7 @@ public class TranslationPresenter {
         }
     }
 
-    private void processFoundResult(TranslateResult result) {
+    private void processFoundResult(DisplayTranslateResult result) {
         view.showTranslation(result);
         view.hideProgress();
         view.showClearBtn();
@@ -129,7 +133,7 @@ public class TranslationPresenter {
         }
     }
 
-    private void processEmptyResult(TranslateResult result) {
+    private void processEmptyResult(DisplayTranslateResult result) {
         if (result.isError) {
             view.showErrorLayout();
             view.clearTranslation();
@@ -146,7 +150,7 @@ public class TranslationPresenter {
         swapDisposable = selectLanguageUseCase
                 .swap()
                 .observeOn(uiScheduler)
-                .subscribe();
+                .subscribe(view::clearResult);
     }
 
     void dispose() {

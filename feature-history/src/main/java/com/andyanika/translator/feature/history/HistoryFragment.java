@@ -2,7 +2,6 @@ package com.andyanika.translator.feature.history;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,7 +17,6 @@ import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import javax.inject.Inject;
 
-import dagger.android.support.AndroidSupportInjection;
 import dagger.android.support.DaggerFragment;
 
 public class HistoryFragment extends DaggerFragment {
@@ -34,12 +32,6 @@ public class HistoryFragment extends DaggerFragment {
     private EditText editInput;
     private View clearBtn;
     private InitialValueObservable<CharSequence> textObservable;
-
-    @Override
-    public void onAttach(Context context) {
-        AndroidSupportInjection.inject(this);
-        super.onAttach(context);
-    }
 
     @Nullable
     @Override

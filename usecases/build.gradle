@@ -1,12 +1,24 @@
-apply plugin: 'java-library'
+apply plugin: 'com.android.library'
 
-sourceCompatibility = java_version
-targetCompatibility = java_version
+android {
+    defaultConfig {
+        versionCode pVersionCode
+        versionName pVersionName
 
+        compileSdkVersion = compileSdk
+        targetSdkVersion targetSdk
+        minSdkVersion minSdk
+        buildToolsVersion build_tools_version
+
+        compileOptions {
+            sourceCompatibility = java_version
+            targetCompatibility = java_version
+        }
+    }
+}
 dependencies {
     implementation project(path: ':common')
 
     implementation "com.google.dagger:dagger:${dagger_version}"
-
     implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
 }

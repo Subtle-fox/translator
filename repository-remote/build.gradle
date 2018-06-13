@@ -1,8 +1,25 @@
-apply plugin: 'java-library'
-apply plugin: "net.ltgt.apt"
+apply plugin: 'com.android.library'
 
-sourceCompatibility = java_version
-targetCompatibility = java_version
+android {
+    defaultConfig {
+        versionCode pVersionCode
+        versionName pVersionName
+
+        compileSdkVersion = compileSdk
+        targetSdkVersion targetSdk
+        minSdkVersion minSdk
+        buildToolsVersion build_tools_version
+
+        // define your own Yandex_api_key in gradle.properties (https://tech.yandex.ru/translate/doc/dg/concepts/api-keys-docpage/)
+        println "Yandex ApiKey: $yandex_api_key"
+        buildConfigField 'String', "ApiKey", yandex_api_key
+
+        compileOptions {
+            sourceCompatibility = java_version
+            targetCompatibility = java_version
+        }
+    }
+}
 
 dependencies {
     implementation project(path: ':common')

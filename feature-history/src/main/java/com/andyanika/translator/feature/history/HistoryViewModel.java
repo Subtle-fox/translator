@@ -4,11 +4,11 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.text.TextUtils;
 
-import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.AddFavoriteUseCase;
 import com.andyanika.translator.common.interfaces.usecase.HistoryUseCase;
 import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
-import com.andyanika.translator.common.models.UiTranslationModel;
+import com.andyanika.translator.common.models.FavoriteModel;
+import com.andyanika.translator.common.scopes.FragmentScope;
 
 import java.util.List;
 
@@ -16,10 +16,11 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 @FragmentScope
 public class HistoryViewModel extends ViewModel {
-    final MutableLiveData<List<UiTranslationModel>> data = new MutableLiveData<>();
+    final MutableLiveData<List<FavoriteModel>> data = new MutableLiveData<>();
     final MutableLiveData<Boolean> showClearBtn = new MutableLiveData<>();
 
     private final HistoryUseCase historyUseCase;
@@ -47,14 +48,16 @@ public class HistoryViewModel extends ViewModel {
                 .subscribe(data::postValue);
     }
 
-    void subscribeItemClick(Observable<UiTranslationModel> observable) {
+    void subscribeItemClick(Observable<FavoriteModel> observable) {
         itemClickDisposable = observable.flatMapCompletable(model -> {
             if (model.isFavorite) {
-                return removeFavoriteUseCase.run(model.id);
+                return removeFavoriteUseCase.run(model.id)
+                        .doOnComplete(() -> Timber.d("favorite removed"));
             } else {
-                return addFavoriteUseCase.run(model.id);
+                return addFavoriteUseCase.run(model.id)
+                        .doOnComplete(() -> Timber.d("favorite added"));
             }
-        }).subscribe(() -> System.out.println("favorites changed"));
+        }).subscribe();
     }
 
     void unsubscribe() {

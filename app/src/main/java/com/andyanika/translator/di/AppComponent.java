@@ -1,24 +1,22 @@
 package com.andyanika.translator.di;
 
-import com.andyanika.datasource.local.LocalRepositoryModule;
 import com.andyanika.translator.App;
-import com.andyanika.translator.main.di.MainActivityComponentModule;
-import com.andyanika.translator.main.di.NavigationModule;
-import com.andyanika.translator.network.RemoteRepositoryModule;
-
-import javax.inject.Singleton;
+import com.andyanika.translator.common.scopes.ApplicationScope;
+import com.andyanika.translator.main.di.MainBindingModule;
+import com.andyanika.translator.repository.local.LocalRepositoryModule;
+import com.andyanika.translator.repository.remote.RemoteRepositoryComponent;
 
 import dagger.Component;
 
-@Singleton
+@ApplicationScope
 @Component(modules = {
         AppModule.class,
         NavigationModule.class,
         LocalRepositoryModule.class,
-        RemoteRepositoryModule.class,
         SchedulersModule.class,
-        MainActivityComponentModule.class,
-        UseCaseModule.class
+        MainBindingModule.class,
+}, dependencies = {
+        RemoteRepositoryComponent.class,
 })
 public interface AppComponent {
     void inject(App app);

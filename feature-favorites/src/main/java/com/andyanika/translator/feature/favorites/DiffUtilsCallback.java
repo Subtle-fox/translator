@@ -3,17 +3,17 @@ package com.andyanika.translator.feature.favorites;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 
-import com.andyanika.translator.common.models.UiTranslationModel;
+import com.andyanika.translator.common.models.FavoriteModel;
 
 import java.util.List;
 
 public class DiffUtilsCallback extends DiffUtil.Callback {
     @NonNull
-    private final List<UiTranslationModel> newData;
+    private final List<FavoriteModel> newData;
     @NonNull
-    private final List<UiTranslationModel> oldData;
+    private final List<FavoriteModel> oldData;
 
-    DiffUtilsCallback(@NonNull List<UiTranslationModel> newData, @NonNull List<UiTranslationModel> oldData) {
+    DiffUtilsCallback(@NonNull List<FavoriteModel> newData, @NonNull List<FavoriteModel> oldData) {
         this.newData = newData;
         this.oldData = oldData;
     }

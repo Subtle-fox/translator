@@ -1,9 +1,9 @@
 package com.andyanika.translator.common.interfaces.usecase;
 
-import com.andyanika.translator.common.DirectionPair;
+import com.andyanika.translator.common.models.TranslateDirection;
 
 import io.reactivex.Observable;
 
 public interface GetSelectedLanguageUseCase {
-    Observable<DirectionPair<String>> run();
+    Observable<TranslateDirection<String>> run();
 }

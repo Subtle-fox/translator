@@ -3,10 +3,10 @@ package com.andyanika.translator.feature.favorites;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.andyanika.resources.di.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.GetFavoritesUseCase;
 import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
-import com.andyanika.translator.common.models.UiTranslationModel;
+import com.andyanika.translator.common.models.FavoriteModel;
+import com.andyanika.translator.common.scopes.FragmentScope;
 
 import java.util.List;
 
@@ -14,10 +14,11 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 @FragmentScope
 public class FavoritesViewModel extends ViewModel {
-    final MutableLiveData<List<UiTranslationModel>> data = new MutableLiveData<>();
+    final MutableLiveData<List<FavoriteModel>> data = new MutableLiveData<>();
 
     private final GetFavoritesUseCase getFavoritesUseCase;
     private final RemoveFavoriteUseCase removeFavoriteUseCase;
@@ -36,10 +37,11 @@ public class FavoritesViewModel extends ViewModel {
         }
     }
 
-    void subscribeItemClick(Observable<UiTranslationModel> observable) {
+    void subscribeItemClick(Observable<FavoriteModel> observable) {
         itemClickDisposable = observable
-                .flatMapCompletable(model -> removeFavoriteUseCase.run(model.id))
-                .subscribe(() -> System.out.println("favorite removed"));
+                .flatMapCompletable(model -> removeFavoriteUseCase.run(model.id)
+                        .doOnComplete(() -> Timber.d("favorite removed")))
+                .subscribe();
     }
 
     void unsubscribeItemClick() {

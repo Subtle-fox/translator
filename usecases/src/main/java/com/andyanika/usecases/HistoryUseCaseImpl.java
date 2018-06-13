@@ -2,27 +2,32 @@ package com.andyanika.usecases;
 
 import com.andyanika.translator.common.interfaces.LocalRepository;
 import com.andyanika.translator.common.interfaces.usecase.HistoryUseCase;
+import com.andyanika.translator.common.models.FavoriteModel;
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.UiTranslationModel;
 
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Flowable;
+import io.reactivex.Scheduler;
 
-public class HistoryUseCaseImpl implements HistoryUseCase {
-    private LocalRepository repository;
+class HistoryUseCaseImpl implements HistoryUseCase {
+    private final LocalRepository repository;
+    private final Scheduler ioScheduler;
 
     @Inject
-    public HistoryUseCaseImpl(LocalRepository repository) {
+    HistoryUseCaseImpl(LocalRepository repository, @Named("io") Scheduler ioScheduler) {
         this.repository = repository;
+        this.ioScheduler = ioScheduler;
     }
 
     @Override
-    public Flowable<List<UiTranslationModel>> run(String filter, int limit) {
+    public Flowable<List<FavoriteModel>> run(String filter, int limit) {
         return repository
                 .getHistory()
+                .subscribeOn(ioScheduler)
                 .take(limit)
                 .flatMap(list -> Flowable.fromIterable(list)
                         .filter(item -> filter(item.translateResult, filter)).toList()
@@ -31,10 +36,9 @@ public class HistoryUseCaseImpl implements HistoryUseCase {
 
     private boolean filter(TranslateResult result, String filter) {
         // TODO: 31.05.2018: implement via Room query
-        // runs in background thread by default
         return filter == null
                 || filter.isEmpty()
                 || result.textSrc.contains(filter)
-                || result.textTranslated.contains(filter);
+                || result.textDst.contains(filter);
     }
 }

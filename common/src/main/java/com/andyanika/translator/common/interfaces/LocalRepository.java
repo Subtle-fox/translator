@@ -1,10 +1,10 @@
 package com.andyanika.translator.common.interfaces;
 
+import com.andyanika.translator.common.models.FavoriteModel;
 import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateDirection;
+import com.andyanika.translator.common.models.TranslateRequest;
 import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.common.models.TranslationRequest;
-import com.andyanika.translator.common.models.UiTranslationModel;
 
 import java.util.List;
 
@@ -13,16 +13,16 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 
 public interface LocalRepository {
-    Single<TranslateResult> translate(TranslationRequest request);
+    Single<TranslateResult> translate(TranslateRequest request);
     void addTranslation(TranslateResult translateResult);
 
-    Flowable<List<UiTranslationModel>> getHistory();
+    Flowable<List<FavoriteModel>> getHistory();
 
-    Flowable<List<UiTranslationModel>> getFavorites();
+    Flowable<List<FavoriteModel>> getFavorites();
     void addFavorites(int wordId);
     void removeFavorite(int wordId);
 
-    void setLanguageDirection(TranslateDirection direction);
+    void setLanguageDirection(TranslateDirection<LanguageCode> direction);
     Observable<LanguageCode> getAvailableLanguagesObservable();
     Observable<LanguageCode> getSrcLanguage();
     Observable<LanguageCode> getDstLanguage();

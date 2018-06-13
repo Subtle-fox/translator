@@ -4,8 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
 
-import com.andyanika.resources.Screens;
 import com.andyanika.translator.R;
+import com.andyanika.translator.common.constants.Screens;
 
 import javax.inject.Inject;
 
