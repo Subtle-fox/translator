@@ -4,7 +4,7 @@ package com.andyanika.translator.feature.translate;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.translator.common.scopes.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase;
 import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
 import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase;
@@ -90,7 +90,6 @@ public class TranslationPresenter {
                 });
 
         searchDisposable = searchTextObservable
-                .distinctUntilChanged(CharSequence::equals)
                 .map(CharSequence::toString)
                 .doOnNext(t -> Timber.d("received new text: %s", t))
                 .distinctUntilChanged(String::equals)

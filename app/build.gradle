@@ -45,6 +45,7 @@ dependencies {
 
     compileOnly "com.google.dagger:dagger-android-support:${dagger_version}"
     annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+    annotationProcessor "com.google.dagger:dagger-android-processor:${dagger_version}"
 
     implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
     implementation "io.reactivex.rxjava2:rxandroid:${rx_android_version}"

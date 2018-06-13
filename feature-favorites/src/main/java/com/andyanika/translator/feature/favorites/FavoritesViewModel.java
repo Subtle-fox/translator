@@ -3,7 +3,7 @@ package com.andyanika.translator.feature.favorites;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.translator.common.scopes.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.GetFavoritesUseCase;
 import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
 import com.andyanika.translator.common.models.FavoriteModel;

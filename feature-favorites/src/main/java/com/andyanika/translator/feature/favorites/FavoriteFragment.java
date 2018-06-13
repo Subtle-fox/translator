@@ -2,7 +2,6 @@ package com.andyanika.translator.feature.favorites;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,11 +13,11 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import dagger.android.support.AndroidSupportInjection;
 import dagger.android.support.DaggerFragment;
 
 public class FavoriteFragment extends DaggerFragment {
     private final static int LIMIT = 100;
+    private FavoritesViewModel viewModel;
 
     @Inject
     FavoritesListAdapter adapter;
@@ -26,13 +25,6 @@ public class FavoriteFragment extends DaggerFragment {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    private FavoritesViewModel viewModel;
-
-    @Override
-    public void onAttach(Context context) {
-        AndroidSupportInjection.inject(this);
-        super.onAttach(context);
-    }
 
     @Nullable
     @Override

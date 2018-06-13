@@ -2,8 +2,9 @@ package com.andyanika.translator.di;
 
 import android.content.Context;
 
+import com.andyanika.translator.common.scopes.ApplicationScope;
+
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,7 +18,7 @@ public class AppModule {
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     @Named("app")
     Context provideAppContext() {
         return appContext;

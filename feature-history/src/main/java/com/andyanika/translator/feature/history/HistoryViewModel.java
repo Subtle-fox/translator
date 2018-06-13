@@ -4,7 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.text.TextUtils;
 
-import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.translator.common.scopes.FragmentScope;
 import com.andyanika.translator.common.interfaces.usecase.AddFavoriteUseCase;
 import com.andyanika.translator.common.interfaces.usecase.HistoryUseCase;
 import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;

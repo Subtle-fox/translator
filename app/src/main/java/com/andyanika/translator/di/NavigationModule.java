@@ -1,8 +1,7 @@
 package com.andyanika.translator.di;
 
+import com.andyanika.translator.common.scopes.ApplicationScope;
 import com.andyanika.translator.common.interfaces.ScreenRouter;
-
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -18,35 +17,25 @@ import ru.terrakok.cicerone.Router;
 public class NavigationModule {
     private Cicerone<Router> cicerone;
 
-    public NavigationModule() {
+    NavigationModule() {
         cicerone = Cicerone.create();
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     Router provideCiceroneRouter() {
         return cicerone.getRouter();
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     NavigatorHolder provideNavigatorHolder() {
         return cicerone.getNavigatorHolder();
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     ScreenRouter provideScreenRouter(Router router) {
-        return new ScreenRouter() {
-            @Override
-            public void navigateTo(String screenKey, Object data) {
-                router.navigateTo(screenKey, data);
-            }
-
-            @Override
-            public void backTo(String screenKey) {
-                router.backTo(screenKey);
-            }
-        };
+        return new ScreenRouterImpl(router);
     }
 }

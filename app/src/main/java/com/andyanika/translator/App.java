@@ -17,10 +17,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import timber.log.Timber;
 
-public class App extends Application /*DaggerApplication*/ implements HasActivityInjector {
-
-    private static AppComponent appComponent;
-
+public class App extends Application implements HasActivityInjector {
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
 
@@ -28,7 +25,7 @@ public class App extends Application /*DaggerApplication*/ implements HasActivit
     public void onCreate() {
         super.onCreate();
 
-        appComponent = buildComponent();
+        AppComponent appComponent = buildComponent();
         appComponent.inject(this);
         initLogger();
     }
@@ -48,10 +45,6 @@ public class App extends Application /*DaggerApplication*/ implements HasActivit
         Timber.d("logger initialized");
     }
 
-    public static AppComponent getAppComponent() {
-        return appComponent;
-    }
-
     private AppComponent buildComponent() {
         RemoteRepositoryComponent remoteRepositoryComponent = DaggerRemoteRepositoryComponent
                 .builder()
@@ -67,9 +60,4 @@ public class App extends Application /*DaggerApplication*/ implements HasActivit
     public AndroidInjector<Activity> activityInjector() {
         return dispatchingActivityInjector;
     }
-
-//    @Override
-//    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
-//        return appComponent;
-//    }
 }

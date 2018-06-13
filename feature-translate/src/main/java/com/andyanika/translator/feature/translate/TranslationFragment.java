@@ -1,6 +1,5 @@
 package com.andyanika.translator.feature.translate;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,8 +11,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.andyanika.resources.Extras;
-import com.andyanika.resources.Screens;
+import com.andyanika.translator.common.constants.Extras;
+import com.andyanika.translator.common.constants.Screens;
 import com.andyanika.translator.common.interfaces.ScreenRouter;
 import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
 import com.jakewharton.rxbinding2.InitialValueObservable;
@@ -21,7 +20,6 @@ import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import javax.inject.Inject;
 
-import dagger.android.support.AndroidSupportInjection;
 import dagger.android.support.DaggerFragment;
 
 public class TranslationFragment extends DaggerFragment implements TranslationView {
@@ -42,12 +40,6 @@ public class TranslationFragment extends DaggerFragment implements TranslationVi
     private Button dstLangBtn;
     private ImageButton swapLangBtn;
     private InitialValueObservable<CharSequence> textObservable;
-
-    @Override
-    public void onAttach(Context context) {
-        AndroidSupportInjection.inject(this);
-        super.onAttach(context);
-    }
 
     @Nullable
     @Override

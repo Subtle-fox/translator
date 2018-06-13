@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.andyanika.resources.di.FragmentScope;
+import com.andyanika.translator.common.scopes.FragmentScope;
 import com.andyanika.translator.common.models.FavoriteModel;
 
 import java.util.ArrayList;
