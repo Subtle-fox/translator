@@ -2,21 +2,16 @@ package com.andyanika.translator.main;
 
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 
 import com.andyanika.translator.R;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.android.support.DaggerAppCompatActivity;
 import ru.terrakok.cicerone.NavigatorHolder;
 
 
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+public class MainActivity extends DaggerAppCompatActivity {
     @Inject
     MainActivityPresenter presenter;
 
@@ -26,17 +21,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Inject
     MainActivityNavigator navigator;
 
-    @Inject
-    DispatchingAndroidInjector<Fragment> dispatchingActivityInjector;
-
-    @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return dispatchingActivityInjector;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
