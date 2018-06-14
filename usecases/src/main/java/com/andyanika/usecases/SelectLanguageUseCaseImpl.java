@@ -28,7 +28,7 @@ class SelectLanguageUseCaseImpl implements SelectLanguageUseCase {
                         .subscribeOn(ioScheduler)
                         .zipWith(repository.getDstLanguage(), TranslateDirection<LanguageCode>::new)
                         .take(1)
-                        .map(oldDirection -> normalize(new TranslateDirection<>(code, oldDirection.dst), oldDirection))
+                        .map(oldDirection -> normalize(new TranslateDirection<>(code, oldDirection.getDst()), oldDirection))
                         .doOnNext(repository::setLanguageDirection));
     }
 
@@ -39,7 +39,7 @@ class SelectLanguageUseCaseImpl implements SelectLanguageUseCase {
                         .subscribeOn(ioScheduler)
                         .zipWith(repository.getDstLanguage(), TranslateDirection<LanguageCode>::new)
                         .take(1)
-                        .map(oldDirection -> normalize(new TranslateDirection<>(oldDirection.src, code), oldDirection))
+                        .map(oldDirection -> normalize(new TranslateDirection<>(oldDirection.getSrc(), code), oldDirection))
                         .doOnNext(repository::setLanguageDirection));
     }
 
@@ -54,13 +54,13 @@ class SelectLanguageUseCaseImpl implements SelectLanguageUseCase {
     }
 
     TranslateDirection<LanguageCode> normalize(TranslateDirection<LanguageCode> newDirection, TranslateDirection<LanguageCode> oldDirection) {
-        if (newDirection.src == oldDirection.dst) {
+        if (newDirection.getSrc() == oldDirection.getDst()) {
             // swap
-            return new TranslateDirection<>(newDirection.src, oldDirection.src);
-        } else if (newDirection.dst == oldDirection.src) {
+            return new TranslateDirection<>(newDirection.getSrc(), oldDirection.getSrc());
+        } else if (newDirection.getDst() == oldDirection.getSrc()) {
             // swap
-            return new TranslateDirection<>(oldDirection.dst, newDirection.src);
+            return new TranslateDirection<>(oldDirection.getDst(), newDirection.getSrc());
         }
-        return new TranslateDirection<>(newDirection.src, newDirection.dst);
+        return new TranslateDirection<>(newDirection.getSrc(), newDirection.getDst());
     }
 }

@@ -32,7 +32,7 @@ public class FavoritesViewHolder extends RecyclerView.ViewHolder {
 
         title.setText(result.textSrc);
         description.setText(result.textDst);
-        langSrc.setText(result.direction.src.toString());
-        langDst.setText(result.direction.dst.toString());
+        langSrc.setText(result.direction.getSrc().toString());
+        langDst.setText(result.direction.getDst().toString());
     }
 }

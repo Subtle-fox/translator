@@ -20,6 +20,10 @@ import io.reactivex.subjects.PublishSubject;
 import timber.log.Timber;
 
 class LocalRepositoryImpl implements LocalRepository {
+    static final String LANGUAGE_SRC = "language_src";
+    static final String LANGUAGE_DST = "language_dst";
+
+
     private final TranslatorDao dao;
     private final SharedPreferences preferences;
     private final ModelsAdapter adapter;
@@ -53,7 +57,7 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public Single<TranslateResult> translate(TranslateRequest request) {
-        return dao.getTranslation(request.text, request.direction.src.toString(), request.direction.dst.toString())
+        return dao.getTranslation(request.getText(), request.getDirection().getSrc().toString(), request.getDirection().getDst().toString())
                 .map(adapter::toTranslationResult);
     }
 
@@ -79,10 +83,11 @@ class LocalRepositoryImpl implements LocalRepository {
     public Observable<LanguageCode> getSrcLanguage() {
         return srcLanguageSubject
                 .startWith(Observable.fromCallable(() -> {
-                            String s = preferences.getString("language_src", null);
+                            String s = preferences.getString(LANGUAGE_SRC, null);
                             return LanguageCode.tryParse(s, LanguageCode.RU);
                         }
                 ))
+                .onErrorReturnItem(LanguageCode.RU)
                 .subscribeOn(ioScheduler);
     }
 
@@ -90,29 +95,30 @@ class LocalRepositoryImpl implements LocalRepository {
     public Observable<LanguageCode> getDstLanguage() {
         return dstLanguageSubject
                 .startWith(Observable.fromCallable(() -> {
-                            String s = preferences.getString("language_dst", null);
+                            String s = preferences.getString(LANGUAGE_DST, null);
                             return LanguageCode.tryParse(s, LanguageCode.EN);
                         }
                 ))
+                .onErrorReturnItem(LanguageCode.EN)
                 .subscribeOn(ioScheduler);
     }
 
 
     @Override
     public void setLanguageDirection(TranslateDirection<LanguageCode> direction) {
-        Timber.d("save repository direction: %s - %s", direction.src, direction.dst);
+        Timber.d("save repository direction: %s - %s", direction.getSrc(), direction.getDst());
         preferences
                 .edit()
-                .putString("language_src", direction.src.toString())
-                .putString("language_dst", direction.dst.toString())
+                .putString("language_src", direction.getSrc().toString())
+                .putString("language_dst", direction.getDst().toString())
                 .apply();
 
-        srcLanguageSubject.onNext(direction.src);
-        dstLanguageSubject.onNext(direction.dst);
+        srcLanguageSubject.onNext(direction.getSrc());
+        dstLanguageSubject.onNext(direction.getDst());
     }
 
     @Override
-    public Observable<LanguageCode> getAvailableLanguagesObservable() {
+    public Observable<LanguageCode> getAvailableLanguages() {
         return Observable.fromArray(LanguageCode.values()).cache();
     }
 }

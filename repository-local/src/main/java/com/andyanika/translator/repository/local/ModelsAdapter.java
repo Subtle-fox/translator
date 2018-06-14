@@ -31,6 +31,6 @@ class ModelsAdapter {
     }
 
     WordModel toWordModel(TranslateResult translateResult) {
-        return new WordModel(translateResult.textSrc, translateResult.textDst, translateResult.direction.src.toString(), translateResult.direction.dst.toString());
+        return new WordModel(translateResult.textSrc, translateResult.textDst, translateResult.direction.getSrc().toString(), translateResult.direction.getDst().toString());
     }
 }

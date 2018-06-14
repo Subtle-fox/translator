@@ -14,6 +14,7 @@ import javax.inject.Named;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import timber.log.Timber;
 
 class GetLanguagesUseCaseImpl implements GetLanguagesUseCase {
     private final Resources resources;
@@ -29,24 +30,26 @@ class GetLanguagesUseCaseImpl implements GetLanguagesUseCase {
 
     @Override
     public Observable<List<DisplayLanguageModel>> run(boolean selectSource) {
-        Observable<LanguageCode> selectedLanguage =
-                selectSource
-                        ? repository.getSrcLanguage()
-                        : repository.getDstLanguage();
+        Observable<LanguageCode> selectedLanguage = (selectSource
+                ? repository.getSrcLanguage()
+                : repository.getDstLanguage())
+                .doOnNext(l -> Timber.d("onNext: selected lang %s", l));
 
         Observable<LanguageDescription> availableLanguages = repository
-                .getAvailableLanguagesObservable()
+                .getAvailableLanguages().doOnNext(l -> Timber.d("onNext: available lang %s", l))
                 .map(code -> new LanguageDescription(code, resources.getString("lang_" + code.toString().toLowerCase())));
 
         Observable<DisplayLanguageModel> combineLatest = selectedLanguage
                 .take(1)
                 .flatMap(code -> availableLanguages
                         .map(desc -> new DisplayLanguageModel(desc.code, desc.description, desc.code == code))
+                        .doOnNext(desc -> Timber.d("onMapped: lang %s", desc.description))
                 );
 
 
         return combineLatest
                 .subscribeOn(ioScheduler)
-                .buffer(100);
+                .buffer(100)
+                .doOnNext(list -> Timber.d("onNext: list of %d elements", list.size()));
     }
 }

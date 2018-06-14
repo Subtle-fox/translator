@@ -23,7 +23,7 @@ public interface LocalRepository {
     void removeFavorite(int wordId);
 
     void setLanguageDirection(TranslateDirection<LanguageCode> direction);
-    Observable<LanguageCode> getAvailableLanguagesObservable();
+    Observable<LanguageCode> getAvailableLanguages();
     Observable<LanguageCode> getSrcLanguage();
     Observable<LanguageCode> getDstLanguage();
 }

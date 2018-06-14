@@ -27,6 +27,6 @@ public class SelectLanguageViewHolder extends RecyclerView.ViewHolder {
     public void bind(DisplayLanguageModel model) {
         title.setText(model.code.toString());
         description.setText(model.description);
-        currentIcon.setVisibility(model.isCurrent ? View.VISIBLE : View.GONE);
+        currentIcon.setVisibility(model.isSelected ? View.VISIBLE : View.GONE);
     }
 }

@@ -11,6 +11,6 @@ class YandexTranslationParamsBuilder {
     }
 
     String buildParam(TranslateDirection<LanguageCode> direction) {
-        return String.format("%s-%s", direction.src.toString(), direction.dst.toString()).toLowerCase();
+        return String.format("%s-%s", direction.getSrc().toString(), direction.getDst().toString()).toLowerCase();
     }
 }

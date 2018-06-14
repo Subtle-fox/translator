@@ -5,6 +5,7 @@ import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
 
 public interface TranslationView {
     void showTranslation(DisplayTranslateResult result);
+    void showNotFound();
     void showProgress();
     void hideProgress();
     void showErrorLayout();

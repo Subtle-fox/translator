@@ -16,6 +16,11 @@ class YandexModelsAdapter {
             res.append(s).append('\n');
         }
 
-        return new TranslateResult(request.text, res.toString().trim(), request.direction);
+        return new TranslateResult(request.getText(), res.toString().trim(), request.getDirection());
+    }
+
+    // Yandex's specific case:
+    boolean isTranslationFound(TranslateResult result) {
+        return !result.textDst.isEmpty() && !result.textSrc.equalsIgnoreCase(result.textDst);
     }
 }

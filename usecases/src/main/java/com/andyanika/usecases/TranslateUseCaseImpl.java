@@ -6,14 +6,16 @@ import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase;
 import com.andyanika.translator.common.models.LanguageCode;
 import com.andyanika.translator.common.models.TranslateDirection;
 import com.andyanika.translator.common.models.TranslateRequest;
-import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
 import timber.log.Timber;
 
@@ -45,42 +47,41 @@ class TranslateUseCaseImpl implements TranslationUseCase {
     Observable<TranslateRequest> getTranslationRequest(String srcText) {
         return Observable
                 .zip(localRepository.getSrcLanguage(), localRepository.getDstLanguage(), TranslateDirection<LanguageCode>::new)
+                .timeout(500, TimeUnit.MILLISECONDS)
                 .take(1)
                 .map(direction -> new TranslateRequest(srcText, direction))
-                .doOnNext(translateRequest -> Timber.d("translation request: %s", translateRequest.text));
+                .doOnNext(translateRequest -> Timber.d("translation request: %s", translateRequest.getText()));
     }
 
     Observable<DisplayTranslateResult> translateLocally(TranslateRequest request) {
         return localRepository.translate(request)
-                .doOnSuccess(r -> Timber.d("local next: %s", r.textDst))
-                .map(r -> new DisplayTranslateResult(r, true))
+                .doOnSuccess(result -> Timber.d("local next: %s", result))
+                .map(result -> new DisplayTranslateResult(result, true))
                 .toObservable()
                 .doOnComplete(() -> Timber.d("local completed"))
-                .doOnError(t -> Timber.e("local error", t));
+                .doOnError(t -> Timber.e(t, "local error"));
     }
 
     Observable<DisplayTranslateResult> translateRemotely(TranslateRequest request) {
         return remoteRepository.translate(request)
-                .doOnNext(r -> Timber.d("remote next: %s", r.textDst))
-                .map(result -> getDisplayTranslateResult(request, result))
+                .doOnNext(result -> Timber.d("remote next: %s", result))
+                .flatMap(result ->
+                        Single.fromCallable(() -> {
+                            Timber.d("before saving to local db");
+                            localRepository.addTranslation(result);
+                            Timber.d("after saving to local db");
+                            return result;
+                        })
+                                .doOnSuccess(r -> Timber.d("saved to local db OK: %s", r))
+                                .doOnError(e -> Timber.e(e, "saved to local db exception"))
+                                .onErrorReturnItem(result)
+                                .toObservable()
+                )
+                .doOnNext(result -> Timber.d("after flat map: %s", result))
+                .map(result -> new DisplayTranslateResult(result, false))
                 .doOnComplete(() -> Timber.d("remote completed"))
-                .doOnError(t -> Timber.e("remote error", t))
-                .onErrorReturnItem(DisplayTranslateResult.createEmptyResult(request.text, request.direction, true));
-    }
-
-    private DisplayTranslateResult getDisplayTranslateResult(TranslateRequest request, TranslateResult result) {
-        if (!request.text.equalsIgnoreCase(result.textDst)) {
-            try {
-                Timber.d("save to local repository");
-                localRepository.addTranslation(result);
-                return new DisplayTranslateResult(result, false);
-            } catch (Exception e) {
-                // somethign goes wrong while saving into db
-                e.printStackTrace();
-                return DisplayTranslateResult.createEmptyResult(request.text, request.direction, false);
-            }
-        } else {
-            return DisplayTranslateResult.createEmptyResult(request.text, request.direction, false);
-        }
+                .defaultIfEmpty(DisplayTranslateResult.createEmptyResult(request, false))
+                .doOnError(t -> Timber.e(t, "remote error"))
+                .onErrorReturnItem(DisplayTranslateResult.createEmptyResult(request, true));
     }
 }

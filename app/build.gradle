@@ -1,4 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 
 android {
     defaultConfig {
@@ -23,6 +34,10 @@ android {
     compileOptions {
         sourceCompatibility java_version
         targetCompatibility java_version
+    }
+
+    sourceSets {
+        test.java.srcDirs += 'src/test/kotlin'
     }
 }
 
@@ -52,5 +67,10 @@ dependencies {
 
     implementation "ru.terrakok.cicerone:cicerone:${cicerone_version}"
 
+
     testImplementation "junit:junit:${junit_version}"
+    testImplementation "org.mockito:mockito-core:${mockito_version}"
+    testImplementation "org.robolectric:robolectric:${robolectric_version}"
+    testImplementation "org.assertj:assertj-core:${asserj_version}"
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

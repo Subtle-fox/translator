@@ -27,7 +27,25 @@ class YandexRemoteRepository implements RemoteRepository {
 
     @Override
     public Observable<TranslateResult> translate(TranslateRequest request) {
-        String direction = directionBuilder.buildParam(request.direction);
-        return api.translate(key, request.text, direction).map(response -> modelsAdapter.convert(request, response));
+        String direction = directionBuilder.buildParam(request.getDirection());
+        return api.translate(key, request.getText(), direction)
+                .map(response -> modelsAdapter.convert(request, response))
+                .filter(modelsAdapter::isTranslationFound);
     }
+
+//    private DisplayTranslateResult getDisplayTranslateResult(TranslateRequest request, TranslateResult result) {
+//        if (!request.getText().equalsIgnoreCase(result.textDst)) {
+//            try {
+//                Timber.d("save to local repository");
+//                localRepos1itory.addTranslation(result);
+//                return new DisplayTranslateResult(result, false);
+//            } catch (Exception e) {
+//                // somethign goes wrong while saving into db
+//                e.printStackTrace();
+//                return DisplayTranslateResult.createEmptyResult(request, false);
+//            }
+//        } else {
+//            return DisplayTranslateResult.createEmptyResult(request, false);
+//        }
+//    }
 }

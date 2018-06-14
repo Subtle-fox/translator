@@ -23,7 +23,7 @@ import timber.log.Timber;
 
 @FragmentScope
 public class TranslationPresenter {
-    private static final long DELAY = 1;
+    static final long DELAY = 1;
 
     private final TranslationView view;
     private final TranslationUseCase translateUseCase;
@@ -70,7 +70,7 @@ public class TranslationPresenter {
             view.hideOffline();
             view.hideClearBtn();
 
-            if (TextUtils.isEmpty(charSequence)) {
+            if (charSequence.length() == 0) {
                 view.hideProgress();
                 view.clearTranslation();
             } else {
@@ -85,8 +85,8 @@ public class TranslationPresenter {
                 .run()
                 .observeOn(uiScheduler)
                 .subscribe(pair -> {
-                    view.setSrcLabel(pair.src);
-                    view.setDstLabel(pair.dst);
+                    view.setSrcLabel(pair.getSrc());
+                    view.setDstLabel(pair.getDst());
                 });
 
         searchDisposable = searchTextObservable
@@ -95,9 +95,11 @@ public class TranslationPresenter {
                 .distinctUntilChanged(String::equals)
                 .mergeWith(retrySubject)
                 .doOnNext(this::showProgress)
+                .doOnNext(s -> Timber.d("before debounce: %s", s))
                 .debounce(DELAY, TimeUnit.SECONDS, computationScheduler)
-                .doOnNext(t -> Timber.d("after debounce: %s", t))
+                .doOnNext(s -> Timber.d("after debounce: %s", s))
                 .switchMap(translateUseCase::run)
+                .doOnNext(r -> Timber.d("after switch map: %s", r))
                 .observeOn(uiScheduler)
                 .subscribe(this::processResult, this::processError);
     }
@@ -138,7 +140,7 @@ public class TranslationPresenter {
             view.showErrorLayout();
             view.clearTranslation();
         } else {
-            view.showTranslation(result);
+            view.showNotFound();
         }
 
         view.hideProgress();

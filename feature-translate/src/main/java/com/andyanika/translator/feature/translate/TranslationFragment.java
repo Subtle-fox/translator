@@ -87,6 +87,11 @@ public class TranslationFragment extends DaggerFragment implements TranslationVi
     }
 
     @Override
+    public void showNotFound() {
+        txtTranslated.setText(R.string.translation_not_found);
+    }
+
+    @Override
     public void showTranslation(DisplayTranslateResult response) {
         txtTranslated.setText(response.textTranslated);
     }

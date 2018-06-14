@@ -1,5 +1,7 @@
 ext {
     java_version = JavaVersion.VERSION_1_8
+    kotlin_version = '1.2.50'
+    kotlin_jvm_version = '1.8'
 
     compileSdk = 27
     targetSdk = 27
@@ -30,6 +32,9 @@ ext {
     javax_inject_version = '1'
 
     junit_version = '4.12'
+    mockito_version = '1.10.19'
+    robolectric_version = '3.5'
+    asserj_version = '2.9.1'
 }
 
 buildscript {
@@ -42,8 +47,6 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.3'
-        classpath "net.ltgt.gradle:gradle-apt-plugin:0.15"
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
 

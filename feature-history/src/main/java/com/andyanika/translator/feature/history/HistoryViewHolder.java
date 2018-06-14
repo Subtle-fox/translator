@@ -34,8 +34,8 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
 
         title.setText(result.textSrc);
         description.setText(result.textDst);
-        langSrc.setText(result.direction.src.toString());
-        langDst.setText(result.direction.dst.toString());
+        langSrc.setText(result.direction.getSrc().toString());
+        langDst.setText(result.direction.getDst().toString());
         int color = model.isFavorite ? Color.RED : Color.BLACK;
         favoriteButton.setColorFilter(color);
     }
