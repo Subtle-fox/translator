@@ -15,7 +15,6 @@ import javax.inject.Named;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
-import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
 import timber.log.Timber;
 
@@ -65,18 +64,9 @@ class TranslateUseCaseImpl implements TranslationUseCase {
     Observable<DisplayTranslateResult> translateRemotely(TranslateRequest request) {
         return remoteRepository.translate(request)
                 .doOnNext(result -> Timber.d("remote next: %s", result))
-                .flatMap(result ->
-                        Single.fromCallable(() -> {
-                            Timber.d("before saving to local db");
-                            localRepository.addTranslation(result);
-                            Timber.d("after saving to local db");
-                            return result;
-                        })
-                                .doOnSuccess(r -> Timber.d("saved to local db OK: %s", r))
-                                .doOnError(e -> Timber.e(e, "saved to local db exception"))
-                                .onErrorReturnItem(result)
-                                .toObservable()
-                )
+                .flatMap(result -> localRepository.addTranslation(result)
+                        .onErrorReturnItem(result)
+                        .toObservable())
                 .doOnNext(result -> Timber.d("after flat map: %s", result))
                 .map(result -> new DisplayTranslateResult(result, false))
                 .doOnComplete(() -> Timber.d("remote completed"))

@@ -12,6 +12,7 @@ import com.andyanika.translator.repository.local.model.WordModel;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
@@ -62,9 +63,13 @@ class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public void addTranslation(TranslateResult translateResult) {
+    public Single<TranslateResult> addTranslation(TranslateResult translateResult) {
         WordModel model = adapter.toWordModel(translateResult);
-        dao.addTranslation(model);
+        return Completable.fromAction(() -> dao.addTranslation(model))
+                .subscribeOn(ioScheduler)
+                .toSingleDefault(translateResult)
+                .doOnSuccess(r -> Timber.d("saved to local db OK: %s", r))
+                .doOnError(e -> Timber.e(e, "saved to local db exception"));
     }
 
     @Override

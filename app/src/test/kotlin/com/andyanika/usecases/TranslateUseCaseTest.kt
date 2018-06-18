@@ -141,6 +141,7 @@ class TranslateUseCaseTest {
         // given
         val request = TranslateRequest("src", TranslateDirection(RU, EN))
         val expectedResult = TranslateResult(request.text, "dst", request.direction)
+        Mockito.`when`(localRepository.addTranslation(expectedResult)).thenReturn(Single.just(expectedResult))
         Mockito.`when`(remoteRepository.translate(request)).thenReturn(Observable.just(expectedResult))
 
         val testObserver = TestObserver<DisplayTranslateResult>()
@@ -217,6 +218,7 @@ class TranslateUseCaseTest {
         // given
         val request = TranslateRequest("src", TranslateDirection(RU, EN))
         val expectedResultRemote = TranslateResult(request.text, "dst remote", request.direction)
+        Mockito.`when`(localRepository.addTranslation(expectedResultRemote)).thenReturn(Single.just(expectedResultRemote))
         Mockito.`when`(remoteRepository.translate(request)).thenReturn(Observable.just(expectedResultRemote))
 
         val testObserver = TestObserver<DisplayTranslateResult>()
@@ -245,7 +247,7 @@ class TranslateUseCaseTest {
         // given
         val request = TranslateRequest("src", TranslateDirection(RU, EN))
         val expectedResultRemote = TranslateResult(request.text, "dst remote", request.direction)
-        Mockito.`when`(localRepository.addTranslation(expectedResultRemote)).then { throw IOException() }
+        Mockito.`when`(localRepository.addTranslation(expectedResultRemote)).thenReturn(Single.error( IOException() ))
         Mockito.`when`(remoteRepository.translate(request)).thenReturn(Observable.just(expectedResultRemote))
 
         val testObserver = TestObserver<DisplayTranslateResult>()
@@ -322,6 +324,7 @@ class TranslateUseCaseTest {
         val request = TranslateRequest("src", TranslateDirection(RU, EN))
         val expectedResultRemote = TranslateResult(request.text, "dst remote", request.direction)
         Mockito.`when`(localRepository.translate(request)).thenReturn(Single.error(Exception("not saved")))
+        Mockito.`when`(localRepository.addTranslation(expectedResultRemote)).thenReturn(Single.just(expectedResultRemote))
         Mockito.`when`(remoteRepository.translate(request)).thenReturn(Observable.just(expectedResultRemote))
 
         val testObserver = TestObserver<DisplayTranslateResult>()

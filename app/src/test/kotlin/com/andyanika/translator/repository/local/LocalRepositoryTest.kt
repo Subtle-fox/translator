@@ -5,6 +5,7 @@ import com.andyanika.translator.common.models.LanguageCode
 import com.andyanika.translator.common.models.LanguageCode.EN
 import com.andyanika.translator.common.models.LanguageCode.RU
 import com.andyanika.translator.common.models.TranslateDirection
+import com.andyanika.translator.common.models.TranslateResult
 import com.andyanika.translator.repository.local.LocalRepositoryImpl.LANGUAGE_DST
 import com.andyanika.translator.repository.local.LocalRepositoryImpl.LANGUAGE_SRC
 import io.reactivex.observers.TestObserver
@@ -31,14 +32,16 @@ class LocalRepositoryTest {
     @Mock
     private lateinit var editor: SharedPreferences.Editor
 
+    private lateinit var modelsAdapter: ModelsAdapter
     private lateinit var testScheduler: TestScheduler
     private lateinit var repository: LocalRepositoryImpl
 
     @Before
     fun before() {
         MockitoAnnotations.initMocks(this)
+        modelsAdapter = ModelsAdapter()
         testScheduler = TestScheduler()
-        repository = LocalRepositoryImpl(dao, prefs, ModelsAdapter(), testScheduler)
+        repository = LocalRepositoryImpl(dao, prefs, modelsAdapter, testScheduler)
     }
 
     @Test
@@ -137,5 +140,37 @@ class LocalRepositoryTest {
         testObserver.values()[1].run {
             assertThat(this).isEqualTo(EN)
         }
+    }
+
+    @Test
+    fun should_emit_completed_when_add_to_dao() {
+        // given
+        val result = TranslateResult("src", "dst", TranslateDirection(RU, EN))
+
+        val testObserver = TestObserver<TranslateResult>()
+        repository.addTranslation(result).subscribe(testObserver)
+
+        // when
+        testScheduler.advanceTimeTo(1, TimeUnit.SECONDS)
+
+        // then
+        testObserver.assertComplete()
+        testObserver.assertValue(result)
+    }
+
+    @Test
+    fun should_emit_error_when_add_to_dao_if_dao_fails() {
+        // given
+        val result = TranslateResult("src", "dst", TranslateDirection(RU, EN))
+        val ioException = IOException()
+        Mockito.`when`(dao.addTranslation(Mockito.any())).then { throw ioException }
+        val testObserver = TestObserver<TranslateResult>()
+        repository.addTranslation(result).subscribe(testObserver)
+
+        // when
+        testScheduler.advanceTimeTo(1, TimeUnit.SECONDS)
+
+        // then
+        testObserver.assertError(ioException)
     }
 }
