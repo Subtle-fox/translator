@@ -1,5 +1,7 @@
 package com.andyanika.translator.feature.translate;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,7 +16,6 @@ import android.widget.TextView;
 import com.andyanika.translator.common.constants.Extras;
 import com.andyanika.translator.common.constants.Screens;
 import com.andyanika.translator.common.interfaces.ScreenRouter;
-import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
 import com.jakewharton.rxbinding2.InitialValueObservable;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
@@ -22,12 +23,12 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class TranslationFragment extends DaggerFragment implements TranslationView {
-    @Inject
-    TranslationPresenter presenter;
-
+public class TranslationFragment extends DaggerFragment {
     @Inject
     ScreenRouter router;
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
 
     private EditText editInput;
     private TextView txtTranslated;
@@ -40,6 +41,7 @@ public class TranslationFragment extends DaggerFragment implements TranslationVi
     private Button dstLangBtn;
     private ImageButton swapLangBtn;
     private InitialValueObservable<CharSequence> textObservable;
+    private TranslationViewModel viewModel;
 
     @Nullable
     @Override
@@ -62,23 +64,26 @@ public class TranslationFragment extends DaggerFragment implements TranslationVi
         dstLangBtn = view.findViewById(R.id.btn_lang_dst);
         swapLangBtn = view.findViewById(R.id.btn_lang_swap);
         offlineIcon = view.findViewById(R.id.icon_offline);
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(TranslationViewModel.class);
+        observe(viewModel);
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        presenter.subscribe(textObservable);
+        viewModel.subscribe(textObservable);
         srcLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC));
         dstLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST));
-        swapLangBtn.setOnClickListener(v -> presenter.swapDirection());
-        clearBtn.setOnClickListener(v -> presenter.clear());
-        retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
+        swapLangBtn.setOnClickListener(v -> viewModel.swapDirection());
+        clearBtn.setOnClickListener(v -> setSource(""));
+        retryBtn.setOnClickListener(v -> viewModel.translate(editInput.getText().toString()));
     }
 
     @Override
     public void onStop() {
-        presenter.dispose();
+        viewModel.unsubscribe();
         retryBtn.setOnClickListener(null);
         srcLangBtn.setOnClickListener(null);
         dstLangBtn.setOnClickListener(null);
@@ -86,80 +91,50 @@ public class TranslationFragment extends DaggerFragment implements TranslationVi
         super.onStop();
     }
 
-    @Override
-    public void showNotFound() {
-        txtTranslated.setText(R.string.translation_not_found);
+    private void observe(TranslationViewModel viewModel) {
+        viewModel.showClearBtn.observe(this, this::showClearBtn);
+        viewModel.showProgress.observe(this, this::showProgress);
+        viewModel.isError.observe(this, this::showErrorLayout);
+        viewModel.isOffline.observe(this, this::showOffline);
+        viewModel.srcLabel.observe(this, this::setSrcLabel);
+        viewModel.dstLabel.observe(this, this::setDstLabel);
+        viewModel.dstString.observe(this, this::setTranslation);
+        viewModel.srcString.observe(this, this::setSource);
     }
 
-    @Override
-    public void showTranslation(DisplayTranslateResult response) {
-        txtTranslated.setText(response.textTranslated);
+    int toVisibility(Boolean isVisible) {
+        return isVisible != null && isVisible ? View.VISIBLE : View.INVISIBLE;
     }
 
-    @Override
-    public void showProgress() {
-        progress.setVisibility(View.VISIBLE);
+    public void setTranslation(CharSequence textTranslation) {
+        txtTranslated.setText(textTranslation);
     }
 
-    @Override
-    public void hideProgress() {
-        progress.setVisibility(View.INVISIBLE);
+    public void setSource(CharSequence charSequence) {
+        editInput.setText(charSequence);
     }
 
-    @Override
-    public void showErrorLayout() {
-        errorLayout.setVisibility(View.VISIBLE);
+    public void showProgress(Boolean isVisible) {
+        progress.setVisibility(toVisibility(isVisible));
     }
 
-    @Override
-    public void hideErrorLayout() {
-        errorLayout.setVisibility(View.INVISIBLE);
+    public void showErrorLayout(Boolean isVisible) {
+        errorLayout.setVisibility(toVisibility(isVisible));
     }
 
-    @Override
     public void setSrcLabel(String text) {
         srcLangBtn.setText(text);
     }
 
-    @Override
     public void setDstLabel(String text) {
         dstLangBtn.setText(text);
     }
 
-    @Override
-    public void showOffline() {
-        offlineIcon.setVisibility(View.VISIBLE);
+    public void showOffline(Boolean isVisible) {
+        offlineIcon.setVisibility(toVisibility(isVisible));
     }
 
-    @Override
-    public void hideOffline() {
-        offlineIcon.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void showClearBtn() {
-        clearBtn.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideClearBtn() {
-        clearBtn.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void clearResult() {
-        editInput.getText().clear();
-    }
-
-    @Override
-    public void clearTranslation() {
-        txtTranslated.setText("");
-    }
-
-    @Override
-    public void onDestroy() {
-        presenter.dispose();
-        presenter = null;
-        super.onDestroy();
+    public void showClearBtn(Boolean isVisible) {
+        clearBtn.setVisibility(toVisibility(isVisible));
     }
 }
