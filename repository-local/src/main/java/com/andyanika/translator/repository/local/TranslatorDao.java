@@ -10,10 +10,9 @@ import com.andyanika.translator.repository.local.model.FavoriteModel;
 import com.andyanika.translator.repository.local.model.WordFavoriteModel;
 import com.andyanika.translator.repository.local.model.WordModel;
 
-import java.util.List;
+import org.reactivestreams.Publisher;
 
-import io.reactivex.Flowable;
-import io.reactivex.Single;
+import java.util.List;
 
 @Dao
 interface TranslatorDao {
@@ -29,7 +28,7 @@ interface TranslatorDao {
             "from words_table " +
             "LEFT JOIN favorites_table ON words_table._id = favorites_table._id " +
             "ORDER BY words_table.last_modified DESC")
-    Flowable<List<WordFavoriteModel>> getHistory();
+    Publisher<List<WordFavoriteModel>> getHistory();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addFavorite(FavoriteModel favorite);
@@ -40,11 +39,11 @@ interface TranslatorDao {
     @Query("SELECT * from words_table " +
             "JOIN favorites_table ON words_table._id = favorites_table._id " +
             "ORDER BY favorites_table.last_modified DESC")
-    Flowable<List<WordModel>> getFavorites();
+    Publisher<List<WordModel>> getFavorites();
 
     @Query("SELECT * from words_table " +
             "WHERE src = :text " +
             "AND lang_src = :langSrc " +
             "AND lang_dst = :langDst")
-    Single<WordModel> getTranslation(String text, String langSrc, String langDst);
+    WordModel getTranslation(String text, String langSrc, String langDst);
 }

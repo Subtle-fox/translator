@@ -15,8 +15,8 @@ import com.andyanika.translator.common.constants.Extras;
 import com.andyanika.translator.common.constants.Screens;
 import com.andyanika.translator.common.interfaces.ScreenRouter;
 import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
-import com.jakewharton.rxbinding2.InitialValueObservable;
-import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.jakewharton.rxbinding4.InitialValueObservable;
+import com.jakewharton.rxbinding4.widget.RxTextView;
 
 import javax.inject.Inject;
 

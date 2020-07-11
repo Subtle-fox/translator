@@ -15,8 +15,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.Subject;
 
 @FragmentScope
 public class HistoryListAdapter extends RecyclerView.Adapter<HistoryViewHolder> {

@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import io.reactivex.annotations.NonNull;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Scheduler;
 import timber.log.Timber;
 
 class TranslateUseCaseImpl implements TranslationUseCase {
@@ -39,7 +39,7 @@ class TranslateUseCaseImpl implements TranslationUseCase {
         return getTranslationRequest(srcText)
                 .flatMap(request ->
                         translateLocally(request)
-                                .onErrorResumeNext(translateRemotely(request)))
+                                .onErrorResumeWith(translateRemotely(request)))
                 .subscribeOn(ioScheduler);
     }
 

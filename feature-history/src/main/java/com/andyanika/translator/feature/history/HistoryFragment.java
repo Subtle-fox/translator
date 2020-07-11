@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.jakewharton.rxbinding2.InitialValueObservable;
-import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.jakewharton.rxbinding4.InitialValueObservable;
+import com.jakewharton.rxbinding4.widget.RxTextView;
 
 import javax.inject.Inject;
 

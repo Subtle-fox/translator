@@ -36,6 +36,10 @@ android {
         targetCompatibility java_version
     }
 
+    kotlinOptions {
+        jvmTarget = kotlin_jvm_version
+    }
+
     sourceSets {
         test.java.srcDirs += 'src/test/kotlin'
     }
@@ -62,8 +66,8 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
     annotationProcessor "com.google.dagger:dagger-android-processor:${dagger_version}"
 
-    implementation "io.reactivex.rxjava2:rxjava:${rx_java_version}"
-    implementation "io.reactivex.rxjava2:rxandroid:${rx_android_version}"
+    implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
+    implementation "io.reactivex.rxjava3:rxandroid:${rx_android_version}"
 
     implementation "ru.terrakok.cicerone:cicerone:${cicerone_version}"
 

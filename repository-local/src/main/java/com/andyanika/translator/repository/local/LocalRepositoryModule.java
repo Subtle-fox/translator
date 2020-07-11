@@ -11,7 +11,7 @@ import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
-import io.reactivex.Scheduler;
+import io.reactivex.rxjava3.core.Scheduler;
 
 @Module
 public class LocalRepositoryModule {

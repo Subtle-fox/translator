@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.andyanika.translator.common.models.ui.DisplayLanguageModel;
 
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 public class SelectLanguageViewHolder extends RecyclerView.ViewHolder {
     private TextView title;

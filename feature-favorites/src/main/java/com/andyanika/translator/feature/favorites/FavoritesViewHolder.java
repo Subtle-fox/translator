@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.andyanika.translator.common.models.FavoriteModel;
 import com.andyanika.translator.common.models.TranslateResult;
 
-import io.reactivex.Observer;
+import io.reactivex.rxjava3.core.Observer;
 
 public class FavoritesViewHolder extends RecyclerView.ViewHolder {
     private TextView title;

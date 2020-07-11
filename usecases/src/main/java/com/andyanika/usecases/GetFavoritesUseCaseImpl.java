@@ -9,8 +9,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Flowable;
-import io.reactivex.Scheduler;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Scheduler;
 
 class GetFavoritesUseCaseImpl implements GetFavoritesUseCase {
     private final LocalRepository repository;

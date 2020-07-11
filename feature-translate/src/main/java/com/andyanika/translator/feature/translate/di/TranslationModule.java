@@ -7,7 +7,7 @@ import com.andyanika.translator.feature.translate.TranslationView;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 
 @Module
 abstract class TranslationModule {

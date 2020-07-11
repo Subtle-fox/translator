@@ -9,9 +9,9 @@ import com.andyanika.translator.common.models.TranslateDirection;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import io.reactivex.functions.Function;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.functions.Function;
 
 class GetSelectedLanguagesUseCaseImpl implements GetSelectedLanguageUseCase {
     private final LocalRepository repository;

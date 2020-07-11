@@ -6,8 +6,8 @@ import com.andyanika.translator.common.interfaces.usecase.AddFavoriteUseCase;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Completable;
-import io.reactivex.Scheduler;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Scheduler;
 
 class AddFavoriteUseCaseImpl implements AddFavoriteUseCase {
     private final LocalRepository repository;
