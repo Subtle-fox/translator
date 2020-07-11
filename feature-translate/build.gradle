@@ -21,10 +21,11 @@ dependencies {
     implementation project(path: ':resources')
     implementation project(path: ':common')
 
-    implementation "com.android.support:appcompat-v7:${support_lib_version}"
-    implementation "com.android.support:design:${support_lib_version}"
-    implementation "com.android.support.constraint:constraint-layout:${constraint_version}"
-    implementation "android.arch.lifecycle:extensions:${arch_components_version}"
+    implementation "androidx.appcompat:appcompat:${material_version}"
+    implementation "com.google.android.material:material:${material_version}"
+    implementation "androidx.constraintlayout:constraintlayout:${constraint_version}"
+    implementation "androidx.lifecycle:lifecycle-extensions:${lifecycle_version}"
+
 
     implementation "com.google.dagger:dagger-android-support:${dagger_version}"
     annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"

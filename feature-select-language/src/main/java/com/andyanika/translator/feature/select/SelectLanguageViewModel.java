@@ -1,7 +1,7 @@
 package com.andyanika.translator.feature.select;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.andyanika.translator.common.constants.Extras;
 import com.andyanika.translator.common.constants.Screens;

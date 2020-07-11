@@ -1,8 +1,7 @@
 package com.andyanika.translator.feature.translate;
 
 
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
+import androidx.annotation.NonNull;
 
 import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase;
 import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;

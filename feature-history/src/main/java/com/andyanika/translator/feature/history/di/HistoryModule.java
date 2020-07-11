@@ -1,6 +1,6 @@
 package com.andyanika.translator.feature.history.di;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.andyanika.resources.ViewModelKey;
 import com.andyanika.translator.common.scopes.FragmentScope;

@@ -29,9 +29,9 @@ dependencies {
     implementation "com.google.dagger:dagger:${dagger_version}"
     annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
 
-    implementation "android.arch.persistence.room:runtime:${roomVersion}"
-    implementation "android.arch.persistence.room:rxjava2:${roomVersion}"
-    annotationProcessor "android.arch.persistence.room:compiler:${roomVersion}"
+    implementation "androidx.room:room-runtime:${room_version}"
+    implementation "androidx.room:room-rxjava2:${room_version}"
+    annotationProcessor "androidx.room:room-compiler:${room_version}"
 
     implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
 }
