@@ -1,8 +1,7 @@
 package com.andyanika.translator.feature.translate;
 
 
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
+import androidx.annotation.NonNull;
 
 import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase;
 import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
@@ -15,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 import timber.log.Timber;
 
 @FragmentScope

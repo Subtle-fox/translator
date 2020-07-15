@@ -1,6 +1,6 @@
 package com.andyanika.translator.repository.local;
 
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -11,7 +11,7 @@ import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
-import io.reactivex.Scheduler;
+import io.reactivex.rxjava3.core.Scheduler;
 
 @Module
 public class LocalRepositoryModule {

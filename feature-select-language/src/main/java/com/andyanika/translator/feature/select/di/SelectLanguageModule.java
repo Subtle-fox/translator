@@ -1,6 +1,6 @@
 package com.andyanika.translator.feature.select.di;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.andyanika.resources.ViewModelKey;
 import com.andyanika.translator.common.scopes.FragmentScope;
@@ -10,8 +10,8 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 @Module
 abstract class SelectLanguageModule {

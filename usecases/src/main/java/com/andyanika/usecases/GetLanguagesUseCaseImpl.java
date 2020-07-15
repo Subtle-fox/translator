@@ -12,8 +12,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Scheduler;
 import timber.log.Timber;
 
 class GetLanguagesUseCaseImpl implements GetLanguagesUseCase {

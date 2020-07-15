@@ -11,13 +11,14 @@ import com.andyanika.translator.common.models.TranslateResult;
 import com.andyanika.translator.repository.local.model.WordModel;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import io.reactivex.Single;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 import timber.log.Timber;
 
 class LocalRepositoryImpl implements LocalRepository {
@@ -42,7 +43,7 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public Flowable<List<FavoriteModel>> getHistory() {
-        return dao.getHistory()
+        return Flowable.fromPublisher(dao.getHistory())
                 .flatMap(list -> Flowable.fromIterable(list)
                         .map(adapter::toTranslationRowModel).toList()
                         .toFlowable());
@@ -50,7 +51,7 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public Flowable<List<FavoriteModel>> getFavorites() {
-        return dao.getFavorites()
+        return Flowable.fromPublisher(dao.getFavorites())
                 .flatMap(list -> Flowable.fromIterable(list)
                         .map(adapter::toTranslationRowModel).toList()
                         .toFlowable());
@@ -58,8 +59,11 @@ class LocalRepositoryImpl implements LocalRepository {
 
     @Override
     public Single<TranslateResult> translate(TranslateRequest request) {
-        return dao.getTranslation(request.getText(), request.getDirection().getSrc().toString(), request.getDirection().getDst().toString())
-                .map(adapter::toTranslationResult);
+        Callable<TranslateResult> callable = () -> {
+            WordModel wordModel = dao.getTranslation(request.getText(), request.getDirection().getSrc().toString(), request.getDirection().getDst().toString());
+            return adapter.toTranslationResult(wordModel);
+        };
+        return Single.fromCallable(callable);
     }
 
     @Override

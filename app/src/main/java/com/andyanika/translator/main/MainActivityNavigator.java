@@ -1,7 +1,7 @@
 package com.andyanika.translator.main;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.andyanika.translator.R;
 import com.andyanika.translator.common.constants.Screens;

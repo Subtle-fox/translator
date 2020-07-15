@@ -1,7 +1,7 @@
 package com.andyanika.translator.feature.select;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.andyanika.translator.common.constants.Extras;
 import com.andyanika.translator.common.constants.Screens;
@@ -16,9 +16,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Scheduler;
-import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.Disposable;
 import timber.log.Timber;
 
 @FragmentScope

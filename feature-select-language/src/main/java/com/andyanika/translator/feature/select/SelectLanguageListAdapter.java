@@ -1,8 +1,8 @@
 package com.andyanika.translator.feature.select;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +15,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Single;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.subjects.Subject;
 
 @FragmentScope
 public class SelectLanguageListAdapter extends RecyclerView.Adapter<SelectLanguageViewHolder> {

@@ -1,7 +1,7 @@
 package com.andyanika.translator.main;
 
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.andyanika.translator.R;
 

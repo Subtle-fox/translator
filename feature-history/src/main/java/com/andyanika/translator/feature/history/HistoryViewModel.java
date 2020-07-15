@@ -1,7 +1,7 @@
 package com.andyanika.translator.feature.history;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 import android.text.TextUtils;
 
 import com.andyanika.translator.common.interfaces.usecase.AddFavoriteUseCase;
@@ -14,8 +14,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
 import timber.log.Timber;
 
 @FragmentScope
@@ -40,7 +40,7 @@ public class HistoryViewModel extends ViewModel {
 
     void subscribeSearch(Observable<CharSequence> searchTextObservable, int limit) {
         listDisposable = searchTextObservable
-                .startWith("")
+                .startWithItem("")
                 .map(CharSequence::toString)
                 .distinctUntilChanged(String::equals)
                 .doOnNext(s -> showClearBtn.postValue(!TextUtils.isEmpty(s)))

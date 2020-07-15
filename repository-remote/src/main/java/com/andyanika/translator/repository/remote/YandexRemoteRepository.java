@@ -6,7 +6,7 @@ import com.andyanika.translator.common.models.TranslateResult;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
 class YandexRemoteRepository implements RemoteRepository {
     private final YandexApi api;

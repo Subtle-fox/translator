@@ -1,6 +1,6 @@
 package com.andyanika.translator.repository.remote;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 

@@ -1,7 +1,7 @@
 package com.andyanika.translator.feature.favorites;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.andyanika.translator.common.interfaces.usecase.GetFavoritesUseCase;
 import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
@@ -12,8 +12,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
 import timber.log.Timber;
 
 @FragmentScope

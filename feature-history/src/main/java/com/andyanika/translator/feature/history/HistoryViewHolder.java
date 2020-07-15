@@ -1,7 +1,7 @@
 package com.andyanika.translator.feature.history;
 
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.andyanika.translator.common.models.FavoriteModel;
 import com.andyanika.translator.common.models.TranslateResult;
 
-import io.reactivex.Observer;
+import io.reactivex.rxjava3.core.Observer;
 
 public class HistoryViewHolder extends RecyclerView.ViewHolder {
     private TextView title;
