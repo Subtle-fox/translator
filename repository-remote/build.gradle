@@ -10,8 +10,6 @@ android {
         minSdkVersion minSdk
         buildToolsVersion build_tools_version
 
-        // define your own Yandex_api_key in gradle.properties (https://tech.yandex.ru/translate/doc/dg/concepts/api-keys-docpage/)
-        def yandex_api_key = '"XXXX-YYYY"'
         println "Yandex ApiKey: $yandex_api_key"
         buildConfigField 'String', "ApiKey", yandex_api_key
 
@@ -31,7 +29,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:${okhttp3_version}"
     implementation "com.squareup.retrofit2:retrofit:${retrofit_version}"
     implementation "com.squareup.retrofit2:converter-gson:${retrofit_version}"
-    implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
+    implementation "com.squareup.retrofit2:adapter-rxjava3:${retrofit_version}"
     implementation "com.google.code.gson:gson:${gson_version}"
 
     implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
