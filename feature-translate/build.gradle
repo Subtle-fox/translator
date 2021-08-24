@@ -2,12 +2,10 @@ apply plugin: 'com.android.library'
 
 android {
     defaultConfig {
-        versionCode pVersionCode
-        versionName pVersionName
 
-        compileSdkVersion = compileSdk
-        targetSdkVersion targetSdk
-        minSdkVersion minSdk
+        compileSdkVersion pCompileSdk
+        targetSdkVersion pTargetSdk
+        minSdkVersion pMinSdk
         buildToolsVersion build_tools_version
 
         compileOptions {
@@ -35,5 +33,5 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxandroid:${rx_android_version}"
     implementation "com.jakewharton.rxbinding4:rxbinding-appcompat:${rx_binding_version}"
 
-    implementation "ru.terrakok.cicerone:cicerone:${cicerone_version}"
+    implementation "com.github.terrakok:cicerone:${cicerone_version}"
 }

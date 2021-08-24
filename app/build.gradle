@@ -18,9 +18,9 @@ android {
         versionCode pVersionCode
         versionName pVersionName
 
-        compileSdkVersion = compileSdk
-        targetSdkVersion targetSdk
-        minSdkVersion minSdk
+        compileSdkVersion pCompileSdk
+        targetSdkVersion pTargetSdk
+        minSdkVersion pMinSdk
         buildToolsVersion build_tools_version
     }
 
@@ -69,12 +69,11 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
     implementation "io.reactivex.rxjava3:rxandroid:${rx_android_version}"
 
-    implementation "ru.terrakok.cicerone:cicerone:${cicerone_version}"
+    implementation "com.github.terrakok:cicerone:${cicerone_version}"
 
 
     testImplementation "junit:junit:${junit_version}"
     testImplementation "org.mockito:mockito-core:${mockito_version}"
-    testImplementation "org.robolectric:robolectric:${robolectric_version}"
     testImplementation "org.assertj:assertj-core:${asserj_version}"
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

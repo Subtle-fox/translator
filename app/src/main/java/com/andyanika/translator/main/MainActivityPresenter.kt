@@ -1,49 +1,43 @@
-package com.andyanika.translator.main;
+package com.andyanika.translator.main
 
-import androidx.annotation.NonNull;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import android.view.MenuItem;
+import android.view.MenuItem
+import com.andyanika.translator.R
+import com.andyanika.translator.main.Screens.Favorite
+import com.andyanika.translator.main.Screens.History
+import com.andyanika.translator.main.Screens.Translation
+import com.github.terrakok.cicerone.Router
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import javax.inject.Inject
 
-import com.andyanika.translator.R;
-import com.andyanika.translator.common.constants.Screens;
-
-import javax.inject.Inject;
-
-import ru.terrakok.cicerone.Router;
-
-public class MainActivityPresenter implements BottomNavigationView.OnNavigationItemSelectedListener {
-    private Router router;
-
-    @Inject
-    MainActivityPresenter(Router router) {
-        this.router = router;
+class MainActivityPresenter @Inject internal constructor(private val router: Router) :
+    BottomNavigationView.OnNavigationItemSelectedListener {
+    fun navigateToTranslation() {
+        router.navigateTo(Translation())
     }
 
-    public void navigateToTranslation() {
-        router.replaceScreen(Screens.TRANSLATION);
+    fun navigateToHistory() {
+        router.replaceScreen(History())
     }
 
-    public void navigateToHistory() {
-        router.replaceScreen(Screens.HISTORY);
+    fun navigateToFavorites() {
+        router.replaceScreen(Favorite())
     }
 
-    public void navigateToFavorites() {
-        router.replaceScreen(Screens.FAVORITES);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.navigation_translate:
-                navigateToTranslation();
-                return true;
-            case R.id.navigation_history:
-                navigateToHistory();
-                return true;
-            case R.id.navigation_favorite:
-                navigateToFavorites();
-                return true;
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.navigation_translate -> {
+                navigateToTranslation()
+                return true
+            }
+            R.id.navigation_history -> {
+                navigateToHistory()
+                return true
+            }
+            R.id.navigation_favorite -> {
+                navigateToFavorites()
+                return true
+            }
         }
-        return false;
+        return false
     }
 }

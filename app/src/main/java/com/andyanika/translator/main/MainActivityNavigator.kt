@@ -1,88 +1,41 @@
-package com.andyanika.translator.main;
+package com.andyanika.translator.main
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.andyanika.translator.R;
-import com.andyanika.translator.common.constants.Screens;
-import com.andyanika.translator.common.scopes.ActivityScope;
-import com.andyanika.translator.feature.favorites.FavoriteFragment;
-import com.andyanika.translator.feature.history.HistoryFragment;
-import com.andyanika.translator.feature.select.SelectLanguageFragment;
-import com.andyanika.translator.feature.translate.TranslationFragment;
-
-import javax.inject.Inject;
-
-import ru.terrakok.cicerone.android.SupportFragmentNavigator;
-import ru.terrakok.cicerone.commands.Command;
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import com.andyanika.translator.R
+import com.andyanika.translator.common.scopes.ActivityScope
+import com.andyanika.translator.feature.favorites.FavoriteFragment
+import com.andyanika.translator.feature.history.HistoryFragment
+import com.andyanika.translator.feature.translate.TranslationFragment
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
+import javax.inject.Inject
 
 @ActivityScope
-public class MainActivityNavigator extends SupportFragmentNavigator {
-    private final MainActivity activity;
+internal class MainActivityNavigator @Inject constructor(activity: MainActivity) :
+    AppNavigator(activity, activity.fragmentContainerId) {
 
-    private TranslationFragment translationFragment;
-    private HistoryFragment historyFragment;
-    private FavoriteFragment favoriteFragment;
+    private var translationFragment: TranslationFragment? = null
+    private var historyFragment: HistoryFragment? = null
+    private var favoriteFragment: FavoriteFragment? = null
 
-    @Inject
-    MainActivityNavigator(MainActivity activity) {
-        super(activity.getSupportFragmentManager(), activity.getFragmentContainerId());
-        this.activity = activity;
+    public override fun back() {
+        activity.setTitle(R.string.app_name)
+        super.back()
     }
 
-    @Override
-    protected Fragment createFragment(String screenKey, Object data) {
-        switch (screenKey) {
-            case Screens.TRANSLATION:
-                if (translationFragment == null) {
-                    translationFragment = new TranslationFragment();
-                }
-                return translationFragment;
-            case Screens.HISTORY:
-                if (historyFragment == null) {
-                    historyFragment = new HistoryFragment();
-                }
-                return historyFragment;
-            case Screens.FAVORITES:
-                if (favoriteFragment == null) {
-                    favoriteFragment = new FavoriteFragment();
-                }
-                return favoriteFragment;
-            case Screens.SELECT_LANGUAGE: {
-                return SelectLanguageFragment.create((String) data);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    protected void showSystemMessage(String message) {
-
-    }
-
-    @Override
-    protected void exit() {
-        activity.finish();
-    }
-
-    @Override
-    public void back() {
-        activity.setTitle(R.string.app_name);
-        super.back();
-    }
-
-    @Override
-    protected void setupFragmentTransactionAnimation(
-            Command command,
-            Fragment currentFragment,
-            Fragment nextFragment,
-            FragmentTransaction fragmentTransaction) {
-        int animationEnter = 0;
-        int animationExit = 0;
+    override fun setupFragmentTransaction(
+        screen: FragmentScreen,
+        fragmentTransaction: FragmentTransaction,
+        currentFragment: Fragment?,
+        nextFragment: Fragment
+    ) {
+        var animationEnter = 0
+        var animationExit = 0
         if (currentFragment != null) {
-            animationEnter = android.R.anim.slide_in_left;
-            animationExit = android.R.anim.slide_out_right;
+            animationEnter = android.R.anim.slide_in_left
+            animationExit = android.R.anim.slide_out_right
         }
-        fragmentTransaction.setCustomAnimations(animationEnter, animationExit, animationEnter, animationExit);
+        fragmentTransaction.setCustomAnimations(animationEnter, animationExit, animationEnter, animationExit)
     }
 }

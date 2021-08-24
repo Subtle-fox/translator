@@ -1,23 +1,24 @@
-package com.andyanika.translator.di;
+package com.andyanika.translator.di
 
-import com.andyanika.translator.common.interfaces.ScreenRouter;
+import com.andyanika.translator.common.constants.Screens
+import com.andyanika.translator.common.interfaces.ScreenRouter
+import com.github.terrakok.cicerone.Router
+import com.andyanika.translator.main.Screens as ScreenFragments
 
-import ru.terrakok.cicerone.Router;
-
-public class ScreenRouterImpl implements ScreenRouter {
-    private Router router;
-
-    ScreenRouterImpl(Router router) {
-        this.router = router;
+class ScreenRouterImpl internal constructor(private val router: Router) : ScreenRouter {
+    override fun navigateTo(screenKey: String, args: Any) {
+        router.navigateTo(getScreenByKey(screenKey, args))
     }
 
-    @Override
-    public void navigateTo(String screenKey, Object data) {
-        router.navigateTo(screenKey, data);
+    override fun backTo(screenKey: String) {
+        router.backTo(getScreenByKey(screenKey))
     }
 
-    @Override
-    public void backTo(String screenKey) {
-        router.backTo(screenKey);
+    fun getScreenByKey(screenKey: String, args: Any? = null) = when (screenKey) {
+        Screens.TRANSLATION -> ScreenFragments.Translation()
+        Screens.HISTORY -> ScreenFragments.History()
+        Screens.FAVORITES -> ScreenFragments.Favorite()
+        Screens.SELECT_LANGUAGE -> ScreenFragments.SelectLanguage(args as String)
+        else -> throw IllegalAccessException(screenKey)
     }
 }

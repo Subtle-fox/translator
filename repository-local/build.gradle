@@ -2,12 +2,10 @@ apply plugin: 'com.android.library'
 
 android {
     defaultConfig {
-        versionCode pVersionCode
-        versionName pVersionName
 
-        compileSdkVersion = compileSdk
-        targetSdkVersion targetSdk
-        minSdkVersion minSdk
+        compileSdkVersion pCompileSdk
+        targetSdkVersion pTargetSdk
+        minSdkVersion pMinSdk
         buildToolsVersion build_tools_version
 
         javaCompileOptions {

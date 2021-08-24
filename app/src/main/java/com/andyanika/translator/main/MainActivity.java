@@ -1,6 +1,8 @@
 package com.andyanika.translator.main;
 
 import android.os.Bundle;
+
+import com.github.terrakok.cicerone.NavigatorHolder;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.andyanika.translator.R;
@@ -8,7 +10,6 @@ import com.andyanika.translator.R;
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
-import ru.terrakok.cicerone.NavigatorHolder;
 
 
 public class MainActivity extends DaggerAppCompatActivity {
