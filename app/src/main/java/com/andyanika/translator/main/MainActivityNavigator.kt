@@ -11,8 +11,7 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 import javax.inject.Inject
 
-@ActivityScope
-internal class MainActivityNavigator @Inject constructor(activity: MainActivity) :
+@ActivityScope class MainActivityNavigator @Inject constructor(activity: MainActivity) :
     AppNavigator(activity, activity.fragmentContainerId) {
 
     private var translationFragment: TranslationFragment? = null

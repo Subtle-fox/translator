@@ -1,66 +1,83 @@
-package com.andyanika.usecases;
+package com.andyanika.usecases
 
-import com.andyanika.translator.common.interfaces.LocalRepository;
-import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
-import com.andyanika.translator.common.models.LanguageCode;
-import com.andyanika.translator.common.models.TranslateDirection;
+import com.andyanika.translator.common.interfaces.LocalRepository
+import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase
+import com.andyanika.translator.common.models.LanguageCode
+import com.andyanika.translator.common.models.TranslateDirection
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Scheduler
+import javax.inject.Inject
+import javax.inject.Named
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Scheduler;
-
-class SelectLanguageUseCaseImpl implements SelectLanguageUseCase {
-    private final LocalRepository repository;
-    private final Scheduler ioScheduler;
-
-    @Inject
-    SelectLanguageUseCaseImpl(LocalRepository repository, @Named("io") Scheduler ioScheduler) {
-        this.repository = repository;
-        this.ioScheduler = ioScheduler;
-    }
-
-    @Override
-    public Completable setSrc(LanguageCode code) {
+class SelectLanguageUseCaseImpl @Inject constructor(
+    private val repository: LocalRepository, @param:Named(
+        "io"
+    ) private val ioScheduler: Scheduler
+) : SelectLanguageUseCase {
+    override fun setSrc(code: LanguageCode): Completable {
         return Completable.fromObservable(
-                repository.getSrcLanguage()
-                        .subscribeOn(ioScheduler)
-                        .zipWith(repository.getDstLanguage(), TranslateDirection<LanguageCode>::new)
-                        .take(1)
-                        .map(oldDirection -> normalize(new TranslateDirection<>(code, oldDirection.getDst()), oldDirection))
-                        .doOnNext(repository::setLanguageDirection));
+            repository.srcLanguage
+                .subscribeOn(ioScheduler)
+                .zipWith(repository.dstLanguage, { src: LanguageCode?, dst: LanguageCode? ->
+                    TranslateDirection(
+                        src!!, dst!!
+                    )
+                })
+                .take(1)
+                .map { oldDirection: TranslateDirection<LanguageCode> ->
+                    normalize(
+                        TranslateDirection(
+                            code,
+                            oldDirection.dst
+                        ), oldDirection
+                    )
+                }
+                .doOnNext { direction: TranslateDirection<LanguageCode?>? -> repository.setLanguageDirection(direction) })
     }
 
-    @Override
-    public Completable setDst(LanguageCode code) {
+    override fun setDst(code: LanguageCode): Completable {
         return Completable.fromObservable(
-                repository.getSrcLanguage()
-                        .subscribeOn(ioScheduler)
-                        .zipWith(repository.getDstLanguage(), TranslateDirection<LanguageCode>::new)
-                        .take(1)
-                        .map(oldDirection -> normalize(new TranslateDirection<>(oldDirection.getSrc(), code), oldDirection))
-                        .doOnNext(repository::setLanguageDirection));
+            repository.srcLanguage
+                .subscribeOn(ioScheduler)
+                .zipWith(repository.dstLanguage, { src: LanguageCode?, dst: LanguageCode? ->
+                    TranslateDirection(
+                        src!!, dst!!
+                    )
+                })
+                .take(1)
+                .map { oldDirection: TranslateDirection<LanguageCode> ->
+                    normalize(
+                        TranslateDirection(
+                            oldDirection.src,
+                            code
+                        ), oldDirection
+                    )
+                }
+                .doOnNext { direction: TranslateDirection<LanguageCode?>? -> repository.setLanguageDirection(direction) })
     }
 
-    @Override
-    public Completable swap() {
+    override fun swap(): Completable {
         return Completable.fromObservable(
-                repository.getSrcLanguage()
-                        .subscribeOn(ioScheduler)
-                        .zipWith(repository.getDstLanguage(), (src, dst) -> new TranslateDirection<>(dst, src))
-                        .take(1)
-                        .doOnNext(repository::setLanguageDirection));
+            repository.srcLanguage
+                .subscribeOn(ioScheduler)
+                .zipWith(
+                    repository.dstLanguage,
+                    { src: LanguageCode, dst: LanguageCode -> TranslateDirection(dst, src) })
+                .take(1)
+                .doOnNext { direction: TranslateDirection<LanguageCode>? -> repository.setLanguageDirection(direction) })
     }
 
-    TranslateDirection<LanguageCode> normalize(TranslateDirection<LanguageCode> newDirection, TranslateDirection<LanguageCode> oldDirection) {
-        if (newDirection.getSrc() == oldDirection.getDst()) {
+    fun normalize(
+        newDirection: TranslateDirection<LanguageCode>,
+        oldDirection: TranslateDirection<LanguageCode>
+    ): TranslateDirection<LanguageCode?> {
+        if (newDirection.src == oldDirection.dst) {
             // swap
-            return new TranslateDirection<>(newDirection.getSrc(), oldDirection.getSrc());
-        } else if (newDirection.getDst() == oldDirection.getSrc()) {
+            return TranslateDirection(newDirection.src, oldDirection.src)
+        } else if (newDirection.dst == oldDirection.src) {
             // swap
-            return new TranslateDirection<>(oldDirection.getDst(), newDirection.getSrc());
+            return TranslateDirection(oldDirection.dst, newDirection.src)
         }
-        return new TranslateDirection<>(newDirection.getSrc(), newDirection.getDst());
+        return TranslateDirection(newDirection.src, newDirection.dst)
     }
 }

@@ -1,4 +1,15 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 
 android {
     defaultConfig {
@@ -19,4 +30,6 @@ dependencies {
 
     implementation "com.google.dagger:dagger:${dagger_version}"
     implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
 }

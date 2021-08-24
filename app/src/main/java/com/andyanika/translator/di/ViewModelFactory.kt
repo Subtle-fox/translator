@@ -1,30 +1,17 @@
-package com.andyanika.translator.di;
+package com.andyanika.translator.di
 
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import javax.inject.Inject
+import javax.inject.Provider
 
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
-public class ViewModelFactory implements ViewModelProvider.Factory {
-
-    private final Map<Class<? extends ViewModel>, Provider<ViewModel>> mProviders;
-
-    @Inject
-    ViewModelFactory(Map<Class<? extends ViewModel>, Provider<ViewModel>> providers) {
-        mProviders = providers;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T extends ViewModel> T create(Class<T> modelClass) {
-        final Provider<ViewModel> provider = mProviders.get(modelClass);
+class ViewModelFactory @Inject internal constructor(private val mProviders: Map<Class<out ViewModel>, Provider<ViewModel>>) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        val provider = mProviders[modelClass]
         if (provider != null) {
-            return (T) provider.get();
+            return provider.get() as T
         }
-        throw new IllegalArgumentException("No such provider for " + modelClass.getCanonicalName());
+        throw IllegalArgumentException("No such provider for " + modelClass.canonicalName)
     }
-
 }

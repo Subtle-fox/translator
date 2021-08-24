@@ -1,41 +1,39 @@
-package com.andyanika.translator.di;
+package com.andyanika.translator.di
 
-import com.andyanika.translator.common.interfaces.ScreenRouter;
-import com.andyanika.translator.common.scopes.ApplicationScope;
-import com.github.terrakok.cicerone.Cicerone;
-import com.github.terrakok.cicerone.NavigatorHolder;
-import com.github.terrakok.cicerone.Router;
-
-import dagger.Module;
-import dagger.Provides;
+import com.andyanika.translator.common.interfaces.ScreenRouter
+import com.andyanika.translator.common.scopes.ApplicationScope
+import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import dagger.Module
+import dagger.Provides
 
 /**
  * Created by terrakok 24.11.16
  */
-
 @Module
-public class NavigationModule {
-    private Cicerone<Router> cicerone;
+class NavigationModule internal constructor() {
+    private val cicerone: Cicerone<Router>
 
-    NavigationModule() {
-        cicerone = Cicerone.create();
+    @Provides
+    @ApplicationScope
+    fun provideCiceroneRouter(): Router {
+        return cicerone.router
     }
 
     @Provides
     @ApplicationScope
-    Router provideCiceroneRouter() {
-        return cicerone.getRouter();
+    fun provideNavigatorHolder(): NavigatorHolder {
+        return cicerone.getNavigatorHolder()
     }
 
     @Provides
     @ApplicationScope
-    NavigatorHolder provideNavigatorHolder() {
-        return cicerone.getNavigatorHolder();
+    fun provideScreenRouter(router: Router?): ScreenRouter {
+        return ScreenRouterImpl(router!!)
     }
 
-    @Provides
-    @ApplicationScope
-    ScreenRouter provideScreenRouter(Router router) {
-        return new ScreenRouterImpl(router);
+    init {
+        cicerone = Cicerone.create()
     }
 }

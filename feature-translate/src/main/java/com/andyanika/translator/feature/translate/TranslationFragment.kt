@@ -1,165 +1,139 @@
-package com.andyanika.translator.feature.translate;
+package com.andyanika.translator.feature.translate
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import com.andyanika.translator.common.constants.Extras
+import com.andyanika.translator.common.constants.Screens
+import com.andyanika.translator.common.interfaces.ScreenRouter
+import com.andyanika.translator.common.models.ui.DisplayTranslateResult
+import com.jakewharton.rxbinding4.InitialValueObservable
+import com.jakewharton.rxbinding4.widget.textChanges
+import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
-import com.andyanika.translator.common.constants.Extras;
-import com.andyanika.translator.common.constants.Screens;
-import com.andyanika.translator.common.interfaces.ScreenRouter;
-import com.andyanika.translator.common.models.ui.DisplayTranslateResult;
-import com.jakewharton.rxbinding4.InitialValueObservable;
-import com.jakewharton.rxbinding4.widget.RxTextView;
-
-import javax.inject.Inject;
-
-import dagger.android.support.DaggerFragment;
-
-public class TranslationFragment extends DaggerFragment implements TranslationView {
+class TranslationFragment : DaggerFragment(), TranslationView {
     @Inject
-    TranslationPresenter presenter;
+    var presenter: TranslationPresenter? = null
 
     @Inject
-    ScreenRouter router;
-
-    private EditText editInput;
-    private TextView txtTranslated;
-    private View progress;
-    private View errorLayout;
-    private View clearBtn;
-    private View retryBtn;
-    private View offlineIcon;
-    private Button srcLangBtn;
-    private Button dstLangBtn;
-    private ImageButton swapLangBtn;
-    private InitialValueObservable<CharSequence> textObservable;
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_translation, null);
+    var router: ScreenRouter? = null
+    private var editInput: EditText? = null
+    private var txtTranslated: TextView? = null
+    private var progress: View? = null
+    private var errorLayout: View? = null
+    private var clearBtn: View? = null
+    private var retryBtn: View? = null
+    private var offlineIcon: View? = null
+    private var srcLangBtn: Button? = null
+    private var dstLangBtn: Button? = null
+    private var swapLangBtn: ImageButton? = null
+    private var textObservable: InitialValueObservable<CharSequence>? = null
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_translation, null)
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        editInput = view.findViewById(R.id.edit_input);
-        textObservable = RxTextView.textChanges(editInput);
-
-        txtTranslated = view.findViewById(R.id.txt_translated);
-        progress = view.findViewById(R.id.search_progress);
-        errorLayout = view.findViewById(R.id.error_layout);
-        retryBtn = view.findViewById(R.id.btn_retry);
-        clearBtn = view.findViewById(R.id.btn_clear);
-        srcLangBtn = view.findViewById(R.id.btn_lang_src);
-        dstLangBtn = view.findViewById(R.id.btn_lang_dst);
-        swapLangBtn = view.findViewById(R.id.btn_lang_swap);
-        offlineIcon = view.findViewById(R.id.icon_offline);
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        editInput = view.findViewById(R.id.edit_input)
+        textObservable = editInput!!.textChanges()
+        txtTranslated = view.findViewById(R.id.txt_translated)
+        progress = view.findViewById(R.id.search_progress)
+        errorLayout = view.findViewById(R.id.error_layout)
+        retryBtn = view.findViewById(R.id.btn_retry)
+        clearBtn = view.findViewById(R.id.btn_clear)
+        srcLangBtn = view.findViewById(R.id.btn_lang_src)
+        dstLangBtn = view.findViewById(R.id.btn_lang_dst)
+        swapLangBtn = view.findViewById(R.id.btn_lang_swap)
+        offlineIcon = view.findViewById(R.id.icon_offline)
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        presenter.subscribe(textObservable);
-        srcLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC));
-        dstLangBtn.setOnClickListener(v -> router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST));
-        swapLangBtn.setOnClickListener(v -> presenter.swapDirection());
-        clearBtn.setOnClickListener(v -> presenter.clear());
-        retryBtn.setOnClickListener(v -> presenter.translate(editInput.getText().toString()));
+    override fun onStart() {
+        super.onStart()
+        presenter!!.subscribe(textObservable)
+        srcLangBtn!!.setOnClickListener { v: View? -> router!!.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC) }
+        dstLangBtn!!.setOnClickListener { v: View? -> router!!.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST) }
+        swapLangBtn!!.setOnClickListener { v: View? -> presenter!!.swapDirection() }
+        clearBtn!!.setOnClickListener { v: View? -> presenter!!.clear() }
+        retryBtn!!.setOnClickListener { v: View? ->
+            presenter!!.translate(
+                editInput!!.text.toString()
+            )
+        }
     }
 
-    @Override
-    public void onStop() {
-        presenter.dispose();
-        retryBtn.setOnClickListener(null);
-        srcLangBtn.setOnClickListener(null);
-        dstLangBtn.setOnClickListener(null);
-
-        super.onStop();
+    override fun onStop() {
+        presenter!!.dispose()
+        retryBtn!!.setOnClickListener(null)
+        srcLangBtn!!.setOnClickListener(null)
+        dstLangBtn!!.setOnClickListener(null)
+        super.onStop()
     }
 
-    @Override
-    public void showNotFound() {
-        txtTranslated.setText(R.string.translation_not_found);
+    override fun showNotFound() {
+        txtTranslated!!.setText(R.string.translation_not_found)
     }
 
-    @Override
-    public void showTranslation(DisplayTranslateResult response) {
-        txtTranslated.setText(response.textTranslated);
+    override fun showTranslation(response: DisplayTranslateResult) {
+        txtTranslated!!.text = response.textTranslated
     }
 
-    @Override
-    public void showProgress() {
-        progress.setVisibility(View.VISIBLE);
+    override fun showProgress() {
+        progress!!.visibility = View.VISIBLE
     }
 
-    @Override
-    public void hideProgress() {
-        progress.setVisibility(View.INVISIBLE);
+    override fun hideProgress() {
+        progress!!.visibility = View.INVISIBLE
     }
 
-    @Override
-    public void showErrorLayout() {
-        errorLayout.setVisibility(View.VISIBLE);
+    override fun showErrorLayout() {
+        errorLayout!!.visibility = View.VISIBLE
     }
 
-    @Override
-    public void hideErrorLayout() {
-        errorLayout.setVisibility(View.INVISIBLE);
+    override fun hideErrorLayout() {
+        errorLayout!!.visibility = View.INVISIBLE
     }
 
-    @Override
-    public void setSrcLabel(String text) {
-        srcLangBtn.setText(text);
+    override fun setSrcLabel(text: String?) {
+        srcLangBtn!!.text = text
     }
 
-    @Override
-    public void setDstLabel(String text) {
-        dstLangBtn.setText(text);
+    override fun setDstLabel(text: String?) {
+        dstLangBtn!!.text = text
     }
 
-    @Override
-    public void showOffline() {
-        offlineIcon.setVisibility(View.VISIBLE);
+    override fun showOffline() {
+        offlineIcon!!.visibility = View.VISIBLE
     }
 
-    @Override
-    public void hideOffline() {
-        offlineIcon.setVisibility(View.INVISIBLE);
+    override fun hideOffline() {
+        offlineIcon!!.visibility = View.INVISIBLE
     }
 
-    @Override
-    public void showClearBtn() {
-        clearBtn.setVisibility(View.VISIBLE);
+    override fun showClearBtn() {
+        clearBtn!!.visibility = View.VISIBLE
     }
 
-    @Override
-    public void hideClearBtn() {
-        clearBtn.setVisibility(View.INVISIBLE);
+    override fun hideClearBtn() {
+        clearBtn!!.visibility = View.INVISIBLE
     }
 
-    @Override
-    public void clearResult() {
-        editInput.getText().clear();
+    override fun clearResult() {
+        editInput!!.text.clear()
     }
 
-    @Override
-    public void clearTranslation() {
-        txtTranslated.setText("");
+    override fun clearTranslation() {
+        txtTranslated!!.text = ""
     }
 
-    @Override
-    public void onDestroy() {
-        presenter.dispose();
-        presenter = null;
-        super.onDestroy();
+    override fun onDestroy() {
+        presenter!!.dispose()
+        presenter = null
+        super.onDestroy()
     }
 }

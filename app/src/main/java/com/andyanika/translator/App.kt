@@ -1,42 +1,35 @@
-package com.andyanika.translator;
+package com.andyanika.translator
 
-import androidx.annotation.NonNull;
-import android.util.Log;
+import android.util.Log
+import com.andyanika.translator.di.DaggerAppComponent
+import com.andyanika.translator.repository.remote.DaggerRemoteRepositoryComponent
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
+import timber.log.Timber
+import timber.log.Timber.DebugTree
 
-import com.andyanika.translator.di.DaggerAppComponent;
-import com.andyanika.translator.repository.remote.DaggerRemoteRepositoryComponent;
-
-import dagger.android.AndroidInjector;
-import dagger.android.DaggerApplication;
-import timber.log.Timber;
-
-public class App extends DaggerApplication {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        initLogger();
+class App : DaggerApplication() {
+    override fun onCreate() {
+        super.onCreate()
+        initLogger()
     }
 
-    @Override
-    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         return DaggerAppComponent
-                .builder()
-                .remoteRepositoryComponent(DaggerRemoteRepositoryComponent.create())
-                .create(this);
+            .builder()
+            .remoteRepositoryComponent(DaggerRemoteRepositoryComponent.create())
+            .create(this)
     }
 
-    private void initLogger() {
-        Timber.Tree tree = BuildConfig.DEBUG
-                ? new Timber.DebugTree()
-                : new Timber.Tree() {
-            @Override
-            protected void log(int priority, String tag, @NonNull String message, Throwable t) {
+    private fun initLogger() {
+        val tree = if (BuildConfig.DEBUG) DebugTree() else object : Timber.Tree() {
+            override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
                 if (priority >= Log.ERROR) {
-                    System.err.println("Timber >>> " + message);
+                    System.err.println("Timber >>> $message")
                 }
             }
-        };
-        Timber.plant(tree);
-        Timber.d("logger initialized");
+        }
+        Timber.plant(tree)
+        Timber.d("logger initialized")
     }
 }

@@ -1,26 +1,20 @@
-package com.andyanika.translator.repository.remote;
+package com.andyanika.translator.repository.remote
 
-import com.andyanika.translator.common.models.TranslateRequest;
-import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.models.TranslateRequest
+import com.andyanika.translator.common.models.TranslateResult
+import javax.inject.Inject
 
-import javax.inject.Inject;
-
-class YandexModelsAdapter {
-    @Inject
-    YandexModelsAdapter() {
-    }
-
-    TranslateResult convert(TranslateRequest request, YandexTranslationResponse response) {
-        StringBuilder res = new StringBuilder();
-        for (String s : response.translatedText) {
-            res.append(s).append('\n');
+internal class YandexModelsAdapter @Inject constructor() {
+    fun convert(request: TranslateRequest, response: YandexTranslationResponse): TranslateResult {
+        val res = StringBuilder()
+        for (s in response.translatedText!!) {
+            res.append(s).append('\n')
         }
-
-        return new TranslateResult(request.getText(), res.toString().trim(), request.getDirection());
+        return TranslateResult(request.text, res.toString().trim { it <= ' ' }, request.direction)
     }
 
     // Yandex's specific case:
-    boolean isTranslationFound(TranslateResult result) {
-        return !result.textDst.isEmpty() && !result.textSrc.equalsIgnoreCase(result.textDst);
+    fun isTranslationFound(result: TranslateResult): Boolean {
+        return !result.textDst.isEmpty() && !result.textSrc.equals(result.textDst, ignoreCase = true)
     }
 }

@@ -1,28 +1,19 @@
-package com.andyanika.usecases;
+package com.andyanika.usecases
 
-import com.andyanika.translator.common.interfaces.LocalRepository;
-import com.andyanika.translator.common.interfaces.usecase.AddFavoriteUseCase;
+import com.andyanika.translator.common.interfaces.LocalRepository
+import com.andyanika.translator.common.interfaces.usecase.AddFavoriteUseCase
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Scheduler
+import javax.inject.Inject
+import javax.inject.Named
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Scheduler;
-
-class AddFavoriteUseCaseImpl implements AddFavoriteUseCase {
-    private final LocalRepository repository;
-    private final Scheduler ioScheduler;
-
-    @Inject
-    AddFavoriteUseCaseImpl(LocalRepository repository, @Named("io") Scheduler ioScheduler) {
-        this.repository = repository;
-        this.ioScheduler = ioScheduler;
-    }
-
-    @Override
-    public Completable run(Integer wordId) {
+class AddFavoriteUseCaseImpl @Inject constructor(
+    private val repository: LocalRepository,
+    @param:Named("io") private val ioScheduler: Scheduler
+) : AddFavoriteUseCase {
+    override fun run(wordId: Int): Completable {
         return Completable
-                .fromRunnable(() -> repository.addFavorites(wordId))
-                .subscribeOn(ioScheduler);
+            .fromRunnable { repository.addFavorites(wordId) }
+            .subscribeOn(ioScheduler)
     }
 }

@@ -1,44 +1,34 @@
-package com.andyanika.usecases;
+package com.andyanika.usecases
 
-import com.andyanika.translator.common.interfaces.LocalRepository;
-import com.andyanika.translator.common.interfaces.usecase.HistoryUseCase;
-import com.andyanika.translator.common.models.FavoriteModel;
-import com.andyanika.translator.common.models.TranslateResult;
+import com.andyanika.translator.common.interfaces.LocalRepository
+import com.andyanika.translator.common.interfaces.usecase.HistoryUseCase
+import com.andyanika.translator.common.models.FavoriteModel
+import com.andyanika.translator.common.models.TranslateResult
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Scheduler
+import javax.inject.Inject
+import javax.inject.Named
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Scheduler;
-
-class HistoryUseCaseImpl implements HistoryUseCase {
-    private final LocalRepository repository;
-    private final Scheduler ioScheduler;
-
-    @Inject
-    HistoryUseCaseImpl(LocalRepository repository, @Named("io") Scheduler ioScheduler) {
-        this.repository = repository;
-        this.ioScheduler = ioScheduler;
-    }
-
-    @Override
-    public Flowable<List<FavoriteModel>> run(String filter, int limit) {
+class HistoryUseCaseImpl @Inject constructor(
+    private val repository: LocalRepository,
+    @param:Named("io") private val ioScheduler: Scheduler
+) : HistoryUseCase {
+    override fun run(filter: String, limit: Int): Flowable<List<FavoriteModel>> {
         return repository
-                .getHistory()
-                .subscribeOn(ioScheduler)
-                .take(limit)
-                .flatMap(list -> Flowable.fromIterable(list)
-                        .filter(item -> filter(item.translateResult, filter)).toList()
-                        .toFlowable());
+            .history
+            .subscribeOn(ioScheduler)
+            .take(limit.toLong())
+            .flatMap { list: List<FavoriteModel>? ->
+                Flowable.fromIterable(list)
+                    .filter { item: FavoriteModel -> filter(item.translateResult, filter) }.toList()
+                    .toFlowable()
+            }
     }
 
-    private boolean filter(TranslateResult result, String filter) {
+    private fun filter(result: TranslateResult, filter: String?): Boolean {
         // TODO: 31.05.2018: implement via Room query
-        return filter == null
-                || filter.isEmpty()
-                || result.textSrc.contains(filter)
-                || result.textDst.contains(filter);
+        return (filter == null || filter.isEmpty()
+            || result.textSrc.contains(filter)
+            || result.textDst.contains(filter))
     }
 }

@@ -1,16 +1,15 @@
-package com.andyanika.translator.repository.remote;
+package com.andyanika.translator.repository.remote
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName
+import java.util.*
 
-import java.util.ArrayList;
-
-class YandexTranslationResponse {
+internal class YandexTranslationResponse {
     @SerializedName("code")
-    int code;
+    var code = 0
 
     @SerializedName("lang")
-    String languageDirection;
+    var languageDirection: String? = null
 
     @SerializedName("text")
-    ArrayList<String> translatedText;
+    var translatedText: ArrayList<String>? = null
 }

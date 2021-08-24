@@ -1,58 +1,48 @@
-package com.andyanika.translator.main;
+package com.andyanika.translator.main
 
-import android.os.Bundle;
+import android.os.Bundle
+import com.andyanika.translator.R
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.android.support.DaggerAppCompatActivity
+import javax.inject.Inject
 
-import com.github.terrakok.cicerone.NavigatorHolder;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import com.andyanika.translator.R;
-
-import javax.inject.Inject;
-
-import dagger.android.support.DaggerAppCompatActivity;
-
-
-public class MainActivity extends DaggerAppCompatActivity {
+class MainActivity : DaggerAppCompatActivity() {
+    @JvmField
     @Inject
-    MainActivityPresenter presenter;
+    var presenter: MainActivityPresenter? = null
 
+    @JvmField
     @Inject
-    NavigatorHolder navigatorHolder;
+    var navigatorHolder: NavigatorHolder? = null
 
+    @JvmField
     @Inject
-    MainActivityNavigator navigator;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(presenter);
-
+    var navigator: MainActivityNavigator? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        val navigation = findViewById<BottomNavigationView>(R.id.navigation)
+        navigation.setOnNavigationItemSelectedListener(presenter)
         if (savedInstanceState == null) {
-            presenter.navigateToTranslation();
+            presenter!!.navigateToTranslation()
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        navigatorHolder.setNavigator(navigator);
+    override fun onResume() {
+        super.onResume()
+        navigatorHolder!!.setNavigator(navigator!!)
     }
 
-    @Override
-    protected void onPause() {
-        navigatorHolder.removeNavigator();
-        super.onPause();
+    override fun onPause() {
+        navigatorHolder!!.removeNavigator()
+        super.onPause()
     }
 
-    @Override
-    public void onBackPressed() {
-        navigator.back();
+    override fun onBackPressed() {
+        navigator!!.back()
     }
 
-    public int getFragmentContainerId() {
-        return R.id.content_frame;
-    }
+    val fragmentContainerId: Int
+        get() = R.id.content_frame
 }

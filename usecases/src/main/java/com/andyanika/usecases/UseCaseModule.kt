@@ -1,40 +1,32 @@
-package com.andyanika.usecases;
+package com.andyanika.usecases
 
-import com.andyanika.translator.common.interfaces.usecase.AddFavoriteUseCase;
-import com.andyanika.translator.common.interfaces.usecase.GetFavoritesUseCase;
-import com.andyanika.translator.common.interfaces.usecase.GetLanguagesUseCase;
-import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase;
-import com.andyanika.translator.common.interfaces.usecase.HistoryUseCase;
-import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
-import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
-import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase;
-
-import dagger.Binds;
-import dagger.Module;
+import com.andyanika.translator.common.interfaces.usecase.*
+import dagger.Binds
+import dagger.Module
 
 @Module
-public abstract class UseCaseModule {
+abstract class UseCaseModule {
     @Binds
-    abstract TranslationUseCase provideTranslationUseCase(TranslateUseCaseImpl useCase);
+    abstract fun provideTranslationUseCase(useCase: TranslateUseCaseImpl?): TranslationUseCase?
 
     @Binds
-    abstract SelectLanguageUseCase provideSelectLanguageUseCase(SelectLanguageUseCaseImpl useCase);
+    abstract fun provideSelectLanguageUseCase(useCase: SelectLanguageUseCaseImpl?): SelectLanguageUseCase?
 
     @Binds
-    abstract GetSelectedLanguageUseCase provideGetSelectedUseCase(GetSelectedLanguagesUseCaseImpl useCase);
+    abstract fun provideGetSelectedUseCase(useCase: GetSelectedLanguagesUseCaseImpl?): GetSelectedLanguageUseCase?
 
     @Binds
-    abstract GetLanguagesUseCase provideLanguagesUseCase(GetLanguagesUseCaseImpl useCase);
+    abstract fun provideLanguagesUseCase(useCase: GetLanguagesUseCaseImpl?): GetLanguagesUseCase?
 
     @Binds
-    abstract GetFavoritesUseCase provideGetFavoritesUseCase(GetFavoritesUseCaseImpl useCase);
+    abstract fun provideGetFavoritesUseCase(useCase: GetFavoritesUseCaseImpl?): GetFavoritesUseCase?
 
     @Binds
-    abstract RemoveFavoriteUseCase provideRemoveFavoritesUseCase(RemoveFavoriteUseCaseImpl useCase);
+    abstract fun provideRemoveFavoritesUseCase(useCase: RemoveFavoriteUseCaseImpl?): RemoveFavoriteUseCase?
 
     @Binds
-    abstract AddFavoriteUseCase provideAddFavoritesUseCase(AddFavoriteUseCaseImpl useCase);
+    abstract fun provideAddFavoritesUseCase(useCase: AddFavoriteUseCaseImpl?): AddFavoriteUseCase?
 
     @Binds
-    abstract HistoryUseCase provideHistoryUseCase(HistoryUseCaseImpl useCase);
+    abstract fun provideHistoryUseCase(useCase: HistoryUseCaseImpl?): HistoryUseCase?
 }

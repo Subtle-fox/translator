@@ -1,29 +1,20 @@
-package com.andyanika.usecases;
+package com.andyanika.usecases
 
-import com.andyanika.translator.common.interfaces.LocalRepository;
-import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
+import com.andyanika.translator.common.interfaces.LocalRepository
+import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Scheduler
+import javax.inject.Inject
+import javax.inject.Named
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Scheduler;
-
-
-class RemoveFavoriteUseCaseImpl implements RemoveFavoriteUseCase {
-    private final LocalRepository repository;
-    private final Scheduler ioScheduler;
-
-    @Inject
-    RemoveFavoriteUseCaseImpl(LocalRepository repository, @Named("io") Scheduler ioScheduler) {
-        this.repository = repository;
-        this.ioScheduler = ioScheduler;
-    }
-
-    @Override
-    public Completable run(Integer wordId) {
+class RemoveFavoriteUseCaseImpl @Inject constructor(
+    private val repository: LocalRepository, @param:Named(
+        "io"
+    ) private val ioScheduler: Scheduler
+) : RemoveFavoriteUseCase {
+    override fun run(wordId: Int): Completable {
         return Completable
-                .fromRunnable(() -> repository.removeFavorite(wordId))
-                .subscribeOn(ioScheduler);
+            .fromRunnable { repository.removeFavorite(wordId) }
+            .subscribeOn(ioScheduler)
     }
 }

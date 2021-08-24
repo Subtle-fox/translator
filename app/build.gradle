@@ -76,4 +76,6 @@ dependencies {
     testImplementation "org.mockito:mockito-core:${mockito_version}"
     testImplementation "org.assertj:assertj-core:${asserj_version}"
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
 }

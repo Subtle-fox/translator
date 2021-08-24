@@ -1,4 +1,15 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 
 android {
     defaultConfig {
@@ -27,8 +38,8 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:${okhttp3_version}"
     implementation "com.squareup.retrofit2:retrofit:${retrofit_version}"
     implementation "com.squareup.retrofit2:converter-gson:${retrofit_version}"
-    implementation "com.squareup.retrofit2:adapter-rxjava3:${retrofit_version}"
+//    implementation "com.squareup.retrofit2:adapter-rxjava3:${retrofit_version}"
     implementation "com.google.code.gson:gson:${gson_version}"
 
-    implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
+//    implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
 }

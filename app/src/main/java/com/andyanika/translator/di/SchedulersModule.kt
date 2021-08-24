@@ -1,30 +1,29 @@
-package com.andyanika.translator.di;
+package com.andyanika.translator.di
 
-import javax.inject.Named;
-
-import dagger.Module;
-import dagger.Provides;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Scheduler;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import dagger.Module
+import dagger.Provides
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Named
 
 @Module
-abstract class SchedulersModule {
+internal object SchedulersModule {
     @Named("io")
     @Provides
-    static Scheduler provideIoScheduler() {
-        return Schedulers.io();
+    fun provideIoScheduler(): Scheduler {
+        return Schedulers.io()
     }
 
     @Named("computation")
     @Provides
-    static Scheduler provideComputationScheduler() {
-        return Schedulers.computation();
+    fun provideComputationScheduler(): Scheduler {
+        return Schedulers.computation()
     }
 
     @Named("ui")
     @Provides
-    static Scheduler provideUiScheduler() {
-        return AndroidSchedulers.mainThread();
+    fun provideUiScheduler(): Scheduler {
+        return AndroidSchedulers.mainThread()
     }
 }

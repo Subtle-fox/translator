@@ -1,12 +1,14 @@
-package com.andyanika.translator.repository.remote;
+package com.andyanika.translator.repository.remote
 
-import io.reactivex.rxjava3.core.Observable;
-import retrofit2.http.POST;
-import retrofit2.http.Query;
+import com.andyanika.translator.common.models.TranslateResult
+import retrofit2.http.POST
+import retrofit2.http.Query
 
-interface YandexApi {
+internal interface YandexApi {
     @POST("translate")
-    Observable<YandexTranslationResponse> translate(@Query("key") String key,
-                                                    @Query("text") String text,
-                                                    @Query("lang") String direction);
+    suspend fun translate(
+        @Query("key") key: String?,
+        @Query("text") text: String?,
+        @Query("lang") direction: String?
+    ): YandexTranslationResponse
 }
