@@ -1,25 +1,35 @@
 package com.andyanika.translator
 
+import android.app.Application
 import android.util.Log
-import com.andyanika.translator.di.DaggerAppComponent
-import com.andyanika.translator.repository.remote.DaggerRemoteRepositoryComponent
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
+import com.andyanika.resources.di.koin.resourceModule
+import com.andyanika.translator.di.koin.activityModule
+import com.andyanika.translator.di.koin.navigationModule
+import com.andyanika.translator.di.koin.schedulersModule
+import com.andyanika.translator.feature.translate.di.koin.translationModule
+import com.andyanika.translator.repository.local.di.koin.localRepositoryModule
+import com.andyanika.translator.repository.remote.di.koin.networkModule
+import com.andyanika.usecases.di.koin.useCaseModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
-class App : DaggerApplication() {
+class App : Application() {
     override fun onCreate() {
         super.onCreate()
         initLogger()
+        initKoin()
     }
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent
-            .builder()
-            .remoteRepositoryComponent(DaggerRemoteRepositoryComponent.create())
-            .create(this)
-    }
+//    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+//        return DaggerAppComponent
+//            .builder()
+//            .remoteRepositoryComponent(DaggerRemoteRepositoryComponent.create())
+//            .create(this)
+//    }
 
     private fun initLogger() {
         val tree = if (BuildConfig.DEBUG) DebugTree() else object : Timber.Tree() {
@@ -31,5 +41,24 @@ class App : DaggerApplication() {
         }
         Timber.plant(tree)
         Timber.d("logger initialized")
+    }
+
+    private fun initKoin() {
+        // start Koin context
+        startKoin {
+            androidContext(this@App)
+            androidLogger(level = Level.DEBUG)
+            modules(
+                navigationModule,
+                schedulersModule,
+                localRepositoryModule,
+                networkModule,
+                useCaseModule,
+                resourceModule,
+
+                activityModule,
+                translationModule
+            )
+        }
     }
 }

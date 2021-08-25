@@ -32,8 +32,9 @@ android {
 dependencies {
     implementation project(path: ':common')
 
-    implementation "com.google.dagger:dagger:${dagger_version}"
-    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+//    implementation "com.google.dagger:dagger:${dagger_version}"
+//    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+    implementation "javax.inject:javax.inject:${javax_inject_version}"
 
     implementation "com.squareup.okhttp3:logging-interceptor:${okhttp3_version}"
     implementation "com.squareup.retrofit2:retrofit:${retrofit_version}"
@@ -42,4 +43,5 @@ dependencies {
     implementation "com.google.code.gson:gson:${gson_version}"
 
 //    implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
+    implementation "io.insert-koin:koin-android:$koin_version"
 }

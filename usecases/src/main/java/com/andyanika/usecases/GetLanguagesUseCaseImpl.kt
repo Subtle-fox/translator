@@ -13,8 +13,9 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class GetLanguagesUseCaseImpl @Inject constructor(
-    private val resources: Resources, private val repository: LocalRepository,
-    @param:Named("io") private val ioScheduler: Scheduler
+    private val resources: Resources,
+    private val repository: LocalRepository,
+    @Named("io") private val ioScheduler: Scheduler
 ) : GetLanguagesUseCase {
     override fun run(selectSource: Boolean): Observable<List<DisplayLanguageModel>> {
         val selectedLanguage = (if (selectSource) repository.srcLanguage else repository.dstLanguage)

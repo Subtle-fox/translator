@@ -1,4 +1,15 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 
 android {
     defaultConfig {
@@ -21,5 +32,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${material_version}"
     implementation "com.google.android.material:material:${material_version}"
 
-    implementation "com.google.dagger:dagger:${dagger_version}"
+//    implementation "com.google.dagger:dagger:${dagger_version}"
+    implementation "javax.inject:javax.inject:${javax_inject_version}"
+    implementation "io.insert-koin:koin-android:$koin_version"
 }

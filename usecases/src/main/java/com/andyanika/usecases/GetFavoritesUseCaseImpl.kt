@@ -10,7 +10,7 @@ import javax.inject.Named
 
 class GetFavoritesUseCaseImpl @Inject constructor(
     private val repository: LocalRepository,
-    @param:Named("io") private val ioScheduler: Scheduler
+    @Named("io") private val ioScheduler: Scheduler
 ) : GetFavoritesUseCase {
     override fun run(limit: Int): Flowable<List<FavoriteModel>> {
         return repository

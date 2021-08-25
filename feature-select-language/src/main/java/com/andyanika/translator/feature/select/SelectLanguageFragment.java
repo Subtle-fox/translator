@@ -1,6 +1,8 @@
 package com.andyanika.translator.feature.select;
 
 import android.app.Activity;
+
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -17,9 +19,8 @@ import com.andyanika.translator.common.constants.Extras;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
 
-public class SelectLanguageFragment extends DaggerFragment {
+public class SelectLanguageFragment extends Fragment {
     @Inject
     SelectLanguageListAdapter adapter;
 
@@ -59,7 +60,7 @@ public class SelectLanguageFragment extends DaggerFragment {
         recyclerView.setAdapter(adapter);
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SelectLanguageViewModel.class);
-        viewModel.data.observe(this, adapter::setData);
+        viewModel.data.observe(getViewLifecycleOwner(), adapter::setData);
         if (savedInstanceState == null) {
             viewModel.setMode(getArguments().getString(Extras.SELECT_MODE));
             viewModel.loadData();

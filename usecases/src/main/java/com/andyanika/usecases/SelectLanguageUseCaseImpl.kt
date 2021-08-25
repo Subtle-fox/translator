@@ -10,9 +10,8 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class SelectLanguageUseCaseImpl @Inject constructor(
-    private val repository: LocalRepository, @param:Named(
-        "io"
-    ) private val ioScheduler: Scheduler
+    private val repository: LocalRepository,
+    @Named("io") private val ioScheduler: Scheduler
 ) : SelectLanguageUseCase {
     override fun setSrc(code: LanguageCode): Completable {
         return Completable.fromObservable(

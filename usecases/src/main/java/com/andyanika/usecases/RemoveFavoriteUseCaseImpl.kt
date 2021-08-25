@@ -8,9 +8,8 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class RemoveFavoriteUseCaseImpl @Inject constructor(
-    private val repository: LocalRepository, @param:Named(
-        "io"
-    ) private val ioScheduler: Scheduler
+    private val repository: LocalRepository,
+    @Named("io") private val ioScheduler: Scheduler
 ) : RemoveFavoriteUseCase {
     override fun run(wordId: Int): Completable {
         return Completable

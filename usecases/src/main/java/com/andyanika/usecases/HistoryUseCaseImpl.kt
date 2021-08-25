@@ -11,7 +11,7 @@ import javax.inject.Named
 
 class HistoryUseCaseImpl @Inject constructor(
     private val repository: LocalRepository,
-    @param:Named("io") private val ioScheduler: Scheduler
+    @Named("io") private val ioScheduler: Scheduler
 ) : HistoryUseCase {
     override fun run(filter: String, limit: Int): Flowable<List<FavoriteModel>> {
         return repository

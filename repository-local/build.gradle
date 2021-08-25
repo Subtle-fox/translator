@@ -1,4 +1,17 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 
 android {
     defaultConfig {
@@ -24,12 +37,13 @@ android {
 dependencies {
     implementation project(path: ':common')
 
-    implementation "com.google.dagger:dagger:${dagger_version}"
-    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
+    implementation "javax.inject:javax.inject:${javax_inject_version}"
 
     implementation "androidx.room:room-runtime:${room_version}"
     implementation "androidx.room:room-rxjava2:${room_version}"
-    annotationProcessor "androidx.room:room-compiler:${room_version}"
+    kapt "androidx.room:room-compiler:${room_version}"
 
     implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
+    implementation "io.insert-koin:koin-android:$koin_version"
+
 }

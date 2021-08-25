@@ -1,133 +1,118 @@
-package com.andyanika.translator.repository.local;
+package com.andyanika.translator.repository.local
 
-import android.content.SharedPreferences;
+import android.content.SharedPreferences
+import com.andyanika.translator.common.interfaces.LocalRepository
+import com.andyanika.translator.common.models.LanguageCode
+import com.andyanika.translator.common.models.TranslateDirection
+import com.andyanika.translator.common.models.TranslateRequest
+import com.andyanika.translator.common.models.TranslateResult
+import com.andyanika.translator.repository.local.model.FavoriteModel
+import com.andyanika.translator.repository.local.model.WordFavoriteModel
+import com.andyanika.translator.repository.local.model.WordModel
+import io.reactivex.rxjava3.core.*
+import io.reactivex.rxjava3.subjects.PublishSubject
+import timber.log.Timber
+import java.util.concurrent.Callable
 
-import com.andyanika.translator.common.interfaces.LocalRepository;
-import com.andyanika.translator.common.models.FavoriteModel;
-import com.andyanika.translator.common.models.LanguageCode;
-import com.andyanika.translator.common.models.TranslateDirection;
-import com.andyanika.translator.common.models.TranslateRequest;
-import com.andyanika.translator.common.models.TranslateResult;
-import com.andyanika.translator.repository.local.model.WordModel;
-
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Scheduler;
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.subjects.PublishSubject;
-import timber.log.Timber;
-
-class LocalRepositoryImpl implements LocalRepository {
-    static final String LANGUAGE_SRC = "language_src";
-    static final String LANGUAGE_DST = "language_dst";
-
-
-    private final TranslatorDao dao;
-    private final SharedPreferences preferences;
-    private final ModelsAdapter adapter;
-    private final Scheduler ioScheduler;
-
-    private final PublishSubject<LanguageCode> srcLanguageSubject = PublishSubject.create();
-    private final PublishSubject<LanguageCode> dstLanguageSubject = PublishSubject.create();
-
-    LocalRepositoryImpl(TranslatorDao dao, SharedPreferences preferences, ModelsAdapter adapter, Scheduler ioScheduler) {
-        this.dao = dao;
-        this.preferences = preferences;
-        this.adapter = adapter;
-        this.ioScheduler = ioScheduler;
+internal class LocalRepositoryImpl(
+    private val dao: TranslatorDao,
+    private val preferences: SharedPreferences,
+    private val adapter: ModelsAdapter,
+    private val ioScheduler: Scheduler
+) : LocalRepository {
+    private val srcLanguageSubject = PublishSubject.create<LanguageCode>()
+    private val dstLanguageSubject = PublishSubject.create<LanguageCode>()
+    override fun getHistory(): Flowable<List<com.andyanika.translator.common.models.FavoriteModel>> {
+        return Flowable.fromPublisher(dao.history)
+            .flatMap { list: List<WordFavoriteModel?>? ->
+                Flowable.fromIterable(list)
+                    .map { dbModel: WordFavoriteModel? ->
+                        adapter.toTranslationRowModel(
+                            dbModel!!
+                        )
+                    }.toList()
+                    .toFlowable()
+            }
     }
 
-    @Override
-    public Flowable<List<FavoriteModel>> getHistory() {
-        return Flowable.fromPublisher(dao.getHistory())
-                .flatMap(list -> Flowable.fromIterable(list)
-                        .map(adapter::toTranslationRowModel).toList()
-                        .toFlowable());
+    override fun getFavorites(): Flowable<List<com.andyanika.translator.common.models.FavoriteModel>> {
+        return Flowable.fromPublisher(dao.favorites)
+            .flatMap { list: List<WordModel?>? ->
+                Flowable.fromIterable(list)
+                    .map { dbModel: WordModel? ->
+                        adapter.toTranslationRowModel(
+                            dbModel!!
+                        )
+                    }.toList()
+                    .toFlowable()
+            }
     }
 
-    @Override
-    public Flowable<List<FavoriteModel>> getFavorites() {
-        return Flowable.fromPublisher(dao.getFavorites())
-                .flatMap(list -> Flowable.fromIterable(list)
-                        .map(adapter::toTranslationRowModel).toList()
-                        .toFlowable());
+    override fun translate(request: TranslateRequest): Single<TranslateResult> {
+        val callable = Callable {
+            val wordModel =
+                dao.getTranslation(request.text, request.direction.src.toString(), request.direction.dst.toString())
+            adapter.toTranslationResult(wordModel!!)
+        }
+        return Single.fromCallable(callable)
     }
 
-    @Override
-    public Single<TranslateResult> translate(TranslateRequest request) {
-        Callable<TranslateResult> callable = () -> {
-            WordModel wordModel = dao.getTranslation(request.getText(), request.getDirection().getSrc().toString(), request.getDirection().getDst().toString());
-            return adapter.toTranslationResult(wordModel);
-        };
-        return Single.fromCallable(callable);
+    override fun addTranslation(translateResult: TranslateResult): Single<TranslateResult> {
+        val model = adapter.toWordModel(translateResult)
+        return Completable.fromAction { dao.addTranslation(model) }
+            .subscribeOn(ioScheduler)
+            .toSingleDefault(translateResult)
+            .doOnSuccess { r: TranslateResult? -> Timber.d("saved to local db OK: %s", r) }
+            .doOnError { e: Throwable? -> Timber.e(e, "saved to local db exception") }
     }
 
-    @Override
-    public Single<TranslateResult> addTranslation(TranslateResult translateResult) {
-        WordModel model = adapter.toWordModel(translateResult);
-        return Completable.fromAction(() -> dao.addTranslation(model))
-                .subscribeOn(ioScheduler)
-                .toSingleDefault(translateResult)
-                .doOnSuccess(r -> Timber.d("saved to local db OK: %s", r))
-                .doOnError(e -> Timber.e(e, "saved to local db exception"));
+    override fun addFavorites(wordId: Int) {
+        val model = FavoriteModel(wordId)
+        dao.addFavorite(model)
     }
 
-    @Override
-    public void addFavorites(int wordId) {
-        com.andyanika.translator.repository.local.model.FavoriteModel model = new com.andyanika.translator.repository.local.model.FavoriteModel(wordId);
-        dao.addFavorite(model);
+    override fun removeFavorite(wordId: Int) {
+        val model = FavoriteModel(wordId)
+        dao.removeFavorite(model)
     }
 
-    @Override
-    public void removeFavorite(int wordId) {
-        com.andyanika.translator.repository.local.model.FavoriteModel model = new com.andyanika.translator.repository.local.model.FavoriteModel(wordId);
-        dao.removeFavorite(model);
-    }
-
-    @Override
-    public Observable<LanguageCode> getSrcLanguage() {
+    override fun getSrcLanguage(): Observable<LanguageCode> {
         return srcLanguageSubject
-                .startWith(Observable.fromCallable(() -> {
-                            String s = preferences.getString(LANGUAGE_SRC, null);
-                            return LanguageCode.tryParse(s, LanguageCode.RU);
-                        }
-                ))
-                .onErrorReturnItem(LanguageCode.RU)
-                .subscribeOn(ioScheduler);
+            .startWith(Observable.fromCallable {
+                val s = preferences.getString(LANGUAGE_SRC, null)
+                LanguageCode.tryParse(s, LanguageCode.RU)
+            })
+            .onErrorReturnItem(LanguageCode.RU)
+            .subscribeOn(ioScheduler)
     }
 
-    @Override
-    public Observable<LanguageCode> getDstLanguage() {
+    override fun getDstLanguage(): Observable<LanguageCode> {
         return dstLanguageSubject
-                .startWith(Observable.fromCallable(() -> {
-                            String s = preferences.getString(LANGUAGE_DST, null);
-                            return LanguageCode.tryParse(s, LanguageCode.EN);
-                        }
-                ))
-                .onErrorReturnItem(LanguageCode.EN)
-                .subscribeOn(ioScheduler);
+            .startWith(Observable.fromCallable {
+                val s = preferences.getString(LANGUAGE_DST, null)
+                LanguageCode.tryParse(s, LanguageCode.EN)
+            })
+            .onErrorReturnItem(LanguageCode.EN)
+            .subscribeOn(ioScheduler)
     }
 
-
-    @Override
-    public void setLanguageDirection(TranslateDirection<LanguageCode> direction) {
-        Timber.d("save repository direction: %s - %s", direction.getSrc(), direction.getDst());
+    override fun setLanguageDirection(direction: TranslateDirection<LanguageCode>) {
+        Timber.d("save repository direction: %s - %s", direction.src, direction.dst)
         preferences
-                .edit()
-                .putString("language_src", direction.getSrc().toString())
-                .putString("language_dst", direction.getDst().toString())
-                .apply();
-
-        srcLanguageSubject.onNext(direction.getSrc());
-        dstLanguageSubject.onNext(direction.getDst());
+            .edit()
+            .putString("language_src", direction.src.toString())
+            .putString("language_dst", direction.dst.toString())
+            .apply()
+        srcLanguageSubject.onNext(direction.src)
+        dstLanguageSubject.onNext(direction.dst)
     }
 
-    @Override
-    public Observable<LanguageCode> getAvailableLanguages() {
-        return Observable.fromArray(LanguageCode.values()).cache();
+    override fun getAvailableLanguages(): Observable<LanguageCode> {
+        return Observable.fromArray(*LanguageCode.values()).cache()
+    }
+
+    companion object {
+        const val LANGUAGE_SRC = "language_src"
+        const val LANGUAGE_DST = "language_dst"
     }
 }

@@ -20,7 +20,10 @@ internal class YandexRemoteRepository @Inject constructor(
 
     override suspend fun translate(request: TranslateRequest): TranslateResult? {
         val direction = directionBuilder.buildParam(request.direction)
-        return api.translate(key, request.text, direction)
+        return YandexTranslationResponse().apply {
+            translatedText = arrayListOf(request.text.reversed())
+            languageDirection = request.direction.dst.name
+        }//api.translate(key, request.text, direction)
             .let { response -> modelsAdapter.convert(request, response) }
             .takeIf { modelsAdapter.isTranslationFound(it) }
     }

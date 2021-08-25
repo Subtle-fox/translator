@@ -1,24 +1,31 @@
 package com.andyanika.translator.main
 
 import android.os.Bundle
+import com.andyanika.resources.ResourceImpl
 import com.andyanika.translator.R
+import com.andyanika.translator.common.interfaces.Resources
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
+import org.koin.android.ext.android.getDefaultScope
+import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
+import org.koin.androidx.scope.ScopeActivity
+import org.koin.androidx.scope.activityScope
+import org.koin.androidx.scope.createScope
+import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 
-class MainActivity : DaggerAppCompatActivity() {
-    @JvmField
-    @Inject
-    var presenter: MainActivityPresenter? = null
+class MainActivity : ScopeActivity() {
 
-    @JvmField
-    @Inject
-    var navigatorHolder: NavigatorHolder? = null
+//    override val scope: Scope by createScope(named("x"))
+    override val scope: Scope by activityScope()
 
-    @JvmField
-    @Inject
-    var navigator: MainActivityNavigator? = null
+    val presenter: MainActivityPresenter by inject()
+    val navigatorHolder: NavigatorHolder by inject()
+    val navigator: MainActivityNavigator by inject { parametersOf(this) }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,6 +34,9 @@ class MainActivity : DaggerAppCompatActivity() {
         if (savedInstanceState == null) {
             presenter!!.navigateToTranslation()
         }
+
+        scope.declare(ResourceImpl(this) as Resources)
+//        getKoin().scopeRegistry.rootScope.declare(ResourceImpl(this) as Resources)
     }
 
     override fun onResume() {

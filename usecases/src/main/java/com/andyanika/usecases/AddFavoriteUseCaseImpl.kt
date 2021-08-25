@@ -9,7 +9,7 @@ import javax.inject.Named
 
 class AddFavoriteUseCaseImpl @Inject constructor(
     private val repository: LocalRepository,
-    @param:Named("io") private val ioScheduler: Scheduler
+    @Named("io") private val ioScheduler: Scheduler
 ) : AddFavoriteUseCase {
     override fun run(wordId: Int): Completable {
         return Completable

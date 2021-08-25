@@ -1,25 +1,25 @@
 package com.andyanika.translator.feature.history;
 
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.jakewharton.rxbinding4.InitialValueObservable;
 import com.jakewharton.rxbinding4.widget.RxTextView;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
-
-public class HistoryFragment extends DaggerFragment {
+public class HistoryFragment extends Fragment {
     private final static int LIMIT = 100;
 
     @Inject
@@ -48,8 +48,8 @@ public class HistoryFragment extends DaggerFragment {
         clearBtn = view.findViewById(R.id.btn_clear);
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HistoryViewModel.class);
-        viewModel.data.observe(this, adapter::setData);
-        viewModel.showClearBtn.observe(this, show -> {
+        viewModel.data.observe(getViewLifecycleOwner(), adapter::setData);
+        viewModel.showClearBtn.observe(getViewLifecycleOwner(), show -> {
             if (show) {
                 clearBtn.setVisibility(View.VISIBLE);
             } else {

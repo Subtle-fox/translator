@@ -1,5 +1,6 @@
 package com.andyanika.translator.feature.favorites;
 
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -13,9 +14,8 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
 
-public class FavoriteFragment extends DaggerFragment {
+public class FavoriteFragment extends Fragment {
     private final static int LIMIT = 100;
     private FavoritesViewModel viewModel;
 
@@ -42,7 +42,7 @@ public class FavoriteFragment extends DaggerFragment {
         recyclerView.setAdapter(adapter);
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
-        viewModel.data.observe(this, adapter::setData);
+        viewModel.data.observe(getViewLifecycleOwner(), adapter::setData);
         viewModel.load(LIMIT);
     }
 

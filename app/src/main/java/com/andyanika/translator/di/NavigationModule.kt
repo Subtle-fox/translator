@@ -5,15 +5,13 @@ import com.andyanika.translator.common.scopes.ApplicationScope
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
-import dagger.Module
-import dagger.Provides
+//import dagger.Module
+//import dagger.Provides
 
-/**
- * Created by terrakok 24.11.16
- */
+/*
 @Module
 class NavigationModule internal constructor() {
-    private val cicerone: Cicerone<Router>
+    private val cicerone: Cicerone<Router> = Cicerone.create()
 
     @Provides
     @ApplicationScope
@@ -33,7 +31,5 @@ class NavigationModule internal constructor() {
         return ScreenRouterImpl(router!!)
     }
 
-    init {
-        cicerone = Cicerone.create()
-    }
 }
+*/

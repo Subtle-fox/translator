@@ -8,21 +8,27 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import com.andyanika.resources.ResourceImpl
 import com.andyanika.translator.common.constants.Extras
 import com.andyanika.translator.common.constants.Screens
+import com.andyanika.translator.common.interfaces.Resources
 import com.andyanika.translator.common.interfaces.ScreenRouter
 import com.andyanika.translator.common.models.ui.DisplayTranslateResult
 import com.jakewharton.rxbinding4.InitialValueObservable
 import com.jakewharton.rxbinding4.widget.textChanges
-import dagger.android.support.DaggerFragment
-import javax.inject.Inject
+import org.koin.android.ext.android.getDefaultScope
+import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.androidx.scope.scopeActivity
+import org.koin.core.parameter.parametersOf
 
-class TranslationFragment : DaggerFragment(), TranslationView {
-    @Inject
-    var presenter: TranslationPresenter? = null
+class TranslationFragment : ScopeFragment(), TranslationView {
+    val presenter: TranslationPresenter by inject { parametersOf(this, ResourceImpl(requireActivity())) }
+    val router: ScreenRouter by inject()
 
-    @Inject
-    var router: ScreenRouter? = null
     private var editInput: EditText? = null
     private var txtTranslated: TextView? = null
     private var progress: View? = null
@@ -132,8 +138,8 @@ class TranslationFragment : DaggerFragment(), TranslationView {
     }
 
     override fun onDestroy() {
-        presenter!!.dispose()
-        presenter = null
+//        presenter!!.dispose()
+//        presenter = null
         super.onDestroy()
     }
 }

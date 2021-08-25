@@ -28,8 +28,11 @@ android {
 dependencies {
     implementation project(path: ':common')
 
-    implementation "com.google.dagger:dagger:${dagger_version}"
+//    implementation "com.google.dagger:dagger:${dagger_version}"
+    implementation "javax.inject:javax.inject:${javax_inject_version}"
+
     implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
+    implementation "io.insert-koin:koin-android:$koin_version"
 }
