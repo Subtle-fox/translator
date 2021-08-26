@@ -1,6 +1,6 @@
-package com.andyanika.translator.repository.local.model;
+package com.andyanika.translator.repository.local.entity;
 
-public class WordFavoriteModel {
+public class WordFavoriteEntity {
     public int id;
     public String textSrc;
     public String textDst;

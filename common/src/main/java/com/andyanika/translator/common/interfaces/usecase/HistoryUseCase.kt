@@ -1,12 +1,8 @@
-package com.andyanika.translator.common.interfaces.usecase;
+package com.andyanika.translator.common.interfaces.usecase
 
-import com.andyanika.translator.common.models.FavoriteModel;
+import com.andyanika.translator.common.models.FavoriteModel
+import kotlinx.coroutines.flow.Flow
 
-import java.util.List;
-
-import io.reactivex.rxjava3.core.Flowable;
-
-
-public interface HistoryUseCase {
-    Flowable<List<FavoriteModel>> run(String filter, int limit);
+interface HistoryUseCase {
+    fun run(filterStr: String, limit: Int): Flow<List<FavoriteModel>>
 }

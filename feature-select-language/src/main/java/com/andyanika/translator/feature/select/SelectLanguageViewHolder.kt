@@ -1,32 +1,23 @@
-package com.andyanika.translator.feature.select;
+package com.andyanika.translator.feature.select
 
-import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-import android.widget.TextView;
+import android.view.View
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.andyanika.translator.common.models.ui.DisplayLanguageModel
 
-import com.andyanika.translator.common.models.ui.DisplayLanguageModel;
+internal class SelectLanguageViewHolder(
+    itemView: View,
+    private val action: (DisplayLanguageModel) -> Unit
+) : RecyclerView.ViewHolder(itemView) {
 
-import io.reactivex.rxjava3.subjects.Subject;
+    private val title: TextView = itemView.findViewById(R.id.title)
+    private val description: TextView = itemView.findViewById(R.id.description)
+    private val currentIcon: View = itemView.findViewById(R.id.view_current)
 
-public class SelectLanguageViewHolder extends RecyclerView.ViewHolder {
-    private TextView title;
-    private TextView description;
-    private View currentIcon;
-
-    SelectLanguageViewHolder(View itemView, Subject<Integer> subject) {
-        super(itemView);
-        title = itemView.findViewById(R.id.title);
-        description = itemView.findViewById(R.id.description);
-        currentIcon = itemView.findViewById(R.id.view_current);
-        itemView.setOnClickListener(v -> {
-            subject.onNext(getAdapterPosition());
-            subject.onComplete();
-        });
-    }
-
-    public void bind(DisplayLanguageModel model) {
-        title.setText(model.getCode().toString());
-        description.setText(model.getDescription());
-        currentIcon.setVisibility(model.isSelected() ? View.VISIBLE : View.GONE);
+    fun bind(model: DisplayLanguageModel) {
+        title.text = model.code.toString()
+        description.text = model.description
+        currentIcon.visibility = if (model.isSelected) View.VISIBLE else View.GONE
+        itemView.setOnClickListener { action.invoke(model) }
     }
 }

@@ -5,29 +5,32 @@ import com.andyanika.translator.common.interfaces.Resources
 import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase
 import com.andyanika.translator.common.models.LanguageCode
 import com.andyanika.translator.common.models.TranslateDirection
-import io.reactivex.rxjava3.functions.Function
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.zip
 import java.util.*
 
-class GetSelectedLanguagesUseCaseImpl constructor(
-    resources: Resources,
+internal class GetSelectedLanguagesUseCaseImpl constructor(
+    private val resources: Resources,
     private val repository: LocalRepository,
-    private val ioDispatcher: CoroutineDispatcher
 ) : GetSelectedLanguageUseCase {
 
-    private val toUiStringFunction = Function { code: LanguageCode ->
-        resources.getString("lang_" + code.toString().lowercase(Locale.getDefault()))
+    private fun toUiString(code: LanguageCode): String {
+        return resources.getString("lang_" + code.toString().lowercase(Locale.getDefault()))
     }
 
     override suspend fun run(): TranslateDirection<String> {
-        return withContext(ioDispatcher) {
-            val srcLanguage = repository.srcLanguage.map(toUiStringFunction)
-            val dstLanguage = repository.dstLanguage.map(toUiStringFunction)
+        val srcLanguage = repository.observeSrcLanguage()
+        val dstLanguage = repository.observeDstLanguage()
 
-            srcLanguage
-                .zipWith(dstLanguage, { src, dst -> TranslateDirection(src, dst) })
-                .blockingFirst()
-        }
+        return srcLanguage
+            .zip(dstLanguage) { src, dst ->
+                TranslateDirection(
+                    toUiString(src),
+                    toUiString(dst)
+                )
+            }
+            .take(1)
+            .single()
     }
 }

@@ -7,6 +7,7 @@ import com.andyanika.translator.di.koin.activityModule
 import com.andyanika.translator.di.koin.dispatchersModule
 import com.andyanika.translator.di.koin.navigationModule
 import com.andyanika.translator.di.koin.schedulersModule
+import com.andyanika.translator.feature.select.di.koin.selectLanguageModule
 import com.andyanika.translator.feature.translate.di.koin.translationModule
 import com.andyanika.translator.repository.local.di.koin.localRepositoryModule
 import com.andyanika.translator.repository.remote.di.koin.networkModule
@@ -52,7 +53,8 @@ class App : Application() {
                 resourceModule,
 
                 activityModule,
-                translationModule
+                translationModule,
+                selectLanguageModule,
             )
         }
     }

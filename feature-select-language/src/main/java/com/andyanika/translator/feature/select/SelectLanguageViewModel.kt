@@ -1,80 +1,61 @@
-package com.andyanika.translator.feature.select;
+package com.andyanika.translator.feature.select
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.andyanika.translator.common.constants.Extras
+import com.andyanika.translator.common.constants.Screens
+import com.andyanika.translator.common.interfaces.ScreenRouter
+import com.andyanika.translator.common.interfaces.usecase.GetLanguagesUseCase
+import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase
+import com.andyanika.translator.common.models.ui.DisplayLanguageModel
+import kotlinx.coroutines.launch
 
-import com.andyanika.translator.common.constants.Extras;
-import com.andyanika.translator.common.constants.Screens;
-import com.andyanika.translator.common.interfaces.ScreenRouter;
-import com.andyanika.translator.common.interfaces.usecase.GetLanguagesUseCase;
-import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase;
-import com.andyanika.translator.common.models.ui.DisplayLanguageModel;
-import com.andyanika.translator.common.scopes.FragmentScope;
+internal class SelectLanguageViewModel(
+    private val getLanguagesUseCase: GetLanguagesUseCase,
+    private val selectLanguageUseCase: SelectLanguageUseCase,
+    private val router: ScreenRouter
+) : ViewModel() {
 
-import java.util.List;
+    private val _data: MutableLiveData<List<DisplayLanguageModel>> = MutableLiveData<List<DisplayLanguageModel>>()
+    val data: LiveData<List<DisplayLanguageModel>> = _data
 
-import javax.inject.Inject;
-import javax.inject.Named;
+    private var isSrcMode = false
 
-import io.reactivex.rxjava3.core.Scheduler;
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.disposables.Disposable;
-import timber.log.Timber;
-
-@FragmentScope
-public class SelectLanguageViewModel extends ViewModel {
-    private final GetLanguagesUseCase getLanguagesUseCase;
-    private final SelectLanguageUseCase selectLanguageUseCase;
-    private final Scheduler uiScheduler;
-    private final ScreenRouter router;
-    MutableLiveData<List<DisplayLanguageModel>> data = new MutableLiveData<>();
-    private Disposable listDisposable;
-    private Disposable itemClickDisposable;
-    private boolean isSrcMode;
-
-    @Inject
-    SelectLanguageViewModel(GetLanguagesUseCase getLanguagesUseCase, SelectLanguageUseCase selectLanguageUseCase, ScreenRouter router, @Named("ui") Scheduler uiScheduler) {
-        this.router = router;
-        this.getLanguagesUseCase = getLanguagesUseCase;
-        this.selectLanguageUseCase = selectLanguageUseCase;
-        this.uiScheduler = uiScheduler;
+    fun setMode(mode: String) {
+        isSrcMode = Extras.MODE_SRC == mode
     }
 
-    void setMode(String mode) {
-        isSrcMode = Extras.MODE_SRC.equals(mode);
-    }
-
-    public void loadData() {
-        listDisposable = getLanguagesUseCase.run(isSrcMode).subscribe(data::postValue);
-    }
-
-    public void subscribeItemClick(Single<DisplayLanguageModel> single) {
-        itemClickDisposable = single
-                .flatMapCompletable(model -> {
-                    Timber.d("select language -> click received (isSrcMode = %b)", isSrcMode);
-                    if (isSrcMode) {
-                        return selectLanguageUseCase.setSrc(model.getCode());
-                    } else {
-                        return selectLanguageUseCase.setDst(model.getCode());
-                    }
-                })
-                .observeOn(uiScheduler)
-                .doOnComplete(() -> Timber.d("navigate back"))
-                .subscribe(() -> router.backTo(Screens.TRANSLATION));
-    }
-
-    public void unsubscribeItemClick() {
-        if (itemClickDisposable != null && !itemClickDisposable.isDisposed()) {
-            itemClickDisposable.dispose();
+    fun loadData() {
+        viewModelScope.launch {
+            _data.value = getLanguagesUseCase.run(isSrcMode)
         }
     }
 
-    @Override
-    protected void onCleared() {
-        unsubscribeItemClick();
-        if (listDisposable != null && !listDisposable.isDisposed()) {
-            listDisposable.dispose();
+//    fun subscribeItemClick(single: Single<DisplayLanguageModel?>) {
+//        itemClickDisposable = single
+//            .flatMapCompletable { model ->
+//                Timber.d("select language -> click received (isSrcMode = %b)", isSrcMode)
+//                if (isSrcMode) {
+//                    return@flatMapCompletable selectLanguageUseCase.setSrc(model.getCode())
+//                } else {
+//                    return@flatMapCompletable selectLanguageUseCase.setDst(model.getCode())
+//                }
+//            }
+//            .observeOn(uiScheduler)
+//            .doOnComplete { Timber.d("navigate back") }
+//            .subscribe { router.backTo(Screens.TRANSLATION) }
+//    }
+
+    fun onItemClick(model: DisplayLanguageModel) {
+        viewModelScope.launch {
+            if (isSrcMode) {
+                selectLanguageUseCase.setSrc(model.code)
+            } else {
+                selectLanguageUseCase.setDst(model.code)
+            }
         }
-        super.onCleared();
+        router.backTo(Screens.TRANSLATION)
     }
 }

@@ -2,113 +2,102 @@ package com.andyanika.translator.repository.local
 
 import android.content.SharedPreferences
 import com.andyanika.translator.common.interfaces.LocalRepository
-import com.andyanika.translator.common.models.LanguageCode
-import com.andyanika.translator.common.models.TranslateDirection
-import com.andyanika.translator.common.models.TranslateRequest
-import com.andyanika.translator.common.models.TranslateResult
-import com.andyanika.translator.repository.local.model.FavoriteModel
-import com.andyanika.translator.repository.local.model.WordFavoriteModel
-import com.andyanika.translator.repository.local.model.WordModel
-import io.reactivex.rxjava3.core.*
-import io.reactivex.rxjava3.subjects.PublishSubject
+import com.andyanika.translator.common.models.*
+import com.andyanika.translator.repository.local.entity.FavoriteEntity
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.concurrent.Callable
 
 internal class LocalRepositoryImpl(
     private val dao: TranslatorDao,
     private val preferences: SharedPreferences,
     private val adapter: ModelsAdapter,
-    private val ioScheduler: Scheduler
+    private val ioDispatcher: CoroutineDispatcher,
 ) : LocalRepository {
-    private val srcLanguageSubject = PublishSubject.create<LanguageCode>()
-    private val dstLanguageSubject = PublishSubject.create<LanguageCode>()
-    override fun getHistory(): Flowable<List<com.andyanika.translator.common.models.FavoriteModel>> {
-        return Flowable.fromPublisher(dao.history)
-            .flatMap { list: List<WordFavoriteModel?>? ->
-                Flowable.fromIterable(list)
-                    .map { dbModel: WordFavoriteModel? ->
-                        adapter.toTranslationRowModel(
-                            dbModel!!
-                        )
-                    }.toList()
-                    .toFlowable()
-            }
+
+    private val srcLanguageState = MutableSharedFlow<LanguageCode>()
+    private val dstLanguageState = MutableSharedFlow<LanguageCode>()
+
+    override fun getHistory(): Flow<List<FavoriteModel>> {
+        return dao
+            .getHistory()
+            .map { models -> models.map(adapter::toTranslationRowModel) }
     }
 
-    override fun getFavorites(): Flowable<List<com.andyanika.translator.common.models.FavoriteModel>> {
-        return Flowable.fromPublisher(dao.favorites)
-            .flatMap { list: List<WordModel?>? ->
-                Flowable.fromIterable(list)
-                    .map { dbModel: WordModel? ->
-                        adapter.toTranslationRowModel(
-                            dbModel!!
-                        )
-                    }.toList()
-                    .toFlowable()
-            }
+    override fun getFavorites(): Flow<List<FavoriteModel>> {
+        return dao
+            .getFavorites()
+            .map { models -> models.map(adapter::toTranslationRowModel) }
     }
 
-    override fun translate(request: TranslateRequest): Single<TranslateResult> {
-        val callable = Callable {
-            val wordModel =
-                dao.getTranslation(request.text, request.direction.src.toString(), request.direction.dst.toString())
-            adapter.toTranslationResult(wordModel!!)
+    override suspend fun translate(request: TranslateRequest): TranslateResult? {
+        return withContext(ioDispatcher) {
+            dao.getTranslation(
+                text = request.text,
+                langSrc = request.direction.src.toString(),
+                langDst = request.direction.dst.toString()
+            )?.let(adapter::toTranslationResult)
         }
-        return Single.fromCallable(callable)
     }
 
-    override fun addTranslation(translateResult: TranslateResult): Single<TranslateResult> {
-        val model = adapter.toWordModel(translateResult)
-        return Completable.fromAction { dao.addTranslation(model) }
-            .subscribeOn(ioScheduler)
-            .toSingleDefault(translateResult)
-            .doOnSuccess { r: TranslateResult? -> Timber.d("saved to local db OK: %s", r) }
-            .doOnError { e: Throwable? -> Timber.e(e, "saved to local db exception") }
+    override suspend fun addTranslation(translateResult: TranslateResult) {
+        return withContext(ioDispatcher) {
+            val model = adapter.toWordModel(translateResult)
+            dao.addTranslation(model)
+        }
     }
 
-    override fun addFavorites(wordId: Int) {
-        val model = FavoriteModel(wordId)
-        dao.addFavorite(model)
+    override suspend fun addFavorites(wordId: Int) {
+        withContext(ioDispatcher) {
+            val entity = FavoriteEntity(wordId)
+            dao.addFavorite(entity)
+        }
     }
 
-    override fun removeFavorite(wordId: Int) {
-        val model = FavoriteModel(wordId)
-        dao.removeFavorite(model)
+    override suspend fun removeFavorite(wordId: Int) {
+        withContext(ioDispatcher) {
+            val entity = FavoriteEntity(wordId)
+            dao.removeFavorite(entity)
+        }
     }
 
-    override fun getSrcLanguage(): Observable<LanguageCode> {
-        return srcLanguageSubject
-            .startWith(Observable.fromCallable {
-                val s = preferences.getString(LANGUAGE_SRC, null)
-                LanguageCode.tryParse(s, LanguageCode.RU)
-            })
-            .onErrorReturnItem(LanguageCode.RU)
-            .subscribeOn(ioScheduler)
+    override fun observeSrcLanguage(): Flow<LanguageCode> {
+        return srcLanguageState
+            .onStart { getSrcLanguage() }
+            .catch { emit(LanguageCode.RU) }
+            .flowOn(ioDispatcher)
     }
 
-    override fun getDstLanguage(): Observable<LanguageCode> {
-        return dstLanguageSubject
-            .startWith(Observable.fromCallable {
-                val s = preferences.getString(LANGUAGE_DST, null)
-                LanguageCode.tryParse(s, LanguageCode.EN)
-            })
-            .onErrorReturnItem(LanguageCode.EN)
-            .subscribeOn(ioScheduler)
+    override fun observeDstLanguage(): Flow<LanguageCode> {
+        return dstLanguageState
+            .onStart { getDstLanguage() }
+            .flowOn(ioDispatcher)
     }
 
-    override fun setLanguageDirection(direction: TranslateDirection<LanguageCode>) {
+    override suspend fun getSrcLanguage(): LanguageCode {
+        val s = preferences.getString(LANGUAGE_SRC, null)
+        return LanguageCode.tryParse(s, LanguageCode.RU)
+    }
+
+    override suspend fun getDstLanguage(): LanguageCode {
+        val s = preferences.getString(LANGUAGE_DST, null)
+        return LanguageCode.tryParse(s, LanguageCode.EN)
+    }
+
+    override suspend fun setLanguageDirection(direction: TranslateDirection<LanguageCode>) {
         Timber.d("save repository direction: %s - %s", direction.src, direction.dst)
         preferences
             .edit()
             .putString("language_src", direction.src.toString())
             .putString("language_dst", direction.dst.toString())
             .apply()
-        srcLanguageSubject.onNext(direction.src)
-        dstLanguageSubject.onNext(direction.dst)
+        srcLanguageState.emit(direction.src)
+        dstLanguageState.emit(direction.dst)
     }
 
-    override fun getAvailableLanguages(): Observable<LanguageCode> {
-        return Observable.fromArray(*LanguageCode.values()).cache()
+    override suspend fun getAvailableLanguages(): List<LanguageCode> {
+        return LanguageCode.values().toList()
     }
 
     companion object {

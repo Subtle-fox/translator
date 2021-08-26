@@ -1,12 +1,11 @@
 package com.andyanika.translator.repository.local
 
 import androidx.room.Database
-import com.andyanika.translator.repository.local.model.WordModel
+import com.andyanika.translator.repository.local.entity.WordEntity
 import androidx.room.RoomDatabase
-import com.andyanika.translator.repository.local.TranslatorDao
-import com.andyanika.translator.repository.local.model.FavoriteModel
+import com.andyanika.translator.repository.local.entity.FavoriteEntity
 
-@Database(version = 1, entities = [WordModel::class, FavoriteModel::class])
+@Database(version = 1, entities = [WordEntity::class, FavoriteEntity::class])
 internal abstract class DatabaseTranslator : RoomDatabase() {
     abstract fun translatorDao(): TranslatorDao
 }

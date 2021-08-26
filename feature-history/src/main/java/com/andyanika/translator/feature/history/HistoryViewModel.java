@@ -39,25 +39,26 @@ public class HistoryViewModel extends ViewModel {
     }
 
     void subscribeSearch(Observable<CharSequence> searchTextObservable, int limit) {
-        listDisposable = searchTextObservable
-                .startWithItem("")
-                .map(CharSequence::toString)
-                .distinctUntilChanged(String::equals)
-                .doOnNext(s -> showClearBtn.postValue(!TextUtils.isEmpty(s)))
-                .flatMap(str -> historyUseCase.run(str, limit).toObservable())
-                .subscribe(data::postValue);
+//        listDisposable = searchTextObservable
+//                .startWithItem("")
+//                .map(CharSequence::toString)
+//                .distinctUntilChanged(String::equals)
+//                .doOnNext(s -> showClearBtn.postValue(!TextUtils.isEmpty(s)))
+//                .flatMap(str -> historyUseCase.run(str, limit).toObservable())
+//                .subscribe(data::postValue);
     }
 
     void subscribeItemClick(Observable<FavoriteModel> observable) {
-        itemClickDisposable = observable.flatMapCompletable(model -> {
-            if (model.isFavorite()) {
-                return removeFavoriteUseCase.run(model.getId())
-                        .doOnComplete(() -> Timber.d("favorite removed"));
-            } else {
-                return addFavoriteUseCase.run(model.getId())
-                        .doOnComplete(() -> Timber.d("favorite added"));
-            }
-        }).subscribe();
+//        itemClickDisposable = observable.flatMapCompletable(model -> {
+//            if (model.isFavorite()) {
+//                return removeFavoriteUseCase.run(model.getId())
+//                        .doOnComplete(() -> Timber.d("favorite removed"));
+//            } else {
+//                return addFavoriteUseCase.run(model.getId())
+//                        .doOnComplete(() -> Timber.d("favorite added"));
+//            }
+//        }
+//        ).subscribe();
     }
 
     void unsubscribe() {

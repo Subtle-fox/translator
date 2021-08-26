@@ -21,20 +21,20 @@ class FavoritesViewModel @Inject internal constructor(
     private var itemClickDisposable: Disposable? = null
     fun load(limit: Int) {
         if (listDisposable == null || listDisposable!!.isDisposed) {
-            listDisposable =
-                getFavoritesUseCase.run(limit).subscribe { value: List<FavoriteModel> -> data.postValue(value) }
+//            listDisposable =
+//                getFavoritesUseCase.run(limit).subscribe { value: List<FavoriteModel> -> data.postValue(value) }
         }
     }
 
     fun subscribeItemClick(observable: Observable<FavoriteModel>) {
-        itemClickDisposable = observable
-            .flatMapCompletable { model: FavoriteModel? ->
-                removeFavoriteUseCase.run(
-                    model!!.id
-                )
-                    .doOnComplete { Timber.d("favorite removed") }
-            }
-            .subscribe()
+//        itemClickDisposable = observable
+//            .flatMapCompletable { model: FavoriteModel? ->
+//                removeFavoriteUseCase.run(
+//                    model!!.id
+//                )
+//                    .doOnComplete { Timber.d("favorite removed") }
+//            }
+//            .subscribe()
     }
 
     fun unsubscribeItemClick() {

@@ -4,80 +4,52 @@ import com.andyanika.translator.common.interfaces.LocalRepository
 import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase
 import com.andyanika.translator.common.models.LanguageCode
 import com.andyanika.translator.common.models.TranslateDirection
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Scheduler
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class SelectLanguageUseCaseImpl @Inject constructor(
+internal class SelectLanguageUseCaseImpl(
     private val repository: LocalRepository,
-    private val ioScheduler: Scheduler,
-    private val ioDispatcher: CoroutineDispatcher,
 ) : SelectLanguageUseCase {
-    override fun setSrc(code: LanguageCode): Completable {
-        return Completable.fromObservable(
-            repository.srcLanguage
-                .subscribeOn(ioScheduler)
-                .zipWith(repository.dstLanguage, { src: LanguageCode?, dst: LanguageCode? ->
-                    TranslateDirection(
-                        src!!, dst!!
-                    )
-                })
-                .take(1)
-                .map { oldDirection: TranslateDirection<LanguageCode> ->
-                    normalize(
-                        TranslateDirection(
-                            code,
-                            oldDirection.dst
-                        ), oldDirection
-                    )
-                }
-                .doOnNext { direction: TranslateDirection<LanguageCode?>? -> repository.setLanguageDirection(direction) })
+
+    override suspend fun setSrc(code: LanguageCode) {
+        val oldDirection = TranslateDirection(
+            repository.getSrcLanguage(),
+            repository.getDstLanguage()
+        )
+
+        val newDirection = normalize(
+            newDirection = TranslateDirection(src = code, dst = oldDirection.dst),
+            oldDirection = oldDirection
+        )
+
+        repository.setLanguageDirection(newDirection)
     }
 
-    override fun setDst(code: LanguageCode): Completable {
-        return Completable.fromObservable(
-            repository.srcLanguage
-                .subscribeOn(ioScheduler)
-                .zipWith(repository.dstLanguage, { src: LanguageCode?, dst: LanguageCode? ->
-                    TranslateDirection(
-                        src!!, dst!!
-                    )
-                })
-                .take(1)
-                .map { oldDirection: TranslateDirection<LanguageCode> ->
-                    normalize(
-                        TranslateDirection(
-                            oldDirection.src,
-                            code
-                        ), oldDirection
-                    )
-                }
-                .doOnNext { direction: TranslateDirection<LanguageCode?>? -> repository.setLanguageDirection(direction) })
+    override suspend fun setDst(code: LanguageCode) {
+        val oldDirection = TranslateDirection(
+            repository.getSrcLanguage(),
+            repository.getDstLanguage()
+        )
+
+        val newDirection = normalize(
+            newDirection = TranslateDirection(src = oldDirection.src, dst = code),
+            oldDirection = oldDirection
+        )
+
+        repository.setLanguageDirection(newDirection)
     }
 
     override suspend fun swap() {
-        return withContext(ioDispatcher) {
-            repository.srcLanguage
-                .subscribeOn(ioScheduler)
-                .zipWith(
-                    repository.dstLanguage,
-                    { src: LanguageCode, dst: LanguageCode -> TranslateDirection(dst, src) })
-                .take(1)
-                .doOnNext { direction: TranslateDirection<LanguageCode>? ->
-                    repository.setLanguageDirection(
-                        direction
-                    )
-                }
-                .blockingFirst()
-        }
+        val newDirection = TranslateDirection(
+            src = repository.getDstLanguage(),
+            dst = repository.getSrcLanguage()
+        )
+
+        repository.setLanguageDirection(newDirection)
     }
 
-    fun normalize(
+    private fun normalize(
         newDirection: TranslateDirection<LanguageCode>,
         oldDirection: TranslateDirection<LanguageCode>
-    ): TranslateDirection<LanguageCode?> {
+    ): TranslateDirection<LanguageCode> {
         if (newDirection.src == oldDirection.dst) {
             // swap
             return TranslateDirection(newDirection.src, oldDirection.src)

@@ -1,81 +1,66 @@
-package com.andyanika.translator.feature.select;
+package com.andyanika.translator.feature.select
 
-import android.app.Activity;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.andyanika.translator.common.constants.Extras
+import com.andyanika.translator.common.models.ui.DisplayLanguageModel
+import org.koin.android.ext.android.inject
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+class SelectLanguageFragment : ScopeFragment() {
+    private val action: (DisplayLanguageModel) -> Unit = { vm.onItemClick(it) }
+    private val adapter: SelectLanguageListAdapter by inject { parametersOf(action) }
 
-import com.andyanika.translator.common.constants.Extras;
-
-import javax.inject.Inject;
+    //    @Inject
+//    var viewModelFactory: ViewModelProvider.Factory? = null
+    private val vm: SelectLanguageViewModel by viewModel()
 
 
-public class SelectLanguageFragment extends Fragment {
-    @Inject
-    SelectLanguageListAdapter adapter;
-
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
-
-    private SelectLanguageViewModel viewModel;
-
-    public static SelectLanguageFragment create(String mode) {
-        Bundle extra = new Bundle();
-        extra.putString(Extras.SELECT_MODE, mode);
-        SelectLanguageFragment fragment = new SelectLanguageFragment();
-        fragment.setArguments(extra);
-        return fragment;
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_select_language, null)
     }
 
-    @Override
-    public void onAttach(Context context) {
-        Activity mainActivity = (Activity) context;
-        mainActivity.setTitle(R.string.title_select_language);
-        super.onAttach(context);
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().setTitle(R.string.title_select_language)
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_select_language, null);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SelectLanguageViewModel.class);
-        viewModel.data.observe(getViewLifecycleOwner(), adapter::setData);
+        val layoutManager = LinearLayoutManager(context)
+        val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
+//        viewModel = ViewModelProviders.of(this, viewModelFactory).get<SelectLanguageViewModel>(SelectLanguageViewModel::class.java)
+        vm.data.observe(viewLifecycleOwner, { newData: List<DisplayLanguageModel> -> adapter.setData(newData) })
         if (savedInstanceState == null) {
-            viewModel.setMode(getArguments().getString(Extras.SELECT_MODE));
-            viewModel.loadData();
+            arguments?.getString(Extras.SELECT_MODE)?.let {
+                vm.setMode(it)
+                vm.loadData()
+            }
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        viewModel.subscribeItemClick(adapter.getObservable());
+    override fun onStart() {
+        super.onStart()
+//        viewModel!!.subscribeItemClick(adapter.getObservable())
     }
 
-    @Override
-    public void onStop() {
-        viewModel.unsubscribeItemClick();
-        super.onStop();
+    override fun onStop() {
+//        viewModel!!.unsubscribeItemClick()
+        super.onStop()
+    }
+
+    companion object {
+        fun create(mode: String?): SelectLanguageFragment {
+            val extra = Bundle()
+            extra.putString(Extras.SELECT_MODE, mode)
+            val fragment = SelectLanguageFragment()
+            fragment.arguments = extra
+            return fragment
+        }
     }
 }

@@ -1,11 +1,11 @@
-package com.andyanika.translator.repository.local.model;
+package com.andyanika.translator.repository.local.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "favorites_table")
-public class FavoriteModel {
+public class FavoriteEntity {
     @PrimaryKey
     @ColumnInfo(name = "_id")
     public int id;
@@ -13,7 +13,7 @@ public class FavoriteModel {
     @ColumnInfo(name = "last_modified")
     public long lastModified;
 
-    public FavoriteModel(int id) {
+    public FavoriteEntity(int id) {
         this.id = id;
         this.lastModified = System.currentTimeMillis();
     }

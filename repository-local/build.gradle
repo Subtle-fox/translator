@@ -37,13 +37,10 @@ android {
 dependencies {
     implementation project(path: ':common')
 
-    implementation "javax.inject:javax.inject:${javax_inject_version}"
+    kapt "androidx.room:room-compiler:$room_version"
 
-    implementation "androidx.room:room-runtime:${room_version}"
-    implementation "androidx.room:room-rxjava2:${room_version}"
-    kapt "androidx.room:room-compiler:${room_version}"
-
-    implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "io.insert-koin:koin-android:$koin_version"
-
 }

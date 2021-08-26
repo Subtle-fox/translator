@@ -1,5 +1,5 @@
 package com.andyanika.translator.common.interfaces.usecase
 
-interface RemoveFavoriteUseCase {
+interface AddFavoriteUseCase {
     suspend fun run(wordId: Int)
 }

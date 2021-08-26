@@ -2,20 +2,16 @@ package com.andyanika.usecases
 
 import com.andyanika.translator.common.interfaces.LocalRepository
 import com.andyanika.translator.common.interfaces.usecase.GetFavoritesUseCase
-import com.andyanika.translator.common.models.*
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Scheduler
-import javax.inject.Inject
-import javax.inject.Named
+import com.andyanika.translator.common.models.FavoriteModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class GetFavoritesUseCaseImpl @Inject constructor(
-    private val repository: LocalRepository,
-    @Named("io") private val ioScheduler: Scheduler
+internal class GetFavoritesUseCaseImpl(
+    private val repository: LocalRepository
 ) : GetFavoritesUseCase {
-    override fun run(limit: Int): Flowable<List<FavoriteModel>> {
+    override fun run(limit: Int): Flow<List<FavoriteModel>> {
         return repository
-            .favorites
-            .subscribeOn(ioScheduler)
-            .take(limit.toLong())
+            .getFavorites()
+            .map { it.subList(0, limit) }
     }
 }

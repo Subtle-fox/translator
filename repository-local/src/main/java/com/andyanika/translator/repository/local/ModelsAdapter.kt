@@ -4,31 +4,30 @@ import com.andyanika.translator.common.models.FavoriteModel
 import com.andyanika.translator.common.models.LanguageCode
 import com.andyanika.translator.common.models.TranslateDirection
 import com.andyanika.translator.common.models.TranslateResult
-import com.andyanika.translator.repository.local.model.WordFavoriteModel
-import com.andyanika.translator.repository.local.model.WordModel
-import javax.inject.Inject
+import com.andyanika.translator.repository.local.entity.WordFavoriteEntity
+import com.andyanika.translator.repository.local.entity.WordEntity
 
-class ModelsAdapter @Inject constructor() {
-    fun toTranslationResult(dbModel: WordModel): TranslateResult {
+class ModelsAdapter {
+    fun toTranslationResult(dbEntity: WordEntity): TranslateResult {
         val direction =
-            TranslateDirection(LanguageCode.valueOf(dbModel.languageSrc), LanguageCode.valueOf(dbModel.languageDst))
-        return TranslateResult(dbModel.textSrc, dbModel.textDst, direction)
+            TranslateDirection(LanguageCode.valueOf(dbEntity.languageSrc), LanguageCode.valueOf(dbEntity.languageDst))
+        return TranslateResult(dbEntity.textSrc, dbEntity.textDst, direction)
     }
 
-    fun toTranslationRowModel(dbModel: WordModel): FavoriteModel {
-        val translateResult = toTranslationResult(dbModel)
-        return FavoriteModel(dbModel.id, translateResult, true)
+    fun toTranslationRowModel(dbEntity: WordEntity): FavoriteModel {
+        val translateResult = toTranslationResult(dbEntity)
+        return FavoriteModel(dbEntity.id, translateResult, true)
     }
 
-    fun toTranslationRowModel(dbModel: WordFavoriteModel): FavoriteModel {
+    fun toTranslationRowModel(dbEntity: WordFavoriteEntity): FavoriteModel {
         val direction =
-            TranslateDirection(LanguageCode.valueOf(dbModel.languageSrc), LanguageCode.valueOf(dbModel.languageDst))
-        val translateResult = TranslateResult(dbModel.textSrc, dbModel.textDst, direction)
-        return FavoriteModel(dbModel.id, translateResult, dbModel.favoriteId > 0)
+            TranslateDirection(LanguageCode.valueOf(dbEntity.languageSrc), LanguageCode.valueOf(dbEntity.languageDst))
+        val translateResult = TranslateResult(dbEntity.textSrc, dbEntity.textDst, direction)
+        return FavoriteModel(dbEntity.id, translateResult, dbEntity.favoriteId > 0)
     }
 
-    fun toWordModel(translateResult: TranslateResult): WordModel {
-        return WordModel(
+    fun toWordModel(translateResult: TranslateResult): WordEntity {
+        return WordEntity(
             translateResult.textSrc,
             translateResult.textDst,
             translateResult.direction.src.toString(),

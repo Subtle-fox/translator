@@ -1,4 +1,4 @@
-package com.andyanika.translator.repository.local.model;
+package com.andyanika.translator.repository.local.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 @Entity(tableName = "words_table",
         indices = {@Index(value = {"src", "lang_src", "lang_dst"}, unique = true)})
-public class WordModel {
+public class WordEntity {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")
     public int id;
@@ -32,7 +32,7 @@ public class WordModel {
     @ColumnInfo(name = "last_modified")
     public long lastModified;
 
-    public WordModel(@NonNull String textSrc, @NonNull String textDst, @NonNull String languageSrc, @NonNull String languageDst) {
+    public WordEntity(@NonNull String textSrc, @NonNull String textDst, @NonNull String languageSrc, @NonNull String languageDst) {
         this.textSrc = textSrc;
         this.textDst = textDst;
         this.languageSrc = languageSrc;
