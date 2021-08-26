@@ -1,63 +1,49 @@
-package com.andyanika.translator.feature.favorites;
+package com.andyanika.translator.feature.favorites
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.andyanika.translator.common.models.FavoriteModel;
-import com.andyanika.translator.common.scopes.FragmentScope;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.subjects.Subject;
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import com.andyanika.translator.common.models.FavoriteModel
+import com.andyanika.translator.common.scopes.FragmentScope
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.Subject
+import java.util.*
+import javax.inject.Inject
 
 @FragmentScope
-public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesViewHolder> {
-    private ArrayList<FavoriteModel> data;
-    private Subject<Integer> subject;
+class FavoritesListAdapter @Inject internal constructor(subject: Subject<Int?>) :
+    RecyclerView.Adapter<FavoritesViewHolder>() {
+    private var data: ArrayList<FavoriteModel>
+    private val subject: Subject<Int?>
 
-    @Inject
-    FavoritesListAdapter(Subject<Integer> subject) {
-        this.data = new ArrayList<>();
-        this.subject = subject;
+    val observable: Observable<FavoriteModel>
+        get() = subject.map { position: Int? -> data[position!!] }
+
+    fun setData(newData: List<FavoriteModel?>?) {
+        val oldData: List<FavoriteModel> = data
+        data = if (newData == null) ArrayList() else ArrayList(newData)
+        val diffUtilsCallback = DiffUtilsCallback(data, oldData)
+        DiffUtil.calculateDiff(diffUtilsCallback).dispatchUpdatesTo(this)
     }
 
-    public Observable<FavoriteModel> getObservable() {
-        return subject.map(position -> data.get(position));
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesViewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.listview_row, parent, false)
+        return FavoritesViewHolder(itemView, subject)
     }
 
-    public void setData(@Nullable List<FavoriteModel> newData) {
-        List<FavoriteModel> oldData = data;
-        data = newData == null ? new ArrayList<>() : new ArrayList<>(newData);
-
-        DiffUtilsCallback diffUtilsCallback = new DiffUtilsCallback(data, oldData);
-        DiffUtil.calculateDiff(diffUtilsCallback).dispatchUpdatesTo(this);
+    override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
+        val translateResult = data[position]
+        holder.bind(translateResult)
     }
 
-    @NonNull
-    @Override
-    public FavoritesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.listview_row, parent, false);
-        return new FavoritesViewHolder(itemView, subject);
+    override fun getItemCount(): Int {
+        return data.size
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull FavoritesViewHolder holder, int position) {
-        FavoriteModel translateResult = data.get(position);
-        holder.bind(translateResult);
-    }
-
-    @Override
-    public int getItemCount() {
-        return data.size();
+    init {
+        data = ArrayList()
+        this.subject = subject
     }
 }

@@ -1,11 +1,10 @@
-package com.andyanika.translator.repository.remote
+package com.andyanika.translator.repository.remote.yandex
 
 import com.andyanika.translator.common.models.LanguageCode
 import com.andyanika.translator.common.models.TranslateDirection
 import java.util.*
-import javax.inject.Inject
 
-internal class YandexTranslationParamsBuilder @Inject constructor() {
+internal class YandexTranslationParamsBuilder {
     fun buildParam(direction: TranslateDirection<LanguageCode>): String {
         return String
             .format("%s-%s", direction.src.toString(), direction.dst.toString())

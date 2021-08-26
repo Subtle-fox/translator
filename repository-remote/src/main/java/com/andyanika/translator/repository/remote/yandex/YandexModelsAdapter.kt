@@ -1,10 +1,9 @@
-package com.andyanika.translator.repository.remote
+package com.andyanika.translator.repository.remote.yandex
 
 import com.andyanika.translator.common.models.TranslateRequest
 import com.andyanika.translator.common.models.TranslateResult
-import javax.inject.Inject
 
-internal class YandexModelsAdapter @Inject constructor() {
+internal class YandexModelsAdapter constructor() {
     fun convert(request: TranslateRequest, response: YandexTranslationResponse): TranslateResult {
         val res = StringBuilder()
         for (s in response.translatedText!!) {
@@ -15,6 +14,6 @@ internal class YandexModelsAdapter @Inject constructor() {
 
     // Yandex's specific case:
     fun isTranslationFound(result: TranslateResult): Boolean {
-        return !result.textDst.isEmpty() && !result.textSrc.equals(result.textDst, ignoreCase = true)
+        return result.textDst.isNotEmpty() && !result.textSrc.equals(result.textDst, ignoreCase = true)
     }
 }

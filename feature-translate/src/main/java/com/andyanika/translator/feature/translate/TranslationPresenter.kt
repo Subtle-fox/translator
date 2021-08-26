@@ -4,34 +4,21 @@ import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUse
 import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase
 import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase
 import com.andyanika.translator.common.models.ui.DisplayTranslateResult
-import com.andyanika.translator.common.scopes.FragmentScope
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.functions.Function
-import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Named
 
-@FragmentScope
-class TranslationPresenter @Inject internal constructor(
+internal class TranslationPresenter constructor(
     private val view: TranslationView,
     private val translateUseCase: TranslationUseCase,
     private val getSelectedLanguagesUseCase: GetSelectedLanguageUseCase,
     private val selectLanguageUseCase: SelectLanguageUseCase,
-    private val retrySubject: PublishSubject<String>,
-    @param:Named("ui") private val uiScheduler: Scheduler,
-    @param:Named("computation") private val computationScheduler: Scheduler
 ) {
-    private var searchDisposable: Disposable? = null
-    private var languageDisposable: Disposable? = null
-    private var swapDisposable: Disposable? = null
-    fun translate(text: String) {
-        retrySubject.onNext(text)
+    private val retryFlow = MutableSharedFlow<String>(0)
+
+    suspend fun translate(text: String) {
+        retryFlow.emit(text)
     }
 
     fun clear() {
@@ -41,49 +28,35 @@ class TranslationPresenter @Inject internal constructor(
     }
 
     private fun showProgress(charSequence: CharSequence) {
-        uiScheduler.scheduleDirect {
-            view.hideErrorLayout()
-            view.hideOffline()
-            view.hideClearBtn()
-            if (charSequence.length == 0) {
-                view.hideProgress()
-                view.clearTranslation()
-            } else {
-                view.showProgress()
-            }
+        view.hideErrorLayout()
+        view.hideOffline()
+        view.hideClearBtn()
+        if (charSequence.isEmpty()) {
+            view.hideProgress()
+            view.clearTranslation()
+        } else {
+            view.showProgress()
         }
     }
 
-    fun subscribe(searchTextObservable: Observable<CharSequence>?) {
-        languageDisposable = getSelectedLanguagesUseCase
-            .run()
-            .observeOn(uiScheduler)
-            .subscribe { (src, dst) ->
+    fun subscribe(inputTextFlow: Flow<String>, scope: CoroutineScope) {
+        listOf(
+            inputTextFlow.distinctUntilChanged(),
+            retryFlow
+        )
+            .merge()
+            .onStart {
+                val (src, dst) = getSelectedLanguagesUseCase.run()
                 view.setSrcLabel(src)
                 view.setDstLabel(dst)
             }
+            .onEach(::showProgress)
+            .debounce(TimeUnit.SECONDS.toMillis(DELAY))
+            .mapNotNull(translateUseCase::run)
+            .onEach(::processResult)
+            .catch { throwable -> processError(throwable) }
+            .launchIn(scope)
 
-        searchDisposable = searchTextObservable!!
-            .map(Function { obj: CharSequence -> obj.toString() })
-            .doOnNext { t: String? -> Timber.d("received new text: %s", t) }
-            .distinctUntilChanged { obj: String, anObject: String? -> obj.equals(anObject) }
-            .mergeWith(retrySubject)
-            .doOnNext { charSequence: String -> showProgress(charSequence) }
-            .doOnNext { s: String? -> Timber.d("before debounce: %s", s) }
-            .debounce(DELAY, TimeUnit.SECONDS, computationScheduler)
-            .doOnNext { s: String? -> Timber.d("after debounce: %s", s) }
-            .switchMap { srcText ->
-                Maybe.fromCallable<DisplayTranslateResult> { coroutineRun(srcText) }.toObservable()
-            } //Function<String, ObservableSource<out R>?> { srcText: String? -> coroutineRun })
-            .doOnNext { Timber.d("after switch map: %s", it) }
-            .observeOn(uiScheduler)
-            .subscribe({ processResult(it) }) { throwable: Throwable -> processError(throwable) }
-    }
-
-    private fun coroutineRun(srcText: String): DisplayTranslateResult? {
-        return runBlocking {
-            translateUseCase.run(srcText)
-        }
     }
 
     private fun processError(throwable: Throwable) {
@@ -127,23 +100,9 @@ class TranslationPresenter @Inject internal constructor(
         view.hideOffline()
     }
 
-    fun swapDirection() {
-        swapDisposable = selectLanguageUseCase
-            .swap()
-            .observeOn(uiScheduler)
-            .subscribe { view.clearResult() }
-    }
-
-    fun dispose() {
-        dispose(searchDisposable)
-        dispose(languageDisposable)
-        dispose(swapDisposable)
-    }
-
-    private fun dispose(disposable: Disposable?) {
-        if (disposable != null && !disposable.isDisposed) {
-            disposable.dispose()
-        }
+    suspend fun swapDirection() {
+        selectLanguageUseCase.swap()
+        view.clearResult()
     }
 
     companion object {

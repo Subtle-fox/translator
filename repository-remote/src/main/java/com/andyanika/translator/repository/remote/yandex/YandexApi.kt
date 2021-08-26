@@ -1,6 +1,5 @@
-package com.andyanika.translator.repository.remote
+package com.andyanika.translator.repository.remote.yandex
 
-import com.andyanika.translator.common.models.TranslateResult
 import retrofit2.http.POST
 import retrofit2.http.Query
 

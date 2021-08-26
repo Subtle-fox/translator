@@ -1,4 +1,4 @@
-package com.andyanika.translator.repository.remote
+package com.andyanika.translator.repository.remote.yandex
 
 import com.google.gson.annotations.SerializedName
 import java.util.*

@@ -1,11 +1,13 @@
 package com.andyanika.translator.repository.remote.di.koin
 
 import com.andyanika.translator.common.interfaces.RemoteRepository
-import com.andyanika.translator.repository.remote.*
-import com.andyanika.translator.repository.remote.YandexApi
-import com.andyanika.translator.repository.remote.YandexModelsAdapter
-import com.andyanika.translator.repository.remote.YandexRemoteRepository
-import com.andyanika.translator.repository.remote.YandexTranslationParamsBuilder
+import com.andyanika.translator.repository.remote.ApiVariants
+import com.andyanika.translator.repository.remote.BuildConfig
+import com.andyanika.translator.repository.remote.stub.StubRemoteRepository
+import com.andyanika.translator.repository.remote.yandex.YandexApi
+import com.andyanika.translator.repository.remote.yandex.YandexModelsAdapter
+import com.andyanika.translator.repository.remote.yandex.YandexRemoteRepository
+import com.andyanika.translator.repository.remote.yandex.YandexTranslationParamsBuilder
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -41,12 +43,9 @@ val networkModule = module {
             .create()
     }
 
-    single<YandexRemoteRepository>(named("yandex")) bind RemoteRepository::class
-
     single<YandexTranslationParamsBuilder>()
 
     single<YandexModelsAdapter>()
-
 
     single<YandexApi> {
         Retrofit.Builder()
@@ -56,5 +55,16 @@ val networkModule = module {
             .build()
             .create(YandexApi::class.java)
     }
+
+    // region api variants
+
+    single<YandexRemoteRepository>(named<ApiVariants.Yandex>()) bind RemoteRepository::class
+
+    single(named<ApiVariants.Stub>()) { StubRemoteRepository } bind RemoteRepository::class
+
+    // provided by default:
+    single<RemoteRepository> { get(named<ApiVariants.Stub>()) }
+
+    // endregion
 
 }

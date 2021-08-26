@@ -1,10 +1,11 @@
 package com.andyanika.translator.feature.history;
 
 import android.graphics.Color;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.andyanika.translator.common.models.FavoriteModel;
 import com.andyanika.translator.common.models.TranslateResult;
@@ -30,13 +31,13 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(FavoriteModel model) {
-        TranslateResult result = model.translateResult;
+        TranslateResult result = model.getTranslateResult();
 
-        title.setText(result.textSrc);
-        description.setText(result.textDst);
-        langSrc.setText(result.direction.getSrc().toString());
-        langDst.setText(result.direction.getDst().toString());
-        int color = model.isFavorite ? Color.RED : Color.BLACK;
+        title.setText(result.getTextSrc());
+        description.setText(result.getTextDst());
+        langSrc.setText(result.getDirection().getSrc().toString());
+        langDst.setText(result.getDirection().getDst().toString());
+        int color = model.isFavorite() ? Color.RED : Color.BLACK;
         favoriteButton.setColorFilter(color);
     }
 }

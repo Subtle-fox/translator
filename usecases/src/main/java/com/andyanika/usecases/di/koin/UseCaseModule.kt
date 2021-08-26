@@ -7,21 +7,13 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val useCaseModule = module {
-    factory { TranslateUseCaseImpl(get(), get(named("yandex")), get(named("io"))) } bind TranslationUseCase::class
+    factory { TranslateUseCaseImpl(get(), get(), get(named("io"))) } bind TranslationUseCase::class
 
-    factory { SelectLanguageUseCaseImpl(get(), get(named("io"))) } bind SelectLanguageUseCase::class
+    factory { SelectLanguageUseCaseImpl(get(), get(named("io")), get(named("io"))) } bind SelectLanguageUseCase::class
 
-    factory { params ->
-        GetSelectedLanguagesUseCaseImpl(
-            get(),
-            get(),
-            get(named("io"))
-        )
-    } bind GetSelectedLanguageUseCase::class
+    factory { GetSelectedLanguagesUseCaseImpl(get(), get(), get(named("io"))) } bind GetSelectedLanguageUseCase::class
 
-    factory {
-        GetLanguagesUseCaseImpl(get(), get(), get(named("io")))
-    } bind GetLanguagesUseCase::class
+    factory { GetLanguagesUseCaseImpl(get(), get(), get(named("io"))) } bind GetLanguagesUseCase::class
 
     factory { GetFavoritesUseCaseImpl(get(), get(named("io"))) } bind GetFavoritesUseCase::class
 

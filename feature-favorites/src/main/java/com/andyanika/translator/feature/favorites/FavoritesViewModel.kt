@@ -1,61 +1,53 @@
-package com.andyanika.translator.feature.favorites;
+package com.andyanika.translator.feature.favorites
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-
-import com.andyanika.translator.common.interfaces.usecase.GetFavoritesUseCase;
-import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase;
-import com.andyanika.translator.common.models.FavoriteModel;
-import com.andyanika.translator.common.scopes.FragmentScope;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import timber.log.Timber;
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.andyanika.translator.common.interfaces.usecase.GetFavoritesUseCase
+import com.andyanika.translator.common.interfaces.usecase.RemoveFavoriteUseCase
+import com.andyanika.translator.common.models.FavoriteModel
+import com.andyanika.translator.common.scopes.FragmentScope
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.Disposable
+import timber.log.Timber
+import javax.inject.Inject
 
 @FragmentScope
-public class FavoritesViewModel extends ViewModel {
-    final MutableLiveData<List<FavoriteModel>> data = new MutableLiveData<>();
-
-    private final GetFavoritesUseCase getFavoritesUseCase;
-    private final RemoveFavoriteUseCase removeFavoriteUseCase;
-    private Disposable listDisposable;
-    private Disposable itemClickDisposable;
-
-    @Inject
-    FavoritesViewModel(GetFavoritesUseCase getFavoritesUseCase, RemoveFavoriteUseCase removeFavoriteUseCase) {
-        this.getFavoritesUseCase = getFavoritesUseCase;
-        this.removeFavoriteUseCase = removeFavoriteUseCase;
-    }
-
-    void load(int limit) {
-        if (listDisposable == null || listDisposable.isDisposed()) {
-            listDisposable = getFavoritesUseCase.run(limit).subscribe(data::postValue);
+class FavoritesViewModel @Inject internal constructor(
+    private val getFavoritesUseCase: GetFavoritesUseCase,
+    private val removeFavoriteUseCase: RemoveFavoriteUseCase
+) : ViewModel() {
+    val data = MutableLiveData<List<FavoriteModel>>()
+    private var listDisposable: Disposable? = null
+    private var itemClickDisposable: Disposable? = null
+    fun load(limit: Int) {
+        if (listDisposable == null || listDisposable!!.isDisposed) {
+            listDisposable =
+                getFavoritesUseCase.run(limit).subscribe { value: List<FavoriteModel> -> data.postValue(value) }
         }
     }
 
-    void subscribeItemClick(Observable<FavoriteModel> observable) {
+    fun subscribeItemClick(observable: Observable<FavoriteModel>) {
         itemClickDisposable = observable
-                .flatMapCompletable(model -> removeFavoriteUseCase.run(model.id)
-                        .doOnComplete(() -> Timber.d("favorite removed")))
-                .subscribe();
+            .flatMapCompletable { model: FavoriteModel? ->
+                removeFavoriteUseCase.run(
+                    model!!.id
+                )
+                    .doOnComplete { Timber.d("favorite removed") }
+            }
+            .subscribe()
     }
 
-    void unsubscribeItemClick() {
-        if (itemClickDisposable != null && !itemClickDisposable.isDisposed()) {
-            itemClickDisposable.dispose();
+    fun unsubscribeItemClick() {
+        if (itemClickDisposable != null && !itemClickDisposable!!.isDisposed) {
+            itemClickDisposable!!.dispose()
         }
     }
 
-    @Override
-    protected void onCleared() {
-        unsubscribeItemClick();
-        if (!listDisposable.isDisposed()) {
-            listDisposable.dispose();
+    override fun onCleared() {
+        unsubscribeItemClick()
+        if (!listDisposable!!.isDisposed) {
+            listDisposable!!.dispose()
         }
-        super.onCleared();
+        super.onCleared()
     }
 }

@@ -53,9 +53,9 @@ public class SelectLanguageViewModel extends ViewModel {
                 .flatMapCompletable(model -> {
                     Timber.d("select language -> click received (isSrcMode = %b)", isSrcMode);
                     if (isSrcMode) {
-                        return selectLanguageUseCase.setSrc(model.code);
+                        return selectLanguageUseCase.setSrc(model.getCode());
                     } else {
-                        return selectLanguageUseCase.setDst(model.code);
+                        return selectLanguageUseCase.setDst(model.getCode());
                     }
                 })
                 .observeOn(uiScheduler)

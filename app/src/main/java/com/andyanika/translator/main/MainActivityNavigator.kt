@@ -3,13 +3,10 @@ package com.andyanika.translator.main
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.andyanika.translator.R
-import com.andyanika.translator.common.scopes.ActivityScope
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.github.terrakok.cicerone.androidx.FragmentScreen
-import javax.inject.Inject
 
-@ActivityScope
-class MainActivityNavigator @Inject constructor(activity: MainActivity) :
+class MainActivityNavigator constructor(activity: MainActivity) :
     AppNavigator(activity, activity.fragmentContainerId) {
 
     public override fun back() {

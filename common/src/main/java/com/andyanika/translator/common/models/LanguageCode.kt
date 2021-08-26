@@ -1,24 +1,23 @@
-package com.andyanika.translator.common.models;
+package com.andyanika.translator.common.models
 
-import java.nio.channels.IllegalSelectorException;
+import java.nio.channels.IllegalSelectorException
+import java.util.*
 
-public enum LanguageCode {
-    RU,
-    UK,
-    ZH,
-    EN;
+enum class LanguageCode {
+    RU, UK, ZH, EN;
 
-    public static LanguageCode tryParse(String value, LanguageCode defaultValue) {
-        if (value == null || value.isEmpty()) {
-            System.err.print("LanguageCode: failed to parse: " + value);
-            return defaultValue;
-        }
-
-        try {
-            return valueOf(value.toUpperCase());
-        } catch (IllegalSelectorException e) {
-            e.printStackTrace();
-            return defaultValue;
+    companion object {
+        fun tryParse(value: String?, defaultValue: LanguageCode): LanguageCode {
+            if (value == null || value.isEmpty()) {
+                System.err.print("LanguageCode: failed to parse: $value")
+                return defaultValue
+            }
+            return try {
+                valueOf(value.uppercase(Locale.getDefault()))
+            } catch (e: IllegalSelectorException) {
+                e.printStackTrace()
+                defaultValue
+            }
         }
     }
 }

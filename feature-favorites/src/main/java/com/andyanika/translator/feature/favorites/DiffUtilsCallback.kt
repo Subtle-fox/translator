@@ -1,40 +1,25 @@
-package com.andyanika.translator.feature.favorites;
+package com.andyanika.translator.feature.favorites
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.DiffUtil
+import com.andyanika.translator.common.models.FavoriteModel
 
-import com.andyanika.translator.common.models.FavoriteModel;
-
-import java.util.List;
-
-public class DiffUtilsCallback extends DiffUtil.Callback {
-    @NonNull
-    private final List<FavoriteModel> newData;
-    @NonNull
-    private final List<FavoriteModel> oldData;
-
-    DiffUtilsCallback(@NonNull List<FavoriteModel> newData, @NonNull List<FavoriteModel> oldData) {
-        this.newData = newData;
-        this.oldData = oldData;
+class DiffUtilsCallback internal constructor(
+    private val newData: List<FavoriteModel>,
+    private val oldData: List<FavoriteModel>
+) : DiffUtil.Callback() {
+    override fun getOldListSize(): Int {
+        return oldData.size
     }
 
-    @Override
-    public int getOldListSize() {
-        return oldData.size();
+    override fun getNewListSize(): Int {
+        return newData.size
     }
 
-    @Override
-    public int getNewListSize() {
-        return newData.size();
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldData[oldItemPosition].id == newData[newItemPosition].id
     }
 
-    @Override
-    public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldData.get(oldItemPosition).id == newData.get(newItemPosition).id;
-    }
-
-    @Override
-    public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return areItemsTheSame(oldItemPosition, newItemPosition);
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return areItemsTheSame(oldItemPosition, newItemPosition)
     }
 }

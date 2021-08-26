@@ -6,12 +6,14 @@ import com.andyanika.translator.common.models.LanguageCode
 import com.andyanika.translator.common.models.TranslateDirection
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Scheduler
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Named
 
 class SelectLanguageUseCaseImpl @Inject constructor(
     private val repository: LocalRepository,
-    @Named("io") private val ioScheduler: Scheduler
+    private val ioScheduler: Scheduler,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : SelectLanguageUseCase {
     override fun setSrc(code: LanguageCode): Completable {
         return Completable.fromObservable(
@@ -55,15 +57,21 @@ class SelectLanguageUseCaseImpl @Inject constructor(
                 .doOnNext { direction: TranslateDirection<LanguageCode?>? -> repository.setLanguageDirection(direction) })
     }
 
-    override fun swap(): Completable {
-        return Completable.fromObservable(
+    override suspend fun swap() {
+        return withContext(ioDispatcher) {
             repository.srcLanguage
                 .subscribeOn(ioScheduler)
                 .zipWith(
                     repository.dstLanguage,
                     { src: LanguageCode, dst: LanguageCode -> TranslateDirection(dst, src) })
                 .take(1)
-                .doOnNext { direction: TranslateDirection<LanguageCode>? -> repository.setLanguageDirection(direction) })
+                .doOnNext { direction: TranslateDirection<LanguageCode>? ->
+                    repository.setLanguageDirection(
+                        direction
+                    )
+                }
+                .blockingFirst()
+        }
     }
 
     fun normalize(

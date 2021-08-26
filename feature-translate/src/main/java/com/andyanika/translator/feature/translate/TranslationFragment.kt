@@ -1,6 +1,8 @@
 package com.andyanika.translator.feature.translate
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,28 +10,23 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.andyanika.resources.ResourceImpl
 import com.andyanika.translator.common.constants.Extras
 import com.andyanika.translator.common.constants.Screens
-import com.andyanika.translator.common.interfaces.Resources
 import com.andyanika.translator.common.interfaces.ScreenRouter
 import com.andyanika.translator.common.models.ui.DisplayTranslateResult
-import com.jakewharton.rxbinding4.InitialValueObservable
-import com.jakewharton.rxbinding4.widget.textChanges
-import org.koin.android.ext.android.getDefaultScope
-import org.koin.android.ext.android.getKoin
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import org.koin.android.ext.android.inject
-import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.scope.ScopeFragment
-import org.koin.androidx.scope.scopeActivity
 import org.koin.core.parameter.parametersOf
 
 class TranslationFragment : ScopeFragment(), TranslationView {
-    val presenter: TranslationPresenter by inject { parametersOf(this, ResourceImpl(requireActivity())) }
-    val router: ScreenRouter by inject()
+    private val presenter: TranslationPresenter by inject { parametersOf(this, ResourceImpl(requireActivity())) }
+    private val router: ScreenRouter by inject()
 
-    private var editInput: EditText? = null
+    private lateinit var editInput: EditText
     private var txtTranslated: TextView? = null
     private var progress: View? = null
     private var errorLayout: View? = null
@@ -39,7 +36,21 @@ class TranslationFragment : ScopeFragment(), TranslationView {
     private var srcLangBtn: Button? = null
     private var dstLangBtn: Button? = null
     private var swapLangBtn: ImageButton? = null
-    private var textObservable: InitialValueObservable<CharSequence>? = null
+
+    private val textInputFlow by lazy {
+        callbackFlow {
+            val listener = object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) = Unit
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    trySend(s?.toString().orEmpty())
+                }
+            }
+            editInput.addTextChangedListener(listener)
+            awaitClose { editInput.removeTextChangedListener(listener) }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_translation, null)
     }
@@ -47,7 +58,6 @@ class TranslationFragment : ScopeFragment(), TranslationView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         editInput = view.findViewById(R.id.edit_input)
-        textObservable = editInput!!.textChanges()
         txtTranslated = view.findViewById(R.id.txt_translated)
         progress = view.findViewById(R.id.search_progress)
         errorLayout = view.findViewById(R.id.error_layout)
@@ -61,20 +71,27 @@ class TranslationFragment : ScopeFragment(), TranslationView {
 
     override fun onStart() {
         super.onStart()
-        presenter!!.subscribe(textObservable)
-        srcLangBtn!!.setOnClickListener { v: View? -> router!!.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC) }
-        dstLangBtn!!.setOnClickListener { v: View? -> router!!.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST) }
-        swapLangBtn!!.setOnClickListener { v: View? -> presenter!!.swapDirection() }
-        clearBtn!!.setOnClickListener { v: View? -> presenter!!.clear() }
-        retryBtn!!.setOnClickListener { v: View? ->
-            presenter!!.translate(
-                editInput!!.text.toString()
-            )
+        lifecycleScope.launchWhenStarted {
+            presenter.subscribe(textInputFlow, lifecycleScope)
+        }
+//        presenter.subscribe(textInputFlow, lifecycleScope)
+
+        srcLangBtn!!.setOnClickListener { router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC) }
+        dstLangBtn!!.setOnClickListener { router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST) }
+        swapLangBtn!!.setOnClickListener {
+            lifecycleScope.launchWhenCreated {
+                presenter.swapDirection()
+            }
+        }
+        clearBtn!!.setOnClickListener { presenter.clear() }
+        retryBtn!!.setOnClickListener {
+            lifecycleScope.launchWhenCreated {
+                presenter.translate(editInput.text.toString())
+            }
         }
     }
 
     override fun onStop() {
-        presenter!!.dispose()
         retryBtn!!.setOnClickListener(null)
         srcLangBtn!!.setOnClickListener(null)
         dstLangBtn!!.setOnClickListener(null)
@@ -103,6 +120,7 @@ class TranslationFragment : ScopeFragment(), TranslationView {
 
     override fun hideErrorLayout() {
         errorLayout!!.visibility = View.INVISIBLE
+        errorLayout!!.visibility = View.VISIBLE
     }
 
     override fun setSrcLabel(text: String?) {
@@ -135,11 +153,5 @@ class TranslationFragment : ScopeFragment(), TranslationView {
 
     override fun clearTranslation() {
         txtTranslated!!.text = ""
-    }
-
-    override fun onDestroy() {
-//        presenter!!.dispose()
-//        presenter = null
-        super.onDestroy()
     }
 }

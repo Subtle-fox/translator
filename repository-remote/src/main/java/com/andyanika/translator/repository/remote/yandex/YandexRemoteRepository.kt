@@ -1,15 +1,16 @@
-package com.andyanika.translator.repository.remote
+package com.andyanika.translator.repository.remote.yandex
 
 import com.andyanika.translator.common.interfaces.RemoteRepository
 import com.andyanika.translator.common.models.TranslateRequest
 import com.andyanika.translator.common.models.TranslateResult
-import javax.inject.Inject
+import com.andyanika.translator.repository.remote.BuildConfig
 
-internal class YandexRemoteRepository @Inject constructor(
+internal class YandexRemoteRepository constructor(
     private val api: YandexApi,
     private val directionBuilder: YandexTranslationParamsBuilder,
     private val modelsAdapter: YandexModelsAdapter
 ) : RemoteRepository {
+
     private val key: String = BuildConfig.ApiKey
 
     init {
@@ -20,10 +21,7 @@ internal class YandexRemoteRepository @Inject constructor(
 
     override suspend fun translate(request: TranslateRequest): TranslateResult? {
         val direction = directionBuilder.buildParam(request.direction)
-        return YandexTranslationResponse().apply {
-            translatedText = arrayListOf(request.text.reversed())
-            languageDirection = request.direction.dst.name
-        }//api.translate(key, request.text, direction)
+        return api.translate(key, request.text, direction)
             .let { response -> modelsAdapter.convert(request, response) }
             .takeIf { modelsAdapter.isTranslationFound(it) }
     }

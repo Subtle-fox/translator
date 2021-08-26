@@ -7,9 +7,8 @@ import com.andyanika.translator.main.Screens.History
 import com.andyanika.translator.main.Screens.Translation
 import com.github.terrakok.cicerone.Router
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import javax.inject.Inject
 
-class MainActivityPresenter @Inject internal constructor(private val router: Router) :
+internal class MainActivityPresenter internal constructor(private val router: Router) :
     BottomNavigationView.OnNavigationItemSelectedListener {
     fun navigateToTranslation() {
         router.navigateTo(Translation())

@@ -9,19 +9,20 @@ import com.andyanika.translator.common.models.TranslateRequest
 import com.andyanika.translator.common.models.TranslateResult
 import com.andyanika.translator.common.models.ui.DisplayTranslateResult
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Named
 
 class TranslateUseCaseImpl @Inject constructor(
     private val localRepository: LocalRepository,
-    @param:Named("yandex") private val remoteRepository: RemoteRepository,
-    @param:Named("io") private val ioScheduler: Scheduler
+    private val remoteRepository: RemoteRepository,
+    private val dispatcher: CoroutineDispatcher
 ) : TranslationUseCase {
-    override suspend fun run(srcText: String?): DisplayTranslateResult? {
-        return srcText?.let {
+
+    override suspend fun run(srcText: String): DisplayTranslateResult {
+        return withContext(dispatcher) {
             val request = Observable
                 .zip(localRepository.srcLanguage, localRepository.dstLanguage, ::TranslateDirection)
                 .map { direction -> TranslateRequest(srcText, direction) }
@@ -33,35 +34,18 @@ class TranslateUseCaseImpl @Inject constructor(
                 translateRemotely(request)
             }
         }
-
-//        return if (srcText!!.isEmpty()) {
-//            Observable.empty()
-//        } else getTranslationRequest(srcText)
-//            .flatMap { request: TranslateRequest? ->
-//                translateLocally(request)
-//                    .onErrorResumeWith(translateRemotely(request))
-//            }
-//            .subscribeOn(ioScheduler)
     }
 
-    fun getTranslationRequest(srcText: String?): Observable<TranslateRequest> {
+    fun getTranslationRequest(srcText: String): Observable<TranslateRequest> {
         return Observable
-            .zip(localRepository.srcLanguage, localRepository.dstLanguage, { src: LanguageCode?, dst: LanguageCode? ->
-                TranslateDirection(
-                    src!!, dst!!
-                )
-            })
+            .zip(localRepository.srcLanguage, localRepository.dstLanguage, { src, dst -> TranslateDirection(src, dst) })
             .timeout(500, TimeUnit.MILLISECONDS)
             .take(1)
-            .map { direction: TranslateDirection<LanguageCode>? ->
-                TranslateRequest(
-                    srcText!!, direction!!
-                )
-            }
+            .map { direction -> TranslateRequest(srcText, direction) }
             .doOnNext { (text) -> Timber.d("translation request: %s", text) }
     }
 
-    suspend fun translateLocally(request: TranslateRequest?): DisplayTranslateResult {
+    fun translateLocally(request: TranslateRequest?): DisplayTranslateResult {
         val result = localRepository
             .translate(request)
             .blockingGet()
@@ -86,7 +70,7 @@ class TranslateUseCaseImpl @Inject constructor(
         }
     }
 
-    suspend fun addToLocalRepo(result: TranslateResult): TranslateResult {
+    fun addToLocalRepo(result: TranslateResult): TranslateResult {
         return localRepository.addTranslation(result)
             .onErrorReturnItem(result)
             .blockingGet()

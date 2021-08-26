@@ -25,6 +25,7 @@ ext {
     rx_java_version = '3.0.13'
     rx_android_version = '3.0.0'
     rx_binding_version = '4.0.0'
+    coroutine_vesrion = '1.5.0'
 
     cicerone_version = '7.1'
     timber_version = '4.7.0'

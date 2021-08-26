@@ -50,11 +50,11 @@ public class HistoryViewModel extends ViewModel {
 
     void subscribeItemClick(Observable<FavoriteModel> observable) {
         itemClickDisposable = observable.flatMapCompletable(model -> {
-            if (model.isFavorite) {
-                return removeFavoriteUseCase.run(model.id)
+            if (model.isFavorite()) {
+                return removeFavoriteUseCase.run(model.getId())
                         .doOnComplete(() -> Timber.d("favorite removed"));
             } else {
-                return addFavoriteUseCase.run(model.id)
+                return addFavoriteUseCase.run(model.getId())
                         .doOnComplete(() -> Timber.d("favorite added"));
             }
         }).subscribe();

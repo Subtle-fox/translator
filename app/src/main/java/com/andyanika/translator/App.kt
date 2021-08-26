@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.andyanika.resources.di.koin.resourceModule
 import com.andyanika.translator.di.koin.activityModule
+import com.andyanika.translator.di.koin.dispatchersModule
 import com.andyanika.translator.di.koin.navigationModule
 import com.andyanika.translator.di.koin.schedulersModule
 import com.andyanika.translator.feature.translate.di.koin.translationModule
@@ -24,13 +25,6 @@ class App : Application() {
         initKoin()
     }
 
-//    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-//        return DaggerAppComponent
-//            .builder()
-//            .remoteRepositoryComponent(DaggerRemoteRepositoryComponent.create())
-//            .create(this)
-//    }
-
     private fun initLogger() {
         val tree = if (BuildConfig.DEBUG) DebugTree() else object : Timber.Tree() {
             override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
@@ -44,13 +38,14 @@ class App : Application() {
     }
 
     private fun initKoin() {
-        // start Koin context
         startKoin {
             androidContext(this@App)
             androidLogger(level = Level.DEBUG)
             modules(
                 navigationModule,
                 schedulersModule,
+                dispatchersModule,
+
                 localRepositoryModule,
                 networkModule,
                 useCaseModule,

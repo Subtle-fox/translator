@@ -5,6 +5,11 @@ import com.andyanika.translator.common.models.LanguageCode.RU
 import com.andyanika.translator.common.models.TranslateDirection
 import com.andyanika.translator.common.models.TranslateRequest
 import com.andyanika.translator.common.models.TranslateResult
+import com.andyanika.translator.repository.remote.yandex.YandexRemoteRepository
+import com.andyanika.translator.repository.remote.yandex.YandexApi
+import com.andyanika.translator.repository.remote.yandex.YandexModelsAdapter
+import com.andyanika.translator.repository.remote.yandex.YandexTranslationParamsBuilder
+import com.andyanika.translator.repository.remote.yandex.YandexTranslationResponse
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.TestScheduler
