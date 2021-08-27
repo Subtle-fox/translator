@@ -1,6 +1,6 @@
 package com.andyanika.translator.repository.remote.di.koin
 
-import com.andyanika.translator.common.interfaces.RemoteRepository
+import core.interfaces.RemoteRepository
 import com.andyanika.translator.repository.remote.ApiVariants
 import com.andyanika.translator.repository.remote.BuildConfig
 import com.andyanika.translator.repository.remote.stub.StubRemoteRepository

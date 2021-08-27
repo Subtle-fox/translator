@@ -1,11 +1,13 @@
 package com.andyanika.translator.repository.local
 
 import android.content.SharedPreferences
-import com.andyanika.translator.common.interfaces.LocalRepository
-import com.andyanika.translator.common.models.*
 import com.andyanika.translator.repository.local.entity.FavoriteEntity
+import core.interfaces.LocalRepository
+import core.models.*
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -16,8 +18,8 @@ internal class LocalRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher,
 ) : LocalRepository {
 
-    private val srcLanguageState = MutableSharedFlow<LanguageCode>()
-    private val dstLanguageState = MutableSharedFlow<LanguageCode>()
+    private val srcLanguageState = MutableStateFlow(getSrcLanguage())
+    private val dstLanguageState = MutableStateFlow(getDstLanguage())
 
     override fun getHistory(): Flow<List<FavoriteModel>> {
         return dao
@@ -64,23 +66,18 @@ internal class LocalRepositoryImpl(
 
     override fun observeSrcLanguage(): Flow<LanguageCode> {
         return srcLanguageState
-            .onStart { getSrcLanguage() }
-            .catch { emit(LanguageCode.RU) }
-            .flowOn(ioDispatcher)
     }
 
     override fun observeDstLanguage(): Flow<LanguageCode> {
         return dstLanguageState
-            .onStart { getDstLanguage() }
-            .flowOn(ioDispatcher)
     }
 
-    override suspend fun getSrcLanguage(): LanguageCode {
+    override fun getSrcLanguage(): LanguageCode {
         val s = preferences.getString(LANGUAGE_SRC, null)
         return LanguageCode.tryParse(s, LanguageCode.RU)
     }
 
-    override suspend fun getDstLanguage(): LanguageCode {
+    override fun getDstLanguage(): LanguageCode {
         val s = preferences.getString(LANGUAGE_DST, null)
         return LanguageCode.tryParse(s, LanguageCode.EN)
     }

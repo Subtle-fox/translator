@@ -2,7 +2,7 @@ package com.andyanika.translator.repository.local.di.koin
 
 import android.content.Context
 import androidx.room.Room
-import com.andyanika.translator.common.interfaces.LocalRepository
+import core.interfaces.LocalRepository
 import com.andyanika.translator.repository.local.DatabaseTranslator
 import com.andyanika.translator.repository.local.LocalRepositoryImpl
 import com.andyanika.translator.repository.local.ModelsAdapter

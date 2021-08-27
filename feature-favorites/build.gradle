@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 buildscript {
     repositories {
@@ -12,8 +13,11 @@ buildscript {
 }
 
 android {
-    defaultConfig {
+    buildFeatures {
+        viewBinding true
+    }
 
+    defaultConfig {
         compileSdkVersion pCompileSdk
         targetSdkVersion pTargetSdk
         minSdkVersion pMinSdk
@@ -28,18 +32,9 @@ android {
 
 dependencies {
     implementation project(path: ':resources')
-    implementation project(path: ':common')
+    implementation project(path: ':core')
 
-    implementation "androidx.appcompat:appcompat:${material_version}"
-    implementation "com.google.android.material:material:${material_version}"
-    implementation "androidx.constraintlayout:constraintlayout:${constraint_version}"
-    implementation "androidx.lifecycle:lifecycle-extensions:${lifecycle_version}"
-
-//    implementation "com.google.dagger:dagger-android-support:${dagger_version}"
-//    annotationProcessor "com.google.dagger:dagger-compiler:${dagger_version}"
-//    annotationProcessor "com.google.dagger:dagger-android-processor:${dagger_version}"
-    implementation "javax.inject:javax.inject:${javax_inject_version}"
-
-    implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
-    implementation "io.reactivex.rxjava3:rxandroid:${rx_android_version}"
+    implementation "com.google.android.material:material:$material_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
 }

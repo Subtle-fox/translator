@@ -1,7 +1,7 @@
 package com.andyanika.translator.repository.remote.yandex
 
-import com.andyanika.translator.common.models.LanguageCode
-import com.andyanika.translator.common.models.TranslateDirection
+import core.models.LanguageCode
+import core.models.TranslateDirection
 import java.util.*
 
 internal class YandexTranslationParamsBuilder {

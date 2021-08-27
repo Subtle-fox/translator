@@ -1,9 +1,9 @@
 package com.andyanika.translator.repository.local
 
-import com.andyanika.translator.common.models.FavoriteModel
-import com.andyanika.translator.common.models.LanguageCode
-import com.andyanika.translator.common.models.TranslateDirection
-import com.andyanika.translator.common.models.TranslateResult
+import core.models.FavoriteModel
+import core.models.LanguageCode
+import core.models.TranslateDirection
+import core.models.TranslateResult
 import com.andyanika.translator.repository.local.entity.WordFavoriteEntity
 import com.andyanika.translator.repository.local.entity.WordEntity
 

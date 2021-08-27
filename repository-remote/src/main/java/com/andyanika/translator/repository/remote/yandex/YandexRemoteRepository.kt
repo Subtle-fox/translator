@@ -1,8 +1,8 @@
 package com.andyanika.translator.repository.remote.yandex
 
-import com.andyanika.translator.common.interfaces.RemoteRepository
-import com.andyanika.translator.common.models.TranslateRequest
-import com.andyanika.translator.common.models.TranslateResult
+import core.interfaces.RemoteRepository
+import core.models.TranslateRequest
+import core.models.TranslateResult
 import com.andyanika.translator.repository.remote.BuildConfig
 
 internal class YandexRemoteRepository constructor(

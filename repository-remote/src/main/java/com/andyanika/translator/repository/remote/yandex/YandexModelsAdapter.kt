@@ -1,7 +1,7 @@
 package com.andyanika.translator.repository.remote.yandex
 
-import com.andyanika.translator.common.models.TranslateRequest
-import com.andyanika.translator.common.models.TranslateResult
+import core.models.TranslateRequest
+import core.models.TranslateResult
 
 internal class YandexModelsAdapter constructor() {
     fun convert(request: TranslateRequest, response: YandexTranslationResponse): TranslateResult {
