@@ -1,11 +1,9 @@
 package com.andyanika.usecases
 
-import com.andyanika.translator.common.interfaces.LocalRepository
-import com.andyanika.translator.common.interfaces.Resources
-import com.andyanika.translator.common.interfaces.usecase.GetLanguagesUseCase
-import com.andyanika.translator.common.models.LanguageCode
-import com.andyanika.translator.common.models.LanguageCode.*
-import com.andyanika.translator.common.models.ui.DisplayLanguageModel
+import core.interfaces.LocalRepository
+import core.interfaces.Resources
+import core.models.LanguageCode.*
+import core.models.ui.DisplayLanguageModel
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.TestScheduler

@@ -8,4 +8,4 @@ include ':app',
         ':repository-remote',
         ':repository-local',
         ':usecases',
-        ':common'
+    ':core'

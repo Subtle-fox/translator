@@ -1,13 +1,22 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 
 android {
     defaultConfig {
-        versionCode pVersionCode
-        versionName pVersionName
 
-        compileSdkVersion = compileSdk
-        targetSdkVersion targetSdk
-        minSdkVersion minSdk
+        compileSdkVersion pCompileSdk
+        targetSdkVersion pTargetSdk
+        minSdkVersion pMinSdk
         buildToolsVersion build_tools_version
 
         compileOptions {
@@ -17,8 +26,8 @@ android {
     }
 }
 dependencies {
-    implementation project(path: ':common')
+    implementation project(path: ':core')
 
-    implementation "com.google.dagger:dagger:${dagger_version}"
-    implementation "io.reactivex.rxjava3:rxjava:${rx_java_version}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
 }

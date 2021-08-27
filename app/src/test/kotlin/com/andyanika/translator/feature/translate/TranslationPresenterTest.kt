@@ -1,12 +1,12 @@
 package com.andyanika.translator.feature.translate
 
-import com.andyanika.translator.common.interfaces.usecase.GetSelectedLanguageUseCase
-import com.andyanika.translator.common.interfaces.usecase.SelectLanguageUseCase
-import com.andyanika.translator.common.interfaces.usecase.TranslationUseCase
-import com.andyanika.translator.common.models.LanguageCode.EN
-import com.andyanika.translator.common.models.LanguageCode.RU
-import com.andyanika.translator.common.models.TranslateDirection
-import com.andyanika.translator.common.models.ui.DisplayTranslateResult
+import core.interfaces.usecase.GetSelectedLanguageUseCase
+import core.interfaces.usecase.SelectLanguageUseCase
+import core.interfaces.usecase.TranslationUseCase
+import core.models.LanguageCode.EN
+import core.models.LanguageCode.RU
+import core.models.TranslateDirection
+import core.models.ui.DisplayTranslateResult
 import io.reactivex.Observable
 import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.PublishSubject

@@ -1,11 +1,11 @@
 package com.andyanika.translator.repository.local
 
 import android.content.SharedPreferences
-import com.andyanika.translator.common.models.LanguageCode
-import com.andyanika.translator.common.models.LanguageCode.EN
-import com.andyanika.translator.common.models.LanguageCode.RU
-import com.andyanika.translator.common.models.TranslateDirection
-import com.andyanika.translator.common.models.TranslateResult
+import core.models.LanguageCode
+import core.models.LanguageCode.EN
+import core.models.LanguageCode.RU
+import core.models.TranslateDirection
+import core.models.TranslateResult
 import com.andyanika.translator.repository.local.LocalRepositoryImpl.LANGUAGE_DST
 import com.andyanika.translator.repository.local.LocalRepositoryImpl.LANGUAGE_SRC
 import io.reactivex.observers.TestObserver
