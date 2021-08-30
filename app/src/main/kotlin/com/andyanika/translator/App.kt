@@ -10,9 +10,6 @@ import com.andyanika.translator.feature.favorites.di.koin.favoritesModule
 import com.andyanika.translator.feature.history.di.koin.historyModule
 import com.andyanika.translator.feature.select.di.koin.selectLanguageModule
 import com.andyanika.translator.feature.translate.di.koin.translationModule
-import com.andyanika.translator.repository.local.di.koin.localRepositoryModule
-import com.andyanika.translator.repository.remote.di.koin.networkModule
-import com.andyanika.usecases.di.koin.useCaseModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -47,9 +44,6 @@ class App : Application() {
                 navigationModule,
                 dispatchersModule,
 
-                localRepositoryModule,
-                networkModule,
-                useCaseModule,
                 resourceModule,
 
                 activityModule,

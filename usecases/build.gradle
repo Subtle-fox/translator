@@ -4,5 +4,8 @@ apply plugin: 'kotlin-android'
 dependencies {
     implementation project(path: ':core')
 
+    implementation project(path: ':repository-local')
+    implementation project(path: ':repository-remote')
+
     implementation "io.insert-koin:koin-android:$koin_version"
 }

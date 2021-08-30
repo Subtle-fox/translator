@@ -6,14 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andyanika.translator.feature.select.databinding.FragmentSelectLanguageBinding
+import com.andyanika.usecases.di.koin.UseCaseComponent
 import core.constants.Extras
 import core.models.ui.DisplayLanguageModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.context.loadKoinModules
 import org.koin.core.parameter.parametersOf
 
 class SelectLanguageFragment : ScopeFragment() {
+    init {
+        loadKoinModules(UseCaseComponent.getModule())
+    }
+
     private val vm by viewModel<SelectLanguageViewModel>()
     private val action = { model: DisplayLanguageModel -> vm.onItemClick(model) }
     private val adapter: SelectLanguageListAdapter by inject { parametersOf(action) }

@@ -6,6 +6,8 @@ dependencies {
     implementation project(path: ':resources')
     implementation project(path: ':core')
 
+    implementation project(path: ':usecases')
+
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "io.insert-koin:koin-android:$koin_version"

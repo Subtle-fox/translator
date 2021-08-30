@@ -1,11 +1,11 @@
 package com.andyanika.usecases.di.koin
 
-import core.interfaces.usecase.*
 import com.andyanika.usecases.*
+import core.interfaces.usecase.*
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val useCaseModule = module {
+internal val useCaseModule = module {
     factory { TranslateUseCaseImpl(get(), get()) } bind TranslationUseCase::class
 
     factory { SelectLanguageUseCaseImpl(get()) } bind SelectLanguageUseCase::class

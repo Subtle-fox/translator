@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.andyanika.translator.feature.translate.databinding.FragmentTranslationBinding
+import com.andyanika.usecases.di.koin.UseCaseComponent
 import com.andyanika.widgets.observe
 import core.constants.Extras
 import core.constants.Screens
@@ -13,9 +14,15 @@ import core.interfaces.ScreenRouter
 import core.models.ui.DisplayTranslateResult
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeFragment
+import org.koin.core.context.loadKoinModules
 import org.koin.core.parameter.parametersOf
 
 class TranslationFragment : ScopeFragment(), TranslationView {
+
+    init {
+        loadKoinModules(UseCaseComponent.getModule())
+    }
+
     private val presenter by inject<TranslationPresenter> { parametersOf(this) }
     private val router: ScreenRouter by inject()
 

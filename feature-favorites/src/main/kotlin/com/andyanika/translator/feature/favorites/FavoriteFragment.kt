@@ -6,13 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andyanika.translator.feature.favorites.databinding.FragmentFavoritesBinding
+import com.andyanika.usecases.di.koin.UseCaseComponent
 import core.models.FavoriteModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.context.loadKoinModules
 import org.koin.core.parameter.parametersOf
 
 class FavoriteFragment : ScopeFragment() {
+    init {
+        loadKoinModules(UseCaseComponent.getModule())
+    }
+
     private val vm by viewModel<FavoritesViewModel>()
     private val action = { model: FavoriteModel -> vm.removeFavorite(model) }
     private val adapter by inject<FavoritesListAdapter> { parametersOf(action) }
