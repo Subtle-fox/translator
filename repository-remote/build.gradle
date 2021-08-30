@@ -1,31 +1,11 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 android {
     defaultConfig {
-
-        compileSdkVersion pCompileSdk
-        targetSdkVersion pTargetSdk
-        minSdkVersion pMinSdk
-        buildToolsVersion build_tools_version
-
         println "Yandex ApiKey: $yandex_api_key"
         buildConfigField 'String', "ApiKey", yandex_api_key
 
-        compileOptions {
-            sourceCompatibility = java_version
-            targetCompatibility = java_version
-        }
     }
 }
 
@@ -36,6 +16,5 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.google.code.gson:gson:$gson_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "io.insert-koin:koin-android:$koin_version"
 }

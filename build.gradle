@@ -29,7 +29,7 @@ ext {
     coroutine_version = '1.5.0'
 
     cicerone_version = '7.1'
-    timber_version = '4.7.0'
+    timber_version = '4.7.1'
 
     javax_annotation_version = '1.0'
     javax_inject_version = '1'
@@ -51,12 +51,55 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30"
     }
 }
 
 allprojects {
+//    project.plugins.whenPluginAdded { plugin ->
+//        sourceSets {
+//            main.java.srcDirs += 'src/main/kotlin'
+//        }
+//    }
+}
+
+subprojects {
+
     repositories {
         mavenCentral()
         google()
+    }
+
+    project.plugins.whenPluginAdded { plugin ->
+        def isAndroidLibrary = "com.android.build.gradle.LibraryPlugin" == plugin.class.name
+        def isAndroidApp = "com.android.build.gradle.AppPlugin" == plugin.class.name
+
+        if (isAndroidLibrary || isAndroidApp) {
+            android {
+                buildFeatures {
+                    viewBinding true
+                }
+
+                defaultConfig {
+                    compileSdkVersion pCompileSdk
+                    targetSdkVersion pTargetSdk
+                    minSdkVersion pMinSdk
+                }
+
+                compileOptions {
+                    sourceCompatibility java_version
+                    targetCompatibility java_version
+                }
+
+                sourceSets {
+                    test.java.srcDirs += 'src/test/kotlin'
+                }
+            }
+
+            dependencies {
+                implementation "com.jakewharton.timber:timber:$timber_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+            }
+        }
     }
 }
