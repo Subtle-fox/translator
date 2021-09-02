@@ -5,7 +5,6 @@ android {
     defaultConfig {
         println "Yandex ApiKey: $yandex_api_key"
         buildConfigField 'String', "ApiKey", yandex_api_key
-
     }
 }
 

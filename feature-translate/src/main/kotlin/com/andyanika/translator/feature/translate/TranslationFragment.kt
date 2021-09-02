@@ -6,17 +6,28 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.andyanika.translator.feature.translate.databinding.FragmentTranslationBinding
+import com.andyanika.translator.feature.translate.mvi.TranslationAction
+import com.andyanika.translator.feature.translate.mvi.TranslationFeature
+import com.andyanika.translator.feature.translate.mvi.TranslationViewState
 import com.andyanika.widgets.observe
 import core.constants.Extras
 import core.constants.Screens
 import core.interfaces.ScreenRouter
-import core.models.ui.DisplayTranslateResult
+import core.models.LanguageCode
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeFragment
-import org.koin.core.parameter.parametersOf
+import java.util.*
 
-class TranslationFragment : ScopeFragment(), TranslationView {
-    private val presenter by inject<TranslationPresenter> { parametersOf(this) }
+class TranslationFragment : ScopeFragment() {
+    // NOTE: as a variant: manually link feature's scope to fragment's scope
+    private val featureScope = getKoin()
+        .getOrCreateScope<TranslationFeature>("")
+        .apply { scope.linkTo(this) }
+
+    private val feature by inject<TranslationFeature>()
     private val router: ScreenRouter by inject()
 
     private val binding by lazy { FragmentTranslationBinding.bind(requireView()) }
@@ -29,102 +40,118 @@ class TranslationFragment : ScopeFragment(), TranslationView {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launchWhenStarted {
-            presenter.subscribe(binding.editInput.observe())
+            feature
+                .observe()
+                .collect(::render)
         }
 
-        lifecycleScope.launchWhenCreated {
-            presenter.subscribeLanguageDirection()
-        }
-    }
-
-    override fun onStart() = with(binding) {
-        super.onStart()
-
-        btnLangSrc.setOnClickListener {
-            router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC)
+        lifecycleScope.launchWhenResumed {
+            binding
+                .editInput
+                .observe()
+                .collect {
+                    feature.accept(TranslationAction.Translate(it))
+                }
         }
 
-        btnLangDst.setOnClickListener {
-            router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST)
-        }
+        with(binding) {
 
-        btnLangSwap.setOnClickListener {
-            lifecycleScope.launchWhenStarted {
-                presenter.swapDirection()
+            btnLangSrc.setOnClickListener {
+                router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_SRC)
             }
-        }
 
-        btnClear.setOnClickListener {
-            presenter.clear()
-        }
+            btnLangDst.setOnClickListener {
+                router.navigateTo(Screens.SELECT_LANGUAGE, Extras.MODE_DST)
+            }
 
-        btnRetry.setOnClickListener {
-            lifecycleScope.launchWhenStarted {
-                presenter.translate(editInput.text.toString())
+            btnLangSwap.setOnClickListener {
+                lifecycleScope.launch {
+                    feature.accept(TranslationAction.SwapDirection)
+                }
+            }
+
+            btnClear.setOnClickListener {
+                lifecycleScope.launch {
+                    feature.accept(TranslationAction.Clear)
+                }
+            }
+
+            btnRetry.setOnClickListener {
+                lifecycleScope.launch {
+                    feature.accept(TranslationAction.Retry)
+                }
             }
         }
     }
 
     override fun onStop() = with(binding) {
-        btnRetry.setOnClickListener(null)
-        btnLangSrc.setOnClickListener(null)
-        btnLangDst.setOnClickListener(null)
+        // NOTE: as a variant: manually clear feature if not bound to fragment's lifecycle
+        featureScope.close()
+
         super.onStop()
     }
 
-    override fun showNotFound() {
+    private fun showNotFound() {
         binding.txtTranslated.setText(R.string.translation_not_found)
     }
 
-    override fun showTranslation(result: DisplayTranslateResult) {
-        binding.txtTranslated.text = result.textTranslated
+    private fun showTranslation(textTranslated: String) {
+        binding.txtTranslated.text = textTranslated
     }
 
-    override fun showProgress() {
-        binding.searchProgress.visibility = View.VISIBLE
+    private fun showProgress(visible: Boolean) {
+        binding.searchProgress.isVisible = visible
     }
 
-    override fun hideProgress() {
-        binding.searchProgress.visibility = View.INVISIBLE
+    private fun showError(visible: Boolean) {
+        binding.errorLayout.isVisible = visible
     }
 
-    override fun showErrorLayout() {
-        binding.errorLayout.visibility = View.VISIBLE
-    }
-
-    override fun hideErrorLayout() {
-        binding.errorLayout.visibility = View.INVISIBLE
-    }
-
-    override fun setSrcLabel(text: String?) {
+    private fun setSrcLabel(text: String?) {
         binding.btnLangSrc.text = text
     }
 
-    override fun setDstLabel(text: String?) {
+    private fun setDstLabel(text: String?) {
         binding.btnLangDst.text = text
     }
 
-    override fun showOffline() {
-        binding.iconOffline.visibility = View.VISIBLE
+    private fun showOffline(visible: Boolean) {
+        binding.iconOffline.isVisible = visible
     }
 
-    override fun hideOffline() {
-        binding.iconOffline.visibility = View.INVISIBLE
+    private fun showClearBtn(visible: Boolean) {
+        binding.btnClear.isVisible = visible
     }
 
-    override fun showClearBtn() {
-        binding.btnClear.visibility = View.VISIBLE
+    private fun render(state: TranslationViewState) = with(binding) {
+        println("### $state")
+
+        showProgress(state.isLoading)
+        showError(state.isError)
+        showOffline(state.isOffline)
+        showClearBtn(state.canClear)
+        if (state.isNotFound) showNotFound()
+
+        setSrcLabel(getLanguageLabel(state.srcCode))
+        setDstLabel(getLanguageLabel(state.dstCode))
+        showTranslation(state.output)
+
+        if (editInput.text.toString() != state.input) {
+            editInput.text.replace(0, editInput.text.length, state.input)
+        }
     }
 
-    override fun hideClearBtn() {
-        binding.btnClear.visibility = View.INVISIBLE
+    private fun getLanguageLabel(code: LanguageCode): String {
+        val resourceName = "lang_" + code.toString().lowercase(Locale.getDefault())
+        val id = resources.getIdentifier(resourceName, "string", requireActivity().packageName)
+        return getString(id)
     }
 
-    override fun clearResult() {
-        binding.editInput.text.clear()
-    }
-
-    override fun clearTranslation() {
-        binding.editInput.text.clear()
-    }
+    private var View.isVisible: Boolean
+        get() {
+            return visibility == View.VISIBLE
+        }
+        set(value) {
+            visibility = if (value) View.VISIBLE else View.INVISIBLE
+        }
 }
